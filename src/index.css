@@ -5,8 +5,8 @@
 @layer base {
   :root {
     /* Cantiere in Cloud — Design System */
-    --background: 30 14% 97%; /* #FAFAF9 warm white surface */
-    --foreground: 20 14% 8%; /* #1C1917 near-black */
+    --background: 30 14% 97%;
+    --foreground: 20 14% 8%;
 
     --card: 0 0% 100%;
     --card-foreground: 20 14% 8%;
@@ -14,10 +14,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 20 14% 8%;
 
-    --primary: 25 95% 53%; /* #F97316 orange */
+    --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 6% 90%; /* Stone-200 */
+    --secondary: 30 6% 90%;
     --secondary-foreground: 20 14% 8%;
 
     --muted: 30 6% 95%;
@@ -26,16 +26,19 @@
     --accent: 30 6% 93%;
     --accent-foreground: 20 14% 8%;
 
-    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%; /* #F59E0B */
+    --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%; /* #22C55E */
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
-    --border: 30 6% 90%; /* Stone-200 #E7E5E4 */
+    --superadmin: 239 84% 67%;
+    --superadmin-foreground: 0 0% 100%;
+
+    --border: 30 6% 90%;
     --input: 30 6% 90%;
     --ring: 25 95% 53%;
 
@@ -50,8 +53,8 @@
     --sidebar-border: 30 6% 90%;
     --sidebar-ring: 25 95% 53%;
 
-    --font-heading: 'Barlow Semi Condensed', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-heading: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
   }
 
   .dark {
@@ -84,6 +87,9 @@
 
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
+
+    --superadmin: 239 84% 67%;
+    --superadmin-foreground: 0 0% 100%;
 
     --border: 20 6% 18%;
     --input: 20 6% 18%;
