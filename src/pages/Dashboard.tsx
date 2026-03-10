@@ -62,6 +62,11 @@ export default function Dashboard() {
         </Button>
       </div>
 
+      {/* Presenti ora */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <PresenzaLiveWidget />
+      </div>
+
       {/* Cantieri */}
       <section>
         <h2 className="font-heading font-semibold text-lg text-foreground mb-3">Cantieri attivi</h2>

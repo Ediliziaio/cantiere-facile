@@ -56,6 +56,10 @@ const App = () => (
             <Route path="/lavoratori" element={<Lavoratori />} />
             <Route path="/mezzi" element={<Mezzi />} />
             <Route path="/accessi" element={<Accessi />} />
+            <Route path="/badge" element={<BadgeList />} />
+            <Route path="/badge/nuovo" element={<BadgeNuovo />} />
+            <Route path="/badge/:id" element={<BadgeDetail />} />
+            <Route path="/timbrature" element={<Timbrature />} />
             <Route path="/comunicazioni" element={<Comunicazioni />} />
             <Route path="/impostazioni" element={<Impostazioni />} />
           </Route>
