@@ -69,7 +69,9 @@ export default function BadgeDetail() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-          <BadgeCard badge={badge} />
+          <div ref={badgeCardRef}>
+            <BadgeCard badge={badge} />
+          </div>
 
           <div className="flex gap-2 flex-wrap">
             {badge.stato === "attivo" && (
@@ -78,7 +80,9 @@ export default function BadgeDetail() {
             {badge.stato === "sospeso" && (
               <Button variant="outline" size="sm" onClick={() => {}}>Riattiva</Button>
             )}
-            <Button variant="outline" size="sm" onClick={() => {}}>Esporta PDF</Button>
+            <Button variant="outline" size="sm" onClick={exportPdf}>
+              <Download className="h-3.5 w-3.5 mr-1" /> Esporta PDF
+            </Button>
           </div>
         </div>
 
