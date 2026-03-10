@@ -41,6 +41,8 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verifica/:codice" element={<VerificaBadge />} />
+          <Route path="/scan" element={<Scan />} />
 
           {/* App routes with sidebar layout */}
           <Route element={<AppLayout />}>
