@@ -27,23 +27,16 @@ export default function BadgeNuovo() {
   const previewBadge: Badge | null =
     cantiereId && lavoratoreId
       ? {
-          id: "preview",
-          tenant_id: "t1",
-          lavoratore_id: lavoratoreId,
-          cantiere_id: cantiereId,
-          codice_univoco: `CIC-2026-ANTEPR`,
-          qr_payload: "preview",
-          stato: "attivo",
-          data_emissione: new Date().toISOString(),
-          data_scadenza: scadenza,
-          note: null,
-          created_at: new Date().toISOString(),
+          id: "preview", tenant_id: "t1", lavoratore_id: lavoratoreId, cantiere_id: cantiereId,
+          codice_univoco: `CIC-2026-ANTEPR`, qr_payload: "preview", stato: "attivo",
+          data_emissione: new Date().toISOString(), data_scadenza: scadenza,
+          note: null, created_at: new Date().toISOString(),
         }
       : null;
 
   const handleSubmit = () => {
     toast.success("Badge emesso con successo");
-    navigate("/badge");
+    navigate("/app/badge");
   };
 
   return (
@@ -89,10 +82,8 @@ export default function BadgeNuovo() {
       )}
 
       <div className="flex gap-2">
-        <Button onClick={handleSubmit} disabled={!cantiereId || !lavoratoreId}>
-          Emetti badge
-        </Button>
-        <Button variant="outline" onClick={() => navigate("/badge")}>Annulla</Button>
+        <Button onClick={handleSubmit} disabled={!cantiereId || !lavoratoreId}>Emetti badge</Button>
+        <Button variant="outline" onClick={() => navigate("/app/badge")}>Annulla</Button>
       </div>
     </div>
   );

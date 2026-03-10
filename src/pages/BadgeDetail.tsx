@@ -2,17 +2,16 @@ import { useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere, mockVerificheAccesso } from "@/data/mock-badges";
+import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere } from "@/data/mock-badges";
 import { BadgeCard } from "@/components/badge/BadgeCard";
 import { BadgeStatusChip } from "@/components/badge/BadgeStatusChip";
 import { TimbratureCalendar } from "@/components/badge/TimbratureCalendar";
-import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { toast } from "sonner";
 
 const esitoColors: Record<string, string> = {
-  autorizzato: "text-emerald-600",
-  warning: "text-amber-600",
-  bloccato: "text-red-600",
+  autorizzato: "text-success",
+  warning: "text-warning",
+  bloccato: "text-destructive",
 };
 
 export default function BadgeDetail() {
@@ -24,13 +23,7 @@ export default function BadgeDetail() {
     if (!badgeCardRef.current) return;
     try {
       const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(badgeCardRef.current, {
-        scale: 3,
-        backgroundColor: null,
-        useCORS: true,
-      });
-
-      // Create a PDF-sized canvas (credit card proportions)
+      const canvas = await html2canvas(badgeCardRef.current, { scale: 3, backgroundColor: null, useCORS: true });
       const link = document.createElement("a");
       link.download = `badge-${badge?.codice_univoco ?? "export"}.png`;
       link.href = canvas.toDataURL("image/png");
@@ -47,7 +40,7 @@ export default function BadgeDetail() {
       <div className="text-center py-12">
         <p className="text-muted-foreground">Badge non trovato</p>
         <Button variant="outline" size="sm" className="mt-4" asChild>
-          <Link to="/badge">Torna ai badge</Link>
+          <Link to="/app/badge">Torna ai badge</Link>
         </Button>
       </div>
     );
@@ -60,7 +53,7 @@ export default function BadgeDetail() {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
-          <Link to="/badge"><ArrowLeft className="h-4 w-4" /></Link>
+          <Link to="/app/badge"><ArrowLeft className="h-4 w-4" /></Link>
         </Button>
         <h1 className="font-heading font-bold text-2xl text-foreground">
           Badge — {lav ? `${lav.nome} ${lav.cognome}` : badge.codice_univoco}
@@ -69,28 +62,17 @@ export default function BadgeDetail() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-          <div ref={badgeCardRef}>
-            <BadgeCard badge={badge} />
-          </div>
-
+          <div ref={badgeCardRef}><BadgeCard badge={badge} /></div>
           <div className="flex gap-2 flex-wrap">
-            {badge.stato === "attivo" && (
-              <Button variant="outline" size="sm" onClick={() => {}}>Sospendi</Button>
-            )}
-            {badge.stato === "sospeso" && (
-              <Button variant="outline" size="sm" onClick={() => {}}>Riattiva</Button>
-            )}
+            {badge.stato === "attivo" && <Button variant="outline" size="sm" onClick={() => {}}>Sospendi</Button>}
+            {badge.stato === "sospeso" && <Button variant="outline" size="sm" onClick={() => {}}>Riattiva</Button>}
             <Button variant="outline" size="sm" onClick={exportPdf}>
               <Download className="h-3.5 w-3.5 mr-1" /> Esporta PDF
             </Button>
           </div>
         </div>
-
         <div className="space-y-6">
-          <div className="border border-border rounded-lg p-4">
-            <TimbratureCalendar badgeId={badge.id} />
-          </div>
-
+          <div className="border border-border rounded-lg p-4"><TimbratureCalendar badgeId={badge.id} /></div>
           {badge.note && (
             <div className="border border-border rounded-lg p-4">
               <p className="text-sm font-medium text-foreground mb-1">Note</p>
@@ -100,7 +82,6 @@ export default function BadgeDetail() {
         </div>
       </div>
 
-      {/* Timbrature log */}
       <section>
         <h2 className="font-heading font-semibold text-lg text-foreground mb-3">Registro timbrature</h2>
         <div className="border border-border rounded-lg divide-y divide-border">
@@ -110,14 +91,10 @@ export default function BadgeDetail() {
                 <p className="text-sm text-foreground">
                   {t.tipo === "entrata" ? "↗ Entrata" : "↙ Uscita"}
                   <span className="text-muted-foreground ml-2">
-                    {new Date(t.timestamp).toLocaleString("it-IT", {
-                      day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
-                    })}
+                    {new Date(t.timestamp).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </p>
-                {t.motivo_blocco && (
-                  <p className="text-xs text-red-600 mt-0.5">{t.motivo_blocco}</p>
-                )}
+                {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
               </div>
               <span className={`text-xs font-medium ${esitoColors[t.esito] ?? "text-muted-foreground"}`}>
                 {t.esito === "autorizzato" ? "🟢" : t.esito === "warning" ? "🟡" : "🔴"} {t.esito}

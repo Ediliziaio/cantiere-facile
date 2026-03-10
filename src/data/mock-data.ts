@@ -53,6 +53,7 @@ export const mockSubappaltatori = [
     stato_documenti: "completo" as const,
     documenti_ok: 12,
     documenti_totali: 12,
+    portal_token: "portal-bianchi-abc123",
   },
   {
     id: "s2",
@@ -65,6 +66,7 @@ export const mockSubappaltatori = [
     stato_documenti: "in_scadenza" as const,
     documenti_ok: 9,
     documenti_totali: 11,
+    portal_token: "portal-verdi-def456",
   },
   {
     id: "s3",
@@ -77,6 +79,7 @@ export const mockSubappaltatori = [
     stato_documenti: "incompleto" as const,
     documenti_ok: 5,
     documenti_totali: 10,
+    portal_token: "portal-neri-ghi789",
   },
 ];
 

@@ -16,7 +16,7 @@ export default function CantiereDetail() {
       <div className="py-12 text-center">
         <p className="text-muted-foreground">Cantiere non trovato.</p>
         <Button variant="outline" size="sm" className="mt-4" asChild>
-          <Link to="/cantieri">Torna ai cantieri</Link>
+          <Link to="/app/cantieri">Torna ai cantieri</Link>
         </Button>
       </div>
     );
@@ -30,19 +30,16 @@ export default function CantiereDetail() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-start gap-3">
         <Button variant="ghost" size="icon" asChild>
-          <Link to="/cantieri"><ArrowLeft className="h-4 w-4" /></Link>
+          <Link to="/app/cantieri"><ArrowLeft className="h-4 w-4" /></Link>
         </Button>
         <div>
           <h1 className="font-heading font-bold text-2xl text-foreground">{cantiere.nome}</h1>
           <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />
             <span>{cantiere.indirizzo}, {cantiere.comune}</span>
-            <span className="text-xs bg-success/15 text-success rounded-sm px-1.5 py-0.5 font-semibold uppercase tracking-wider">
-              {cantiere.stato}
-            </span>
+            <span className="text-xs bg-success/15 text-success rounded-sm px-1.5 py-0.5 font-semibold uppercase tracking-wider">{cantiere.stato}</span>
           </div>
         </div>
         <div className="ml-auto">
@@ -77,7 +74,7 @@ export default function CantiereDetail() {
         <TabsContent value="subappaltatori">
           <div className="border border-border rounded-lg divide-y divide-border">
             {subs.map((s) => (
-              <Link key={s.id} to={`/subappaltatori/${s.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
+              <Link key={s.id} to={`/app/subappaltatori/${s.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
                 <div>
                   <p className="text-sm font-medium text-foreground">{s.ragione_sociale}</p>
                   <p className="text-xs text-muted-foreground">{s.email_referente}</p>
@@ -91,7 +88,7 @@ export default function CantiereDetail() {
         <TabsContent value="lavoratori">
           <div className="border border-border rounded-lg divide-y divide-border">
             {workers.map((w) => (
-              <Link key={w.id} to={`/lavoratori/${w.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
+              <Link key={w.id} to={`/app/lavoratori/${w.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
                 <div>
                   <p className="text-sm font-medium text-foreground">{w.nome} {w.cognome}</p>
                   <p className="text-xs text-muted-foreground">{w.mansione} · {w.tipo}</p>
