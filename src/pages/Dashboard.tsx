@@ -1,10 +1,12 @@
-import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus } from "lucide-react";
+import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, Users, IdCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { dashboardStats, mockCantieri, mockScadenze, mockAccessi } from "@/data/mock-data";
 import { CantiereSummaryCard } from "@/components/cantiere/CantiereSummaryCard";
 import { ScadenzaAlert } from "@/components/cantiere/ScadenzaAlert";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
+import { PresenzaLiveWidget } from "@/components/badge/PresenzaLiveWidget";
+import { mockBadges } from "@/data/mock-badges";
 
 const statCards = [
   { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/cantieri" },
