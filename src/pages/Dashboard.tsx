@@ -1,16 +1,26 @@
-import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus } from "lucide-react";
+import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, Users, IdCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { dashboardStats, mockCantieri, mockScadenze, mockAccessi } from "@/data/mock-data";
 import { CantiereSummaryCard } from "@/components/cantiere/CantiereSummaryCard";
 import { ScadenzaAlert } from "@/components/cantiere/ScadenzaAlert";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
+import { PresenzaLiveWidget } from "@/components/badge/PresenzaLiveWidget";
+import { mockBadges } from "@/data/mock-badges";
+
+const badgeInScadenza = mockBadges.filter((b) => {
+  const exp = new Date(b.data_scadenza);
+  const now = new Date("2026-03-10");
+  const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+  return diff <= 30 && diff > 0 && b.stato === "attivo";
+}).length;
 
 const statCards = [
   { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/cantieri" },
   { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/scadenze", accent: true },
   { label: "Accessi oggi", value: dashboardStats.accessiOggi, icon: ShieldCheck, href: "/accessi" },
   { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/subappaltatori" },
+  { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/badge" },
 ];
 
 export default function Dashboard() {
@@ -23,7 +33,7 @@ export default function Dashboard() {
       <ScadenzaAlert count={dashboardStats.documentiInScadenza} scadutiCount={dashboardStats.documentiScaduti} />
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {statCards.map((s) => (
           <Link
             key={s.label}
@@ -50,6 +60,11 @@ export default function Dashboard() {
         <Button variant="outline" size="sm" asChild>
           <Link to="/subappaltatori"><UserPlus className="h-3.5 w-3.5 mr-1" /> Aggiungi subappaltatore</Link>
         </Button>
+      </div>
+
+      {/* Presenti ora */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <PresenzaLiveWidget />
       </div>
 
       {/* Cantieri */}

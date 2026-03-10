@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, ScanLine, Clock
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -17,6 +17,9 @@ const navItems = [
   { title: "Subappaltatori", url: "/subappaltatori", icon: Building },
   { title: "Mezzi", url: "/mezzi", icon: Truck },
   { title: "Accessi", url: "/accessi", icon: ShieldCheck },
+  { title: "Badge Digitali", url: "/badge", icon: IdCard },
+  { title: "Timbrature", url: "/timbrature", icon: Clock },
+  { title: "Scansiona", url: "/scan", icon: ScanLine },
   { title: "Scadenze", url: "/scadenze", icon: CalendarClock },
   { title: "Comunicazioni", url: "/comunicazioni", icon: MessageSquare },
   { title: "Impostazioni", url: "/impostazioni", icon: Settings },

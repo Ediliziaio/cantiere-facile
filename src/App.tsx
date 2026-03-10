@@ -20,6 +20,12 @@ import Mezzi from "./pages/Mezzi";
 import Accessi from "./pages/Accessi";
 import Comunicazioni from "./pages/Comunicazioni";
 import Impostazioni from "./pages/Impostazioni";
+import BadgeList from "./pages/BadgeList";
+import BadgeNuovo from "./pages/BadgeNuovo";
+import BadgeDetail from "./pages/BadgeDetail";
+import Timbrature from "./pages/Timbrature";
+import Scan from "./pages/Scan";
+import VerificaBadge from "./pages/VerificaBadge";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +41,8 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verifica/:codice" element={<VerificaBadge />} />
+          <Route path="/scan" element={<Scan />} />
 
           {/* App routes with sidebar layout */}
           <Route element={<AppLayout />}>
@@ -48,6 +56,10 @@ const App = () => (
             <Route path="/lavoratori" element={<Lavoratori />} />
             <Route path="/mezzi" element={<Mezzi />} />
             <Route path="/accessi" element={<Accessi />} />
+            <Route path="/badge" element={<BadgeList />} />
+            <Route path="/badge/nuovo" element={<BadgeNuovo />} />
+            <Route path="/badge/:id" element={<BadgeDetail />} />
+            <Route path="/timbrature" element={<Timbrature />} />
             <Route path="/comunicazioni" element={<Comunicazioni />} />
             <Route path="/impostazioni" element={<Impostazioni />} />
           </Route>
