@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { mockDocumenti, mockCantieri } from "@/data/mock-data";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
+import { DocumentUploadZone } from "@/components/cantiere/DocumentUploadZone";
+import { toast } from "sonner";
 import type { DocumentoStato } from "@/data/mock-data";
 
 export default function Documenti() {
+  const [showUpload, setShowUpload] = useState(false);
   const [search, setSearch] = useState("");
   const [statoFilter, setStatoFilter] = useState<string>("tutti");
 
