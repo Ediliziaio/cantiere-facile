@@ -8,11 +8,19 @@ import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { PresenzaLiveWidget } from "@/components/badge/PresenzaLiveWidget";
 import { mockBadges } from "@/data/mock-badges";
 
+const badgeInScadenza = mockBadges.filter((b) => {
+  const exp = new Date(b.data_scadenza);
+  const now = new Date("2026-03-10");
+  const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+  return diff <= 30 && diff > 0 && b.stato === "attivo";
+}).length;
+
 const statCards = [
   { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/cantieri" },
   { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/scadenze", accent: true },
   { label: "Accessi oggi", value: dashboardStats.accessiOggi, icon: ShieldCheck, href: "/accessi" },
   { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/subappaltatori" },
+  { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/badge" },
 ];
 
 export default function Dashboard() {
