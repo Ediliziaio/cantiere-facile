@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { Search, Filter } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { mockDocumenti, mockCantieri } from "@/data/mock-data";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
+import { DocumentUploadZone } from "@/components/cantiere/DocumentUploadZone";
+import { toast } from "sonner";
 import type { DocumentoStato } from "@/data/mock-data";
 
 export default function Documenti() {
+  const [showUpload, setShowUpload] = useState(false);
   const [search, setSearch] = useState("");
   const [statoFilter, setStatoFilter] = useState<string>("tutti");
 
@@ -20,7 +23,21 @@ export default function Documenti() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-heading font-bold text-2xl text-foreground">Documenti</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading font-bold text-2xl text-foreground">Documenti</h1>
+        <Button size="sm" onClick={() => setShowUpload(!showUpload)}>
+          <Plus className="h-3.5 w-3.5 mr-1" /> Carica documento
+        </Button>
+      </div>
+
+      {showUpload && (
+        <DocumentUploadZone
+          onUpload={(file, categoria, dataScadenza) => {
+            toast.success(`"${file.name}" caricato come ${categoria}`);
+            setShowUpload(false);
+          }}
+        />
+      )}
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
