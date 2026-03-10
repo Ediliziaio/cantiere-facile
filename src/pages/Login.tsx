@@ -4,16 +4,23 @@ import { HardHat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login — navigate to dashboard
-    navigate("/dashboard");
+    login(
+      { id: "u1", email: email || "admin@rossicostruzioni.it", nome: "Marco", cognome: "Rossi" },
+      "admin",
+      "t1",
+      "Rossi Costruzioni S.r.l."
+    );
+    navigate("/app/dashboard");
   };
 
   return (

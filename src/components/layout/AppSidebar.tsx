@@ -3,35 +3,32 @@ import {
   ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, ScanLine, Clock
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
 
 const navItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Cantieri", url: "/cantieri", icon: Building2 },
-  { title: "Documenti", url: "/documenti", icon: FileText },
-  { title: "Lavoratori", url: "/lavoratori", icon: HardHat },
-  { title: "Subappaltatori", url: "/subappaltatori", icon: Building },
-  { title: "Mezzi", url: "/mezzi", icon: Truck },
-  { title: "Accessi", url: "/accessi", icon: ShieldCheck },
-  { title: "Badge Digitali", url: "/badge", icon: IdCard },
-  { title: "Timbrature", url: "/timbrature", icon: Clock },
-  { title: "Scansiona", url: "/scan", icon: ScanLine },
-  { title: "Scadenze", url: "/scadenze", icon: CalendarClock },
-  { title: "Comunicazioni", url: "/comunicazioni", icon: MessageSquare },
-  { title: "Impostazioni", url: "/impostazioni", icon: Settings },
+  { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard },
+  { title: "Cantieri", url: "/app/cantieri", icon: Building2 },
+  { title: "Documenti", url: "/app/documenti", icon: FileText },
+  { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat },
+  { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building },
+  { title: "Mezzi", url: "/app/mezzi", icon: Truck },
+  { title: "Accessi", url: "/app/accessi", icon: ShieldCheck },
+  { title: "Badge Digitali", url: "/app/badge", icon: IdCard },
+  { title: "Timbrature", url: "/app/timbrature", icon: Clock },
+  { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock },
+  { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare },
+  { title: "Impostazioni", url: "/app/impostazioni", icon: Settings },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const location = useLocation();
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border">
+    <Sidebar collapsible="icon" className="border-r border-border hidden md:flex">
       <div className={`flex items-center gap-2 px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
         <HardHat className="h-6 w-6 text-primary shrink-0" />
         {!collapsed && (

@@ -4,14 +4,22 @@ import { HardHat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [form, setForm] = useState({ azienda: "", piva: "", nome: "", email: "", password: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/dashboard");
+    login(
+      { id: "u-new", email: form.email, nome: form.nome, cognome: "" },
+      "admin",
+      "t-new",
+      form.azienda
+    );
+    navigate("/app/dashboard");
   };
 
   const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>

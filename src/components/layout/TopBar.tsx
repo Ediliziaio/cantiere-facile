@@ -6,15 +6,22 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function TopBar() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const unread = mockNotifiche.filter((n) => !n.letto).length;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4">
       <div className="flex items-center gap-3">
-        <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground hidden md:flex" />
         <span className="text-sm font-medium text-foreground hidden sm:inline">
           {mockTenant.nome_azienda}
         </span>
@@ -57,8 +64,8 @@ export function TopBar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => navigate("/impostazioni")}>Impostazioni</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/")}>Esci</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/app/impostazioni")}>Impostazioni</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Esci</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
