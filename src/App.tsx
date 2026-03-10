@@ -20,6 +20,12 @@ import Mezzi from "./pages/Mezzi";
 import Accessi from "./pages/Accessi";
 import Comunicazioni from "./pages/Comunicazioni";
 import Impostazioni from "./pages/Impostazioni";
+import BadgeList from "./pages/BadgeList";
+import BadgeNuovo from "./pages/BadgeNuovo";
+import BadgeDetail from "./pages/BadgeDetail";
+import Timbrature from "./pages/Timbrature";
+import Scan from "./pages/Scan";
+import VerificaBadge from "./pages/VerificaBadge";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
