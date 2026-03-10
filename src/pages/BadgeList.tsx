@@ -1,0 +1,81 @@
+import { Link } from "react-router-dom";
+import { Plus, IdCard, Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { mockBadges, getBadgeLavoratore, getBadgeCantiere, mockTimbrature } from "@/data/mock-badges";
+import { BadgeStatusChip } from "@/components/badge/BadgeStatusChip";
+
+export default function BadgeList() {
+  const getUltimoAccesso = (badgeId: string) => {
+    const ts = mockTimbrature.filter((t) => t.badge_id === badgeId);
+    if (!ts.length) return "—";
+    const last = ts.sort((a, b) => b.timestamp.localeCompare(a.timestamp))[0];
+    return new Date(last.timestamp).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Compliance banner */}
+      <div className="flex items-start gap-3 border border-primary/30 bg-primary/5 rounded-lg p-4">
+        <Info className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+        <div className="text-sm text-foreground">
+          <p className="font-medium">D.L. 159/2025 — Decreto Sicurezza</p>
+          <p className="text-muted-foreground mt-0.5">
+            Il modulo Badge Digitale è conforme al D.L. 159/2025. L'implementazione definitiva sarà allineata
+            ai decreti attuativi del Ministero del Lavoro, attualmente in fase di definizione.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading font-bold text-2xl text-foreground">Badge Digitali</h1>
+        <Button size="sm" asChild>
+          <Link to="/badge/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Emetti badge</Link>
+        </Button>
+      </div>
+
+      <div className="border border-border rounded-lg overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-muted/30">
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Lavoratore</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Cantiere</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Codice</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Stato</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Scadenza</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Ultimo accesso</th>
+              <th className="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {mockBadges.map((b) => {
+              const lav = getBadgeLavoratore(b);
+              const cant = getBadgeCantiere(b);
+              return (
+                <tr key={b.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-4 py-3">
+                    <p className="font-medium text-foreground">{lav ? `${lav.nome} ${lav.cognome}` : "—"}</p>
+                    <p className="text-xs text-muted-foreground">{lav?.mansione}</p>
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">{cant?.nome ?? "—"}</td>
+                  <td className="px-4 py-3 hidden lg:table-cell font-mono text-xs text-muted-foreground">{b.codice_univoco}</td>
+                  <td className="px-4 py-3"><BadgeStatusChip stato={b.stato} /></td>
+                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">
+                    {new Date(b.data_scadenza).toLocaleDateString("it-IT")}
+                  </td>
+                  <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">{getUltimoAccesso(b.id)}</td>
+                  <td className="px-4 py-3 text-right">
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to={`/badge/${b.id}`}>
+                        <IdCard className="h-3.5 w-3.5 mr-1" /> Dettaglio
+                      </Link>
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
