@@ -34,7 +34,7 @@ export default function Subappaltatori() {
         {filtered.map((s) => {
           const cantiere = mockCantieri.find((c) => c.id === s.cantiere_id);
           return (
-            <Link key={s.id} to={`/subappaltatori/${s.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
+            <Link key={s.id} to={`/app/subappaltatori/${s.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
               <div className="flex items-center gap-3">
                 <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${semaphore(s.stato_documenti)}`} />
                 <div>

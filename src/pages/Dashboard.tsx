@@ -1,4 +1,4 @@
-import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, Users, IdCard } from "lucide-react";
+import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, IdCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { dashboardStats, mockCantieri, mockScadenze, mockAccessi } from "@/data/mock-data";
@@ -16,11 +16,11 @@ const badgeInScadenza = mockBadges.filter((b) => {
 }).length;
 
 const statCards = [
-  { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/cantieri" },
-  { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/scadenze", accent: true },
-  { label: "Accessi oggi", value: dashboardStats.accessiOggi, icon: ShieldCheck, href: "/accessi" },
-  { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/subappaltatori" },
-  { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/badge" },
+  { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/app/cantieri" },
+  { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/app/scadenze", accent: true },
+  { label: "Accessi oggi", value: dashboardStats.accessiOggi, icon: ShieldCheck, href: "/app/accessi" },
+  { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/app/subappaltatori" },
+  { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/app/badge" },
 ];
 
 export default function Dashboard() {
@@ -32,7 +32,6 @@ export default function Dashboard() {
 
       <ScadenzaAlert count={dashboardStats.documentiInScadenza} scadutiCount={dashboardStats.documentiScaduti} />
 
-      {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         {statCards.map((s) => (
           <Link
@@ -49,49 +48,36 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Quick Actions */}
       <div className="flex flex-wrap gap-2">
         <Button size="sm" asChild>
-          <Link to="/cantieri/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Nuovo cantiere</Link>
+          <Link to="/app/cantieri/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Nuovo cantiere</Link>
         </Button>
         <Button variant="outline" size="sm" asChild>
-          <Link to="/documenti"><Upload className="h-3.5 w-3.5 mr-1" /> Carica documento</Link>
+          <Link to="/app/documenti"><Upload className="h-3.5 w-3.5 mr-1" /> Carica documento</Link>
         </Button>
         <Button variant="outline" size="sm" asChild>
-          <Link to="/subappaltatori"><UserPlus className="h-3.5 w-3.5 mr-1" /> Aggiungi subappaltatore</Link>
+          <Link to="/app/subappaltatori"><UserPlus className="h-3.5 w-3.5 mr-1" /> Aggiungi subappaltatore</Link>
         </Button>
       </div>
 
-      {/* Presenti ora */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <PresenzaLiveWidget />
       </div>
 
-      {/* Cantieri */}
       <section>
         <h2 className="font-heading font-semibold text-lg text-foreground mb-3">Cantieri attivi</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {mockCantieri.map((c) => (
-            <CantiereSummaryCard
-              key={c.id}
-              id={c.id}
-              nome={c.nome}
-              comune={c.comune}
-              stato={c.stato}
-              lavoratoriCount={c.lavoratori_count}
-              documentiOk={c.documenti_ok}
-              documentiTotali={c.documenti_totali}
-            />
+            <CantiereSummaryCard key={c.id} id={c.id} nome={c.nome} comune={c.comune} stato={c.stato} lavoratoriCount={c.lavoratori_count} documentiOk={c.documenti_ok} documentiTotali={c.documenti_totali} />
           ))}
         </div>
       </section>
 
-      {/* Prossime scadenze */}
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-heading font-semibold text-lg text-foreground">Prossime scadenze</h2>
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/scadenze">Vedi tutte</Link>
+            <Link to="/app/scadenze">Vedi tutte</Link>
           </Button>
         </div>
         <div className="border border-border rounded-lg divide-y divide-border">
@@ -107,12 +93,11 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Ultimi accessi */}
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-heading font-semibold text-lg text-foreground">Accessi oggi</h2>
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/accessi">Vedi tutti</Link>
+            <Link to="/app/accessi">Vedi tutti</Link>
           </Button>
         </div>
         <div className="border border-border rounded-lg divide-y divide-border">

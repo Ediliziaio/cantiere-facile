@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Barlow Semi Condensed', 'sans-serif'],
-        body: ['Inter', 'sans-serif'],
+        heading: ['Syne', 'sans-serif'],
+        body: ['DM Sans', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -58,6 +58,10 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        superadmin: {
+          DEFAULT: "hsl(var(--superadmin))",
+          foreground: "hsl(var(--superadmin-foreground))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

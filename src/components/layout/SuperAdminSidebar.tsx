@@ -1,7 +1,4 @@
-import {
-  LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, ScanLine, Clock
-} from "lucide-react";
+import { LayoutDashboard, Building2, Settings, Shield } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -9,31 +6,22 @@ import {
 } from "@/components/ui/sidebar";
 
 const navItems = [
-  { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard },
-  { title: "Cantieri", url: "/app/cantieri", icon: Building2 },
-  { title: "Documenti", url: "/app/documenti", icon: FileText },
-  { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat },
-  { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building },
-  { title: "Mezzi", url: "/app/mezzi", icon: Truck },
-  { title: "Accessi", url: "/app/accessi", icon: ShieldCheck },
-  { title: "Badge Digitali", url: "/app/badge", icon: IdCard },
-  { title: "Timbrature", url: "/app/timbrature", icon: Clock },
-  { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock },
-  { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare },
-  { title: "Impostazioni", url: "/app/impostazioni", icon: Settings },
+  { title: "Dashboard", url: "/superadmin/dashboard", icon: LayoutDashboard },
+  { title: "Aziende", url: "/superadmin/aziende", icon: Building2 },
+  { title: "Impostazioni", url: "/superadmin/impostazioni", icon: Settings },
 ];
 
-export function AppSidebar() {
+export function SuperAdminSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border hidden md:flex">
+    <Sidebar collapsible="icon" className="border-r border-border">
       <div className={`flex items-center gap-2 px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
-        <HardHat className="h-6 w-6 text-primary shrink-0" />
+        <Shield className="h-6 w-6 text-superadmin shrink-0" />
         {!collapsed && (
           <span className="font-heading font-bold text-sm text-foreground tracking-tight">
-            Cantiere in Cloud
+            SuperAdmin
           </span>
         )}
       </div>
@@ -47,7 +35,7 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-                      activeClassName="bg-primary/10 text-primary font-medium"
+                      activeClassName="bg-superadmin/10 text-superadmin font-medium"
                     >
                       <item.icon className="h-4 w-4 shrink-0" />
                       {!collapsed && <span>{item.title}</span>}

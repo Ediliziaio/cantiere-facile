@@ -14,7 +14,6 @@ export default function BadgeList() {
 
   return (
     <div className="space-y-6">
-      {/* Compliance banner */}
       <div className="flex items-start gap-3 border border-primary/30 bg-primary/5 rounded-lg p-4">
         <Info className="h-5 w-5 text-primary mt-0.5 shrink-0" />
         <div className="text-sm text-foreground">
@@ -29,7 +28,7 @@ export default function BadgeList() {
       <div className="flex items-center justify-between">
         <h1 className="font-heading font-bold text-2xl text-foreground">Badge Digitali</h1>
         <Button size="sm" asChild>
-          <Link to="/badge/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Emetti badge</Link>
+          <Link to="/app/badge/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Emetti badge</Link>
         </Button>
       </div>
 
@@ -65,7 +64,7 @@ export default function BadgeList() {
                   <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">{getUltimoAccesso(b.id)}</td>
                   <td className="px-4 py-3 text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/badge/${b.id}`}>
+                      <Link to={`/app/badge/${b.id}`}>
                         <IdCard className="h-3.5 w-3.5 mr-1" /> Dettaglio
                       </Link>
                     </Button>

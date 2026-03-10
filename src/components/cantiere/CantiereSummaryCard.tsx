@@ -25,7 +25,7 @@ export function CantiereSummaryCard({ id, nome, comune, stato, lavoratoriCount, 
 
   return (
     <Link
-      to={`/cantieri/${id}`}
+      to={`/app/cantieri/${id}`}
       className={cn("block border border-border bg-card p-4 rounded-lg hover:border-primary/40 transition-colors", className)}
     >
       <div className="flex items-start justify-between gap-3">

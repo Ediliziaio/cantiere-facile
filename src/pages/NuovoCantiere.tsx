@@ -14,14 +14,14 @@ export default function NuovoCantiere() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/cantieri");
+    navigate("/app/cantieri");
   };
 
   return (
     <div className="space-y-6 max-w-lg">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
-          <Link to="/cantieri"><ArrowLeft className="h-4 w-4" /></Link>
+          <Link to="/app/cantieri"><ArrowLeft className="h-4 w-4" /></Link>
         </Button>
         <h1 className="font-heading font-bold text-2xl text-foreground">Nuovo cantiere</h1>
       </div>
