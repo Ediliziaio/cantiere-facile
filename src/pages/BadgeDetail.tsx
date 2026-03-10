@@ -18,6 +18,29 @@ const esitoColors: Record<string, string> = {
 export default function BadgeDetail() {
   const { id } = useParams<{ id: string }>();
   const badge = mockBadges.find((b) => b.id === id);
+  const badgeCardRef = useRef<HTMLDivElement>(null);
+
+  const exportPdf = useCallback(async () => {
+    if (!badgeCardRef.current) return;
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(badgeCardRef.current, {
+        scale: 3,
+        backgroundColor: null,
+        useCORS: true,
+      });
+
+      // Create a PDF-sized canvas (credit card proportions)
+      const link = document.createElement("a");
+      link.download = `badge-${badge?.codice_univoco ?? "export"}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("Badge esportato come immagine");
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Errore durante l'esportazione");
+    }
+  }, [badge]);
 
   if (!badge) {
     return (
