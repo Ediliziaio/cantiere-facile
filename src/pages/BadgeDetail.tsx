@@ -1,11 +1,13 @@
+import { useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere, mockVerificheAccesso } from "@/data/mock-badges";
 import { BadgeCard } from "@/components/badge/BadgeCard";
 import { BadgeStatusChip } from "@/components/badge/BadgeStatusChip";
 import { TimbratureCalendar } from "@/components/badge/TimbratureCalendar";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
+import { toast } from "sonner";
 
 const esitoColors: Record<string, string> = {
   autorizzato: "text-emerald-600",
@@ -16,6 +18,29 @@ const esitoColors: Record<string, string> = {
 export default function BadgeDetail() {
   const { id } = useParams<{ id: string }>();
   const badge = mockBadges.find((b) => b.id === id);
+  const badgeCardRef = useRef<HTMLDivElement>(null);
+
+  const exportPdf = useCallback(async () => {
+    if (!badgeCardRef.current) return;
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(badgeCardRef.current, {
+        scale: 3,
+        backgroundColor: null,
+        useCORS: true,
+      });
+
+      // Create a PDF-sized canvas (credit card proportions)
+      const link = document.createElement("a");
+      link.download = `badge-${badge?.codice_univoco ?? "export"}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("Badge esportato come immagine");
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Errore durante l'esportazione");
+    }
+  }, [badge]);
 
   if (!badge) {
     return (
@@ -44,7 +69,9 @@ export default function BadgeDetail() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-          <BadgeCard badge={badge} />
+          <div ref={badgeCardRef}>
+            <BadgeCard badge={badge} />
+          </div>
 
           <div className="flex gap-2 flex-wrap">
             {badge.stato === "attivo" && (
@@ -53,7 +80,9 @@ export default function BadgeDetail() {
             {badge.stato === "sospeso" && (
               <Button variant="outline" size="sm" onClick={() => {}}>Riattiva</Button>
             )}
-            <Button variant="outline" size="sm" onClick={() => {}}>Esporta PDF</Button>
+            <Button variant="outline" size="sm" onClick={exportPdf}>
+              <Download className="h-3.5 w-3.5 mr-1" /> Esporta PDF
+            </Button>
           </div>
         </div>
 
