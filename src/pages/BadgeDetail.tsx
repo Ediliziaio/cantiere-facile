@@ -1,11 +1,13 @@
+import { useRef, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere, mockVerificheAccesso } from "@/data/mock-badges";
 import { BadgeCard } from "@/components/badge/BadgeCard";
 import { BadgeStatusChip } from "@/components/badge/BadgeStatusChip";
 import { TimbratureCalendar } from "@/components/badge/TimbratureCalendar";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
+import { toast } from "sonner";
 
 const esitoColors: Record<string, string> = {
   autorizzato: "text-emerald-600",
