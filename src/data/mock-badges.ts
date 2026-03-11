@@ -222,6 +222,72 @@ export const mockVerificheAccesso: VerificaAccesso[] = [
   },
 ];
 
+// --- Verifica automatica conformità DURC/Formazione/Idoneità ---
+export interface StatoConformitaCheck {
+  label: string;
+  stato: StatoCheck;
+  scadenza: string | null;
+}
+
+export interface StatoConformita {
+  esito_finale: EsitoFinale;
+  checks: StatoConformitaCheck[];
+}
+
+export function calcolaStatoConformita(badge: Badge): StatoConformita {
+  const lav = mockLavoratori.find((l) => l.id === badge.lavoratore_id);
+
+  // Helper: find best doc for a category + riferimento
+  const findDoc = (categoria: string, rifId: string, rifTipo: string) => {
+    const docs = mockDocumenti.filter(
+      (d) => d.categoria === categoria && d.riferimento_id === rifId && d.riferimento_tipo === rifTipo
+    );
+    // Prefer valid > in_scadenza > scaduto
+    return docs.sort((a, b) => {
+      const order: Record<string, number> = { valido: 0, in_scadenza: 1, scaduto: 2, da_verificare: 3 };
+      return (order[a.stato] ?? 4) - (order[b.stato] ?? 4);
+    })[0] ?? null;
+  };
+
+  const docToStato = (doc: typeof mockDocumenti[0] | null): StatoCheck => {
+    if (!doc) return "bloccato";
+    if (doc.stato === "valido") return "ok";
+    if (doc.stato === "in_scadenza") return "warning";
+    return "bloccato";
+  };
+
+  // 1. Formazione (Attestato Sicurezza)
+  const docFormazione = findDoc("Attestato Sicurezza", badge.lavoratore_id, "lavoratore");
+  const statoFormazione = docToStato(docFormazione);
+
+  // 2. Idoneità Sanitaria
+  const docIdoneita = findDoc("Idoneità Sanitaria", badge.lavoratore_id, "lavoratore");
+  const statoIdoneita = docToStato(docIdoneita);
+
+  // 3. DURC impresa (subappaltatore or tenant)
+  const durcId = lav?.subappaltatore_id ?? "t1";
+  const docDurc = findDoc("DURC", durcId, "subappaltatore");
+  const statoDurc = docToStato(docDurc);
+
+  const checks: StatoConformitaCheck[] = [
+    { label: "Formazione", stato: statoFormazione, scadenza: docFormazione?.data_scadenza ?? null },
+    { label: "Idoneità sanitaria", stato: statoIdoneita, scadenza: docIdoneita?.data_scadenza ?? null },
+    { label: "DURC impresa", stato: statoDurc, scadenza: docDurc?.data_scadenza ?? null },
+  ];
+
+  // Also check all worker docs generically
+  const allWorkerDocs = mockDocumenti.filter((d) => d.riferimento_id === badge.lavoratore_id && d.riferimento_tipo === "lavoratore");
+  const hasScaduto = allWorkerDocs.some((d) => d.stato === "scaduto");
+  const hasWarning = allWorkerDocs.some((d) => d.stato === "in_scadenza");
+
+  const anyBloccato = checks.some((c) => c.stato === "bloccato") || hasScaduto;
+  const anyWarning = checks.some((c) => c.stato === "warning") || hasWarning;
+
+  const esito_finale: EsitoFinale = anyBloccato ? "rosso" : anyWarning ? "giallo" : "verde";
+
+  return { esito_finale, checks };
+}
+
 // Helper to get lavoratore info for a badge
 export function getBadgeLavoratore(badge: Badge) {
   return mockLavoratori.find((l) => l.id === badge.lavoratore_id);
