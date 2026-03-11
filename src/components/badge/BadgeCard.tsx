@@ -29,7 +29,6 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
     >
       {/* Conformità indicator */}
       <div className={`absolute top-3 right-3 h-2.5 w-2.5 rounded-full ${conformitaColor} ring-2 ring-white/20`} title={`Conformità: ${conformita.esito_finale}`} />
-    >
       <div className="p-4 h-full flex flex-col justify-between gap-2">
         {/* Header */}
         <div className="flex items-center justify-between">
