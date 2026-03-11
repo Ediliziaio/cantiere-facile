@@ -2,8 +2,9 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { mockCantieri, mockDocumenti, mockSubappaltatori, mockLavoratori, mockMezzi, mockAccessi, mockFileCantiere } from "@/data/mock-data";
+import { mockCantieri, mockDocumenti, mockSubappaltatori, mockLavoratori, mockMezzi, mockAccessi, mockFileCantiere, mockDiarioCantiere } from "@/data/mock-data";
 import { GalleriaCantiere } from "@/components/cantiere/GalleriaCantiere";
+import { DiarioCantiere } from "@/components/cantiere/DiarioCantiere";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { ChecklistProgress } from "@/components/cantiere/ChecklistProgress";
@@ -30,6 +31,7 @@ export default function CantiereDetail() {
   const mezzi = mockMezzi.filter((m) => m.cantiere_id === id);
   const accessi = mockAccessi.filter((a) => a.cantiere_id === id);
   const fileCantiere = mockFileCantiere.filter((f) => f.cantiere_id === id);
+  const diario = mockDiarioCantiere.filter((d) => d.cantiere_id === id);
 
   return (
     <div className="space-y-6">
@@ -58,6 +60,7 @@ export default function CantiereDetail() {
           <TabsTrigger value="mezzi">Mezzi ({mezzi.length})</TabsTrigger>
           <TabsTrigger value="accessi">Accessi ({accessi.length})</TabsTrigger>
           <TabsTrigger value="galleria">Galleria ({fileCantiere.length})</TabsTrigger>
+          <TabsTrigger value="diario">Diario ({diario.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="documenti">
@@ -133,6 +136,9 @@ export default function CantiereDetail() {
         </TabsContent>
         <TabsContent value="galleria">
           <GalleriaCantiere cantiereId={id!} />
+        </TabsContent>
+        <TabsContent value="diario">
+          <DiarioCantiere cantiereId={id!} />
         </TabsContent>
       </Tabs>
     </div>

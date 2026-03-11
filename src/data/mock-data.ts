@@ -453,3 +453,34 @@ export const mockFileCantiere: FileCantiere[] = [
   { id: "fc9", cantiere_id: "c2", nome_file: "Demolizione_parete.jpg", tipo: "foto", descrizione: "Demolizione parete interna piano 2", data_caricamento: "2026-03-10T09:30:00", caricato_da: "Paolo Neri", dimensione_kb: 2500, url: "/placeholder.svg", thumbnail_url: "/placeholder.svg" },
   { id: "fc10", cantiere_id: "c2", nome_file: "DDT_Mattoni_forati.pdf", tipo: "materiale", descrizione: "DDT consegna mattoni forati — 2 pallet", data_caricamento: "2026-03-06T08:45:00", caricato_da: "Paolo Neri", dimensione_kb: 310, url: "/placeholder.svg", thumbnail_url: null },
 ];
+
+// ── Diario di Cantiere ──
+
+export type MeteoCondizione = "sereno" | "nuvoloso" | "pioggia" | "neve" | "vento";
+
+export interface DiarioCantiere {
+  id: string;
+  cantiere_id: string;
+  data: string;
+  meteo: MeteoCondizione;
+  temperatura: number;
+  attivita: string;
+  problemi?: string;
+  note?: string;
+  foto_ids: string[];
+  compilato_da: string;
+  ore_lavorate: number;
+  operai_presenti: number;
+}
+
+export const mockDiarioCantiere: DiarioCantiere[] = [
+  { id: "dc1", cantiere_id: "c1", data: "2026-03-10", meteo: "sereno", temperatura: 14, attivita: "Getto fondazioni lotto A completato. Posizionamento armatura pilastri P1-P4.", problemi: "Ritardo consegna calcestruzzo di 2 ore — fornitore avvisato.", note: "Programmato getto pilastri per il 12/03.", foto_ids: ["fc1", "fc2"], compilato_da: "Marco Rossi", ore_lavorate: 8, operai_presenti: 14 },
+  { id: "dc2", cantiere_id: "c1", data: "2026-03-09", meteo: "nuvoloso", temperatura: 11, attivita: "Casseratura pilastri piano terra. Posa armatura travi T1-T6.", problemi: undefined, note: undefined, foto_ids: ["fc2"], compilato_da: "Marco Rossi", ore_lavorate: 8, operai_presenti: 16 },
+  { id: "dc3", cantiere_id: "c1", data: "2026-03-08", meteo: "pioggia", temperatura: 8, attivita: "Lavori sospesi per maltempo dalle 11:00. Attività di magazzino e preparazione materiali al coperto.", problemi: "Sospensione lavori esterni per pioggia intensa.", note: "Verificare previsioni per i prossimi giorni.", foto_ids: [], compilato_da: "Marco Rossi", ore_lavorate: 4, operai_presenti: 10 },
+  { id: "dc4", cantiere_id: "c1", data: "2026-03-07", meteo: "sereno", temperatura: 12, attivita: "Scavo fondazioni lotto A completato. Verifica quote con geometra. Foto panoramica cantiere.", problemi: undefined, note: undefined, foto_ids: ["fc7"], compilato_da: "Luca Ferrari", ore_lavorate: 8, operai_presenti: 15 },
+  { id: "dc5", cantiere_id: "c1", data: "2026-03-06", meteo: "vento", temperatura: 9, attivita: "Gru ferma per vento forte (>60 km/h). Lavori a terra: preparazione casseri e taglio ferri.", problemi: "Gru fuori servizio per condizioni meteo avverse.", note: "Limite operativo gru superato — ripresa domani.", foto_ids: [], compilato_da: "Marco Rossi", ore_lavorate: 6, operai_presenti: 12 },
+  { id: "dc6", cantiere_id: "c1", data: "2026-03-05", meteo: "nuvoloso", temperatura: 10, attivita: "Consegna acciaio B450C (8 ton). Inizio preparazione armatura fondazioni.", problemi: undefined, note: undefined, foto_ids: [], compilato_da: "Marco Rossi", ore_lavorate: 8, operai_presenti: 14 },
+  { id: "dc7", cantiere_id: "c2", data: "2026-03-10", meteo: "nuvoloso", temperatura: 10, attivita: "Demolizione pareti interne piano 2. Rimozione detriti e pulizia.", problemi: "Trovata tubazione amianto non mappata — sospeso lavoro zona nord.", note: "Contattata ditta specializzata per bonifica amianto.", foto_ids: ["fc9"], compilato_da: "Paolo Neri", ore_lavorate: 7, operai_presenti: 8 },
+  { id: "dc8", cantiere_id: "c2", data: "2026-03-09", meteo: "sereno", temperatura: 12, attivita: "Demolizione pareti interne piano 1 completata. Verifica strutturale con ingegnere.", problemi: undefined, note: undefined, foto_ids: [], compilato_da: "Paolo Neri", ore_lavorate: 8, operai_presenti: 9 },
+  { id: "dc9", cantiere_id: "c2", data: "2026-03-06", meteo: "pioggia", temperatura: 7, attivita: "Consegna materiali (mattoni forati). Lavori interni: rimozione pavimenti piano 1.", problemi: undefined, note: undefined, foto_ids: [], compilato_da: "Paolo Neri", ore_lavorate: 6, operai_presenti: 7 },
+];
