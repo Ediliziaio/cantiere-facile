@@ -5,9 +5,9 @@ import { HardHat, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { label: "Funzionalità", href: "#funzionalita" },
-  { label: "Prezzi", href: "#prezzi" },
-  { label: "Chi siamo", href: "#manifesto" },
+  { label: "Funzionalità", to: "/funzionalita" },
+  { label: "Tariffe", to: "/tariffe" },
+  { label: "Chi siamo", to: "/chi-siamo" },
 ];
 
 export default function LandingNavbar() {
