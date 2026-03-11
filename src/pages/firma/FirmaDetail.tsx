@@ -87,6 +87,11 @@ export default function FirmaDetail() {
         <Button variant="outline" size="sm" asChild>
           <Link to={`/app/firma/${id}/anteprima`}><Eye className="h-3.5 w-3.5 mr-1.5" /> Anteprima</Link>
         </Button>
+        {doc.stato === "completato" && (
+          <Button variant="outline" size="sm" asChild>
+            <Link to={`/app/firma/${id}/certificato`}><Award className="h-3.5 w-3.5 mr-1.5" /> Certificato</Link>
+          </Button>
+        )}
       </div>
 
       {/* Pipeline stepper */}
