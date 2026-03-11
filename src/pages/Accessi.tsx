@@ -9,7 +9,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFoo
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { format } from "date-fns";
+import { it } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 const esitoColors: Record<string, string> = {
@@ -21,6 +23,7 @@ const esitoColors: Record<string, string> = {
 interface DaySummary {
   lavoratoreId: string;
   cantiereId: string;
+  data: string;
   entrata: string | null;
   uscita: string | null;
   minutiLavorati: number | null;
@@ -29,60 +32,84 @@ interface DaySummary {
   motivoBlocco?: string;
 }
 
+type DateMode = "giorno" | "intervallo" | "tutte";
+
+// Extract all unique dates from timbrature
+const allDates = Array.from(new Set(mockTimbrature.map((t) => t.timestamp.substring(0, 10)))).sort();
+
+function buildSummaries(timbrature: typeof mockTimbrature): DaySummary[] {
+  const map = new Map<string, DaySummary>();
+
+  for (const t of timbrature) {
+    const dateKey = t.timestamp.substring(0, 10);
+    const key = `${t.lavoratore_id}_${t.cantiere_id}_${dateKey}`;
+    if (!map.has(key)) {
+      map.set(key, {
+        lavoratoreId: t.lavoratore_id,
+        cantiereId: t.cantiere_id,
+        data: dateKey,
+        entrata: null,
+        uscita: null,
+        minutiLavorati: null,
+        inCorso: false,
+        esito: t.esito,
+        motivoBlocco: t.motivo_blocco,
+      });
+    }
+    const s = map.get(key)!;
+    if (t.esito === "bloccato") {
+      s.esito = "bloccato";
+      s.motivoBlocco = t.motivo_blocco;
+    } else if (s.esito !== "bloccato" && t.esito === "warning") {
+      s.esito = "warning";
+    }
+    if (t.tipo === "entrata" && (!s.entrata || t.timestamp < s.entrata)) {
+      s.entrata = t.timestamp;
+    }
+    if (t.tipo === "uscita" && (!s.uscita || t.timestamp > s.uscita)) {
+      s.uscita = t.timestamp;
+    }
+  }
+
+  for (const s of map.values()) {
+    if (s.entrata && s.uscita) {
+      s.minutiLavorati = Math.round((new Date(s.uscita).getTime() - new Date(s.entrata).getTime()) / 60000);
+    } else if (s.entrata && !s.uscita && s.esito !== "bloccato") {
+      s.inCorso = true;
+    }
+  }
+
+  return Array.from(map.values()).sort((a, b) => b.data.localeCompare(a.data) || a.lavoratoreId.localeCompare(b.lavoratoreId));
+}
+
 export default function Accessi() {
   const [filtroCantiere, setFiltroCantiere] = useState("tutti");
   const [searchLav, setSearchLav] = useState("");
+  const [dateMode, setDateMode] = useState<DateMode>("giorno");
   const [filtroData, setFiltroData] = useState<Date>(new Date("2026-03-10"));
+  const [dataInizio, setDataInizio] = useState<Date>(new Date("2026-03-03"));
+  const [dataFine, setDataFine] = useState<Date>(new Date("2026-03-10"));
   const [logOpen, setLogOpen] = useState(false);
 
   const sorted = useMemo(() => [...mockTimbrature].sort((a, b) => b.timestamp.localeCompare(a.timestamp)), []);
 
-  const dateStr = format(filtroData, "yyyy-MM-dd");
-
-  // Build daily summaries grouped by worker+site
-  const summaries = useMemo(() => {
-    const dayTs = sorted.filter((t) => t.timestamp.startsWith(dateStr));
-    const map = new Map<string, DaySummary>();
-
-    for (const t of dayTs) {
-      const key = `${t.lavoratore_id}_${t.cantiere_id}`;
-      if (!map.has(key)) {
-        map.set(key, {
-          lavoratoreId: t.lavoratore_id,
-          cantiereId: t.cantiere_id,
-          entrata: null,
-          uscita: null,
-          minutiLavorati: null,
-          inCorso: false,
-          esito: t.esito,
-          motivoBlocco: t.motivo_blocco,
-        });
-      }
-      const s = map.get(key)!;
-      if (t.esito === "bloccato") {
-        s.esito = "bloccato";
-        s.motivoBlocco = t.motivo_blocco;
-      } else if (s.esito !== "bloccato" && t.esito === "warning") {
-        s.esito = "warning";
-      }
-      if (t.tipo === "entrata" && (!s.entrata || t.timestamp < s.entrata)) {
-        s.entrata = t.timestamp;
-      }
-      if (t.tipo === "uscita" && (!s.uscita || t.timestamp > s.uscita)) {
-        s.uscita = t.timestamp;
-      }
+  // Filter timbrature by date mode
+  const dateFilteredTs = useMemo(() => {
+    if (dateMode === "tutte") return sorted;
+    if (dateMode === "giorno") {
+      const ds = format(filtroData, "yyyy-MM-dd");
+      return sorted.filter((t) => t.timestamp.startsWith(ds));
     }
+    // intervallo
+    const ds = format(dataInizio, "yyyy-MM-dd");
+    const de = format(dataFine, "yyyy-MM-dd");
+    return sorted.filter((t) => {
+      const d = t.timestamp.substring(0, 10);
+      return d >= ds && d <= de;
+    });
+  }, [sorted, dateMode, filtroData, dataInizio, dataFine]);
 
-    for (const s of map.values()) {
-      if (s.entrata && s.uscita) {
-        s.minutiLavorati = Math.round((new Date(s.uscita).getTime() - new Date(s.entrata).getTime()) / 60000);
-      } else if (s.entrata && !s.uscita && s.esito !== "bloccato") {
-        s.inCorso = true;
-      }
-    }
-
-    return Array.from(map.values());
-  }, [sorted, dateStr]);
+  const summaries = useMemo(() => buildSummaries(dateFilteredTs), [dateFilteredTs]);
 
   // Apply filters
   const filtered = useMemo(() => {
@@ -101,7 +128,8 @@ export default function Accessi() {
   const totalMin = totalMinuti % 60;
 
   // Stats from today's raw data
-  const todayTs = sorted.filter((t) => t.timestamp.startsWith(dateStr));
+  const todayStr = "2026-03-10";
+  const todayTs = sorted.filter((t) => t.timestamp.startsWith(todayStr));
   const presentiOra = getPresentiOra();
   const ingressiOggi = todayTs.filter((t) => t.tipo === "entrata").length;
   const usciteOggi = todayTs.filter((t) => t.tipo === "uscita").length;
@@ -116,15 +144,19 @@ export default function Accessi() {
   };
 
   const formatDurata = (min: number | null, inCorso: boolean) => {
-    if (inCorso) return null; // handled separately
+    if (inCorso) return null;
     if (min == null || min <= 0) return "—";
     return `${Math.floor(min / 60)}h ${min % 60}m`;
   };
 
+  const formatDateLabel = (ds: string) => {
+    const d = new Date(ds + "T00:00:00");
+    return format(d, "EEE dd MMM", { locale: it });
+  };
+
   // Filtered raw log for collapsible section
   const filteredRaw = useMemo(() => {
-    return sorted.filter((t) => {
-      if (!t.timestamp.startsWith(dateStr)) return false;
+    return dateFilteredTs.filter((t) => {
       if (filtroCantiere !== "tutti" && t.cantiere_id !== filtroCantiere) return false;
       if (searchLav) {
         const lav = mockLavoratori.find((l) => l.id === t.lavoratore_id);
@@ -132,7 +164,9 @@ export default function Accessi() {
       }
       return true;
     });
-  }, [sorted, dateStr, filtroCantiere, searchLav]);
+  }, [dateFilteredTs, filtroCantiere, searchLav]);
+
+  const showDataColumn = dateMode !== "giorno";
 
   return (
     <div className="space-y-6">
@@ -181,23 +215,86 @@ export default function Accessi() {
         </div>
       </div>
 
+      {/* Date mode toggle */}
+      <div className="flex flex-wrap items-center gap-3">
+        <ToggleGroup type="single" value={dateMode} onValueChange={(v) => v && setDateMode(v as DateMode)} className="border border-border rounded-lg p-1">
+          <ToggleGroupItem value="giorno" className="text-xs px-3 h-8 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Giorno</ToggleGroupItem>
+          <ToggleGroupItem value="intervallo" className="text-xs px-3 h-8 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Intervallo</ToggleGroupItem>
+          <ToggleGroupItem value="tutte" className="text-xs px-3 h-8 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Tutte le date</ToggleGroupItem>
+        </ToggleGroup>
+
+        {dateMode === "giorno" && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-44 justify-start text-left font-normal">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {format(filtroData, "dd/MM/yyyy")}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={filtroData} onSelect={(d) => d && setFiltroData(d)} className={cn("p-3 pointer-events-auto")} />
+            </PopoverContent>
+          </Popover>
+        )}
+
+        {dateMode === "intervallo" && (
+          <>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-36 justify-start text-left font-normal text-sm">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(dataInizio, "dd/MM/yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={dataInizio} onSelect={(d) => d && setDataInizio(d)} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+            <span className="text-muted-foreground text-sm">→</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-36 justify-start text-left font-normal text-sm">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(dataFine, "dd/MM/yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={dataFine} onSelect={(d) => d && setDataFine(d)} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+          </>
+        )}
+
+        {dateMode === "tutte" && (
+          <span className="text-xs text-muted-foreground">
+            {allDates.length} giorni disponibili ({formatDateLabel(allDates[0])} — {formatDateLabel(allDates[allDates.length - 1])})
+          </span>
+        )}
+      </div>
+
+      {/* Quick date chips for "tutte" mode */}
+      {dateMode === "tutte" && (
+        <div className="flex flex-wrap gap-1.5">
+          {allDates.map((d) => (
+            <Button
+              key={d}
+              variant="outline"
+              size="sm"
+              className="text-xs h-7 px-2"
+              onClick={() => { setDateMode("giorno"); setFiltroData(new Date(d + "T00:00:00")); }}
+            >
+              {formatDateLabel(d)}
+            </Button>
+          ))}
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Cerca lavoratore…" value={searchLav} onChange={(e) => setSearchLav(e.target.value)} className="pl-9" />
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-44 justify-start text-left font-normal">
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {format(filtroData, "dd/MM/yyyy")}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar mode="single" selected={filtroData} onSelect={(d) => d && setFiltroData(d)} className={cn("p-3 pointer-events-auto")} />
-          </PopoverContent>
-        </Popover>
         <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
           <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
           <SelectContent>
@@ -215,6 +312,7 @@ export default function Accessi() {
               <TableHead>Lavoratore</TableHead>
               <TableHead className="hidden md:table-cell">Mansione</TableHead>
               <TableHead>Cantiere</TableHead>
+              {showDataColumn && <TableHead className="text-center">Data</TableHead>}
               <TableHead className="text-center">Entrata</TableHead>
               <TableHead className="text-center">Uscita</TableHead>
               <TableHead className="text-center">Ore</TableHead>
@@ -224,15 +322,15 @@ export default function Accessi() {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                  Nessun accesso trovato per questa data
+                <TableCell colSpan={showDataColumn ? 8 : 7} className="text-center py-8 text-muted-foreground">
+                  Nessun accesso trovato
                 </TableCell>
               </TableRow>
             ) : (
               filtered.map((s) => {
                 const lav = getLav(s.lavoratoreId);
                 return (
-                  <TableRow key={`${s.lavoratoreId}_${s.cantiereId}`}>
+                  <TableRow key={`${s.lavoratoreId}_${s.cantiereId}_${s.data}`}>
                     <TableCell className="font-medium text-foreground">
                       {lav ? `${lav.nome} ${lav.cognome}` : "—"}
                     </TableCell>
@@ -240,6 +338,11 @@ export default function Accessi() {
                       {lav?.mansione ?? "—"}
                     </TableCell>
                     <TableCell className="text-sm">{getCantName(s.cantiereId)}</TableCell>
+                    {showDataColumn && (
+                      <TableCell className="text-center text-xs text-muted-foreground">
+                        {formatDateLabel(s.data)}
+                      </TableCell>
+                    )}
                     <TableCell className="text-center font-mono text-sm">{formatTime(s.entrata)}</TableCell>
                     <TableCell className="text-center font-mono text-sm">
                       {s.inCorso ? (
@@ -264,7 +367,7 @@ export default function Accessi() {
           {filtered.length > 0 && (
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={5} className="text-right font-semibold text-foreground">Totale ore</TableCell>
+                <TableCell colSpan={showDataColumn ? 6 : 5} className="text-right font-semibold text-foreground">Totale ore</TableCell>
                 <TableCell className="text-center font-mono font-semibold text-foreground">{totalOre}h {totalMin}m</TableCell>
                 <TableCell />
               </TableRow>
