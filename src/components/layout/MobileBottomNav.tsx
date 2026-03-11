@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
-  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine
+  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine, PenTool
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
