@@ -1,10 +1,9 @@
 import { QRCodeSVG } from "qrcode.react";
 import { HardHat, User, Shield } from "lucide-react";
 import type { Badge } from "@/data/mock-badges";
-import { getBadgeLavoratore, getBadgeCantiere } from "@/data/mock-badges";
+import { getBadgeLavoratore, getBadgeCantiere, calcolaStatoConformita } from "@/data/mock-badges";
 import { mockTenant, mockSubappaltatori } from "@/data/mock-data";
 import { BadgeStatusChip } from "./BadgeStatusChip";
-
 interface BadgeCardProps {
   badge: Badge;
   compact?: boolean;
