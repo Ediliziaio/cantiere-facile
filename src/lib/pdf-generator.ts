@@ -246,7 +246,7 @@ export async function generateSignedPdf(documentoId: string): Promise<Uint8Array
 export async function downloadSignedPdf(documentoId: string) {
   const doc = mockDocumentiFirma.find(d => d.id === documentoId);
   const pdfBytes = await generateSignedPdf(documentoId);
-  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const blob = new Blob([pdfBytes.buffer as ArrayBuffer], { type: "application/pdf" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
