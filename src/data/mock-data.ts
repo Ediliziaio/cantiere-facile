@@ -377,3 +377,49 @@ export const mockLogAttivita: LogAttivita[] = [
   { id: "log14", tenant_id: "t1", utente_id: "ua5", utente_nome: "Roberto Conti", tipo: "login", descrizione: "Accesso al sistema", dettaglio: null, timestamp: "2026-01-20T09:45:00" },
   { id: "log15", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "modifica", descrizione: "Utente disabilitato", dettaglio: "Disabilitato Roberto Conti", timestamp: "2026-01-21T10:00:00" },
 ];
+
+// ── Notifiche Email Scadenza ──
+
+export type NotificaEmailTipo = "scadenza_durc" | "scadenza_formazione" | "scadenza_idoneita";
+export type NotificaEmailStato = "inviata" | "programmata" | "errore";
+
+export interface NotificaEmail {
+  id: string;
+  tipo: NotificaEmailTipo;
+  destinatario_email: string;
+  destinatario_nome: string;
+  documento_nome: string;
+  categoria: string;
+  data_scadenza: string;
+  giorni_rimanenti: number;
+  stato_invio: NotificaEmailStato;
+  data_invio: string;
+  letto: boolean;
+}
+
+export const mockNotificheEmail: NotificaEmail[] = [
+  { id: "ne1", tipo: "scadenza_formazione", destinatario_email: "admin@rossicostruzioni.it", destinatario_nome: "Andrea Rossi", documento_nome: "Attestato_Sicurezza_Bianchi.pdf", categoria: "Attestato Sicurezza", data_scadenza: "2026-02-15", giorni_rimanenti: -24, stato_invio: "inviata", data_invio: "2026-02-01T08:00:00", letto: true },
+  { id: "ne2", tipo: "scadenza_durc", destinatario_email: "admin@rossicostruzioni.it", destinatario_nome: "Andrea Rossi", documento_nome: "DURC_Neri_2026.pdf", categoria: "DURC", data_scadenza: "2026-02-28", giorni_rimanenti: -11, stato_invio: "inviata", data_invio: "2026-02-13T08:00:00", letto: true },
+  { id: "ne3", tipo: "scadenza_idoneita", destinatario_email: "admin@rossicostruzioni.it", destinatario_nome: "Andrea Rossi", documento_nome: "Idoneita_Sanitaria_Verdi.pdf", categoria: "Idoneità Sanitaria", data_scadenza: "2026-03-20", giorni_rimanenti: 9, stato_invio: "inviata", data_invio: "2026-03-05T08:00:00", letto: false },
+  { id: "ne4", tipo: "scadenza_durc", destinatario_email: "admin@rossicostruzioni.it", destinatario_nome: "Andrea Rossi", documento_nome: "DURC_Verdi_2026.pdf", categoria: "DURC", data_scadenza: "2026-06-15", giorni_rimanenti: 96, stato_invio: "programmata", data_invio: "2026-05-16T08:00:00", letto: false },
+  { id: "ne5", tipo: "scadenza_formazione", destinatario_email: "admin@rossicostruzioni.it", destinatario_nome: "Andrea Rossi", documento_nome: "Attestato_Sicurezza_Neri.pdf", categoria: "Attestato Sicurezza", data_scadenza: "2026-06-01", giorni_rimanenti: 82, stato_invio: "programmata", data_invio: "2026-05-02T08:00:00", letto: false },
+  { id: "ne6", tipo: "scadenza_idoneita", destinatario_email: "s.colombo@rossicostruzioni.it", destinatario_nome: "Sara Colombo", documento_nome: "Idoneita_Sanitaria_Rossi.pdf", categoria: "Idoneità Sanitaria", data_scadenza: "2026-04-20", giorni_rimanenti: 40, stato_invio: "inviata", data_invio: "2026-03-06T08:00:00", letto: false },
+  { id: "ne7", tipo: "scadenza_formazione", destinatario_email: "admin@rossicostruzioni.it", destinatario_nome: "Andrea Rossi", documento_nome: "Attestato_Sicurezza_Bianchi.pdf", categoria: "Attestato Sicurezza", data_scadenza: "2026-02-15", giorni_rimanenti: -10, stato_invio: "errore", data_invio: "2026-02-15T08:00:00", letto: false },
+  { id: "ne8", tipo: "scadenza_durc", destinatario_email: "admin@rossicostruzioni.it", destinatario_nome: "Andrea Rossi", documento_nome: "DURC_Neri_2026.pdf", categoria: "DURC", data_scadenza: "2026-02-28", giorni_rimanenti: 0, stato_invio: "inviata", data_invio: "2026-02-28T08:00:00", letto: true },
+];
+
+export interface ImpostazioniNotifiche {
+  abilitata_durc: boolean;
+  abilitata_formazione: boolean;
+  abilitata_idoneita: boolean;
+  soglia_giorni: number;
+  email_destinatari: string[];
+}
+
+export const mockImpostazioniNotifiche: ImpostazioniNotifiche = {
+  abilitata_durc: true,
+  abilitata_formazione: true,
+  abilitata_idoneita: true,
+  soglia_giorni: 30,
+  email_destinatari: ["admin@rossicostruzioni.it", "s.colombo@rossicostruzioni.it"],
+};
