@@ -397,7 +397,7 @@ export default function Accessi() {
             Tabella
           </TabsTrigger>
           <TabsTrigger value="mappa" className="gap-1.5 text-xs">
-            <Map className="h-3.5 w-3.5" />
+            <MapIcon className="h-3.5 w-3.5" />
             Mappa
           </TabsTrigger>
           <TabsTrigger value="grafici" className="gap-1.5 text-xs">
