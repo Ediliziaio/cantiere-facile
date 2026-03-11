@@ -61,10 +61,6 @@ const comparison = [
 
 export default function FunzionalitaOverview() {
   const [gridRef, gridInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const [penaltyRef, penaltyInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const [scenarioRef, scenarioInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const [questionsRef, questionsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-  const [statsRef, statsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
   const [compRef, compInView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
