@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, lazy, Suspense } from "react";
-import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown, Download, MapPin, Map, BarChart3, TableIcon } from "lucide-react";
+import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown, Download, MapPin, Map as MapIcon, BarChart3, TableIcon } from "lucide-react";
 import { mockTimbrature, getPresentiOra } from "@/data/mock-badges";
 import { mockCantieri, mockLavoratori } from "@/data/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -397,7 +397,7 @@ export default function Accessi() {
             Tabella
           </TabsTrigger>
           <TabsTrigger value="mappa" className="gap-1.5 text-xs">
-            <Map className="h-3.5 w-3.5" />
+            <MapIcon className="h-3.5 w-3.5" />
             Mappa
           </TabsTrigger>
           <TabsTrigger value="grafici" className="gap-1.5 text-xs">
