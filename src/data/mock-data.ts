@@ -91,9 +91,136 @@ export const mockLavoratori = [
   { id: "l5", tenant_id: "t1", nome: "Luca", cognome: "Ferrari", codice_fiscale: "FRRLCU87S30F205V", tipo: "interno" as const, subappaltatore_id: null, mansione: "Muratore" },
 ];
 
-export const mockMezzi = [
-  { id: "m1", tenant_id: "t1", cantiere_id: "c1", tipo: "Escavatore", targa_o_matricola: "RM-2024-001", descrizione: "CAT 320 — escavatore cingolato" },
-  { id: "m2", tenant_id: "t1", cantiere_id: "c1", tipo: "Gru a torre", targa_o_matricola: "MI-GRU-045", descrizione: "Liebherr 280 EC-H — gru a torre fissa" },
+export type MezzoStatoOperativo = "operativo" | "in_manutenzione" | "fermo";
+
+export interface Mezzo {
+  id: string;
+  tenant_id: string;
+  cantiere_id: string;
+  tipo: string;
+  targa_o_matricola: string;
+  descrizione: string;
+  stato_operativo: MezzoStatoOperativo;
+  data_immatricolazione: string;
+  data_ultima_revisione: string | null;
+  data_prossima_revisione: string;
+  data_ultima_manutenzione: string | null;
+  data_prossima_manutenzione: string;
+  scadenza_assicurazione: string;
+  scadenza_collaudo: string | null;
+  ore_lavoro: number;
+  km_percorsi: number | null;
+  responsabile: string;
+  note: string | null;
+}
+
+export interface ManutenzioneEntry {
+  id: string;
+  mezzo_id: string;
+  data: string;
+  tipo: "ordinaria" | "straordinaria" | "revisione" | "collaudo";
+  descrizione: string;
+  eseguita_da: string;
+  costo: number | null;
+}
+
+export const mockMezzi: Mezzo[] = [
+  {
+    id: "m1", tenant_id: "t1", cantiere_id: "c1",
+    tipo: "Escavatore", targa_o_matricola: "RM-2024-001",
+    descrizione: "CAT 320 — escavatore cingolato",
+    stato_operativo: "operativo",
+    data_immatricolazione: "2024-03-15",
+    data_ultima_revisione: "2025-09-10",
+    data_prossima_revisione: "2026-09-10",
+    data_ultima_manutenzione: "2026-01-20",
+    data_prossima_manutenzione: "2026-07-20",
+    scadenza_assicurazione: "2026-12-31",
+    scadenza_collaudo: "2027-03-15",
+    ore_lavoro: 3420,
+    km_percorsi: null,
+    responsabile: "Marco Rossi",
+    note: null,
+  },
+  {
+    id: "m2", tenant_id: "t1", cantiere_id: "c1",
+    tipo: "Gru a torre", targa_o_matricola: "MI-GRU-045",
+    descrizione: "Liebherr 280 EC-H — gru a torre fissa",
+    stato_operativo: "operativo",
+    data_immatricolazione: "2022-06-01",
+    data_ultima_revisione: "2025-06-01",
+    data_prossima_revisione: "2026-06-01",
+    data_ultima_manutenzione: "2025-12-15",
+    data_prossima_manutenzione: "2026-06-15",
+    scadenza_assicurazione: "2026-08-30",
+    scadenza_collaudo: "2026-06-01",
+    ore_lavoro: 8750,
+    km_percorsi: null,
+    responsabile: "Marco Rossi",
+    note: "Collaudo in scadenza — prenotare verifica INAIL",
+  },
+  {
+    id: "m3", tenant_id: "t1", cantiere_id: "c1",
+    tipo: "Autocarro", targa_o_matricola: "FG 123 AB",
+    descrizione: "IVECO Daily 70C — autocarro ribaltabile",
+    stato_operativo: "operativo",
+    data_immatricolazione: "2021-11-20",
+    data_ultima_revisione: "2025-11-20",
+    data_prossima_revisione: "2026-11-20",
+    data_ultima_manutenzione: "2026-02-10",
+    data_prossima_manutenzione: "2026-08-10",
+    scadenza_assicurazione: "2026-05-15",
+    scadenza_collaudo: null,
+    ore_lavoro: 1200,
+    km_percorsi: 67800,
+    responsabile: "Luca Ferrari",
+    note: null,
+  },
+  {
+    id: "m4", tenant_id: "t1", cantiere_id: "c2",
+    tipo: "Piattaforma aerea", targa_o_matricola: "BG-PTA-012",
+    descrizione: "JLG 860SJ — piattaforma telescopica",
+    stato_operativo: "in_manutenzione",
+    data_immatricolazione: "2023-02-28",
+    data_ultima_revisione: "2025-02-28",
+    data_prossima_revisione: "2026-02-28",
+    data_ultima_manutenzione: "2025-08-01",
+    data_prossima_manutenzione: "2026-02-01",
+    scadenza_assicurazione: "2026-09-30",
+    scadenza_collaudo: "2027-02-28",
+    ore_lavoro: 2100,
+    km_percorsi: null,
+    responsabile: "Paolo Neri",
+    note: "In manutenzione straordinaria — sostituzione cilindro idraulico",
+  },
+  {
+    id: "m5", tenant_id: "t1", cantiere_id: "c2",
+    tipo: "Betoniera", targa_o_matricola: "BG-BET-003",
+    descrizione: "IMER L120 — betoniera a bicchiere",
+    stato_operativo: "fermo",
+    data_immatricolazione: "2019-07-10",
+    data_ultima_revisione: "2024-07-10",
+    data_prossima_revisione: "2025-07-10",
+    data_ultima_manutenzione: "2025-01-15",
+    data_prossima_manutenzione: "2025-07-15",
+    scadenza_assicurazione: "2025-12-31",
+    scadenza_collaudo: "2025-07-10",
+    ore_lavoro: 5600,
+    km_percorsi: null,
+    responsabile: "Paolo Neri",
+    note: "Revisione e assicurazione scadute — fermo fino a rinnovo",
+  },
+];
+
+export const mockManutenzioni: ManutenzioneEntry[] = [
+  { id: "man1", mezzo_id: "m1", data: "2026-01-20", tipo: "ordinaria", descrizione: "Cambio olio e filtri, controllo cingoli", eseguita_da: "Officina Meccanica Brambilla", costo: 1200 },
+  { id: "man2", mezzo_id: "m1", data: "2025-09-10", tipo: "revisione", descrizione: "Revisione annuale — esito positivo", eseguita_da: "Centro Revisioni Milano", costo: 350 },
+  { id: "man3", mezzo_id: "m2", data: "2025-12-15", tipo: "ordinaria", descrizione: "Controllo funi, pulegge e sistema di sicurezza", eseguita_da: "Liebherr Service Italia", costo: 2800 },
+  { id: "man4", mezzo_id: "m2", data: "2025-06-01", tipo: "revisione", descrizione: "Revisione biennale — esito positivo", eseguita_da: "INAIL Verifiche", costo: 500 },
+  { id: "man5", mezzo_id: "m3", data: "2026-02-10", tipo: "ordinaria", descrizione: "Tagliando 60.000 km, sostituzione pastiglie freni", eseguita_da: "Iveco Service Milano", costo: 890 },
+  { id: "man6", mezzo_id: "m4", data: "2026-03-05", tipo: "straordinaria", descrizione: "Sostituzione cilindro idraulico braccio telescopico", eseguita_da: "JLG Italia", costo: 4500 },
+  { id: "man7", mezzo_id: "m4", data: "2025-08-01", tipo: "ordinaria", descrizione: "Manutenzione programmata semestrale", eseguita_da: "JLG Italia", costo: 1600 },
+  { id: "man8", mezzo_id: "m5", data: "2025-01-15", tipo: "ordinaria", descrizione: "Controllo motore e ingranaggi", eseguita_da: "Officina Meccanica Brambilla", costo: 450 },
 ];
 
 export type DocumentoStato = "valido" | "in_scadenza" | "scaduto" | "da_verificare";
@@ -106,6 +233,9 @@ export const mockDocumenti = [
   { id: "d5", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m1", nome_file: "Libretto_Escavatore.pdf", data_caricamento: "2026-01-05", data_scadenza: "2027-01-05", stato: "valido" as DocumentoStato, categoria: "Libretto" },
   { id: "d6", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l1", nome_file: "Idoneita_Sanitaria_Rossi.pdf", data_caricamento: "2025-11-20", data_scadenza: "2026-04-20", stato: "in_scadenza" as DocumentoStato, categoria: "Idoneità Sanitaria" },
   { id: "d7", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s3", nome_file: "Polizza_RC_Neri.pdf", data_caricamento: "2026-01-20", data_scadenza: "2026-03-12", stato: "in_scadenza" as DocumentoStato, categoria: "Polizza RC" },
+  { id: "d8", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m2", nome_file: "Certificato_Collaudo_Gru.pdf", data_caricamento: "2025-06-01", data_scadenza: "2026-06-01", stato: "in_scadenza" as DocumentoStato, categoria: "Collaudo" },
+  { id: "d9", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m3", nome_file: "Assicurazione_Autocarro.pdf", data_caricamento: "2025-05-15", data_scadenza: "2026-05-15", stato: "in_scadenza" as DocumentoStato, categoria: "Assicurazione" },
+  { id: "d10", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "mezzo" as const, riferimento_id: "m4", nome_file: "Libretto_Piattaforma.pdf", data_caricamento: "2025-02-28", data_scadenza: "2027-02-28", stato: "valido" as DocumentoStato, categoria: "Libretto" },
 ];
 
 export const mockAccessi = [
@@ -142,3 +272,13 @@ export const dashboardStats = {
   accessiOggi: 5,
   subAppConProblemi: 2,
 };
+
+// Helper: get scadenza status for a date
+export function getScadenzaStatus(dateStr: string): "valido" | "in_scadenza" | "scaduto" {
+  const today = new Date("2026-03-11");
+  const date = new Date(dateStr);
+  const diffDays = Math.ceil((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return "scaduto";
+  if (diffDays <= 30) return "in_scadenza";
+  return "valido";
+}

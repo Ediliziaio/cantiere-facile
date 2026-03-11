@@ -1,10 +1,34 @@
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Plus, IdCard, Info } from "lucide-react";
+import { Plus, IdCard, Info, Search, ShieldCheck, ShieldOff, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { mockBadges, getBadgeLavoratore, getBadgeCantiere, mockTimbrature } from "@/data/mock-badges";
+import { mockCantieri } from "@/data/mock-data";
 import { BadgeStatusChip } from "@/components/badge/BadgeStatusChip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function BadgeList() {
+  const [filtroCantiere, setFiltroCantiere] = useState("tutti");
+  const [filtroStato, setFiltroStato] = useState("tutti");
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    return mockBadges.filter((b) => {
+      if (filtroCantiere !== "tutti" && b.cantiere_id !== filtroCantiere) return false;
+      if (filtroStato !== "tutti" && b.stato !== filtroStato) return false;
+      if (search) {
+        const lav = getBadgeLavoratore(b);
+        if (!lav || !`${lav.nome} ${lav.cognome}`.toLowerCase().includes(search.toLowerCase())) return false;
+      }
+      return true;
+    });
+  }, [filtroCantiere, filtroStato, search]);
+
+  const attivi = mockBadges.filter((b) => b.stato === "attivo").length;
+  const sospesi = mockBadges.filter((b) => b.stato === "sospeso").length;
+  const revocati = mockBadges.filter((b) => b.stato === "revocato").length;
+
   const getUltimoAccesso = (badgeId: string) => {
     const ts = mockTimbrature.filter((t) => t.badge_id === badgeId);
     if (!ts.length) return "—";
@@ -25,11 +49,58 @@ export default function BadgeList() {
         </div>
       </div>
 
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="border border-border rounded-lg p-4 text-center">
+          <p className="font-heading font-bold text-2xl text-foreground">{mockBadges.length}</p>
+          <p className="text-xs text-muted-foreground">Totali</p>
+        </div>
+        <div className="border border-border rounded-lg p-4 text-center">
+          <ShieldCheck className="h-4 w-4 text-emerald-600 mx-auto mb-1" />
+          <p className="font-heading font-bold text-2xl text-emerald-600">{attivi}</p>
+          <p className="text-xs text-muted-foreground">Attivi</p>
+        </div>
+        <div className="border border-border rounded-lg p-4 text-center">
+          <ShieldAlert className="h-4 w-4 text-amber-600 mx-auto mb-1" />
+          <p className="font-heading font-bold text-2xl text-amber-600">{sospesi}</p>
+          <p className="text-xs text-muted-foreground">Sospesi</p>
+        </div>
+        <div className="border border-border rounded-lg p-4 text-center">
+          <ShieldOff className="h-4 w-4 text-destructive mx-auto mb-1" />
+          <p className="font-heading font-bold text-2xl text-destructive">{revocati}</p>
+          <p className="text-xs text-muted-foreground">Revocati</p>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <h1 className="font-heading font-bold text-2xl text-foreground">Badge Digitali</h1>
         <Button size="sm" asChild>
           <Link to="/app/badge/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Emetti badge</Link>
         </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Cerca lavoratore…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        </div>
+        <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
+          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+            {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filtroStato} onValueChange={setFiltroStato}>
+          <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti</SelectItem>
+            <SelectItem value="attivo">Attivo</SelectItem>
+            <SelectItem value="sospeso">Sospeso</SelectItem>
+            <SelectItem value="revocato">Revocato</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden">
@@ -46,7 +117,7 @@ export default function BadgeList() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {mockBadges.map((b) => {
+            {filtered.map((b) => {
               const lav = getBadgeLavoratore(b);
               const cant = getBadgeCantiere(b);
               return (
@@ -74,6 +145,9 @@ export default function BadgeList() {
             })}
           </tbody>
         </table>
+        {filtered.length === 0 && (
+          <p className="px-4 py-8 text-sm text-muted-foreground text-center">Nessun badge trovato</p>
+        )}
       </div>
     </div>
   );
