@@ -1,4 +1,4 @@
-import { mockLavoratori, mockCantieri, mockTenant } from "./mock-data";
+import { mockLavoratori, mockCantieri, mockTenant, mockDocumenti } from "./mock-data";
 
 export type BadgeStato = "attivo" | "sospeso" | "revocato";
 export type TimbraturaTipo = "entrata" | "uscita";
