@@ -80,9 +80,9 @@ export default function FirmaDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Select value={filtroStato} onValueChange={setFiltroStato}>
-          <SelectTrigger className="w-[180px]"><SelectValue placeholder="Stato" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Stato" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="tutti">Tutti gli stati</SelectItem>
             <SelectItem value="bozza">Bozza</SelectItem>
@@ -94,7 +94,7 @@ export default function FirmaDashboard() {
           </SelectContent>
         </Select>
         <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-          <SelectTrigger className="w-[180px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="tutti">Tutti i tipi</SelectItem>
             <SelectItem value="collaudo">Collaudo</SelectItem>
