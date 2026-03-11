@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Truck, Wrench, AlertTriangle, CheckCircle2, OctagonX, Search, Eye } from "lucide-react";
+import { Truck, Wrench, AlertTriangle, CheckCircle2, OctagonX, Search, Eye, Plus } from "lucide-react";
 import { mockMezzi, mockCantieri, getScadenzaStatus, type MezzoStatoOperativo } from "@/data/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";

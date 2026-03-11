@@ -76,6 +76,7 @@ const App = () => (
               <Route path="subappaltatori" element={<Subappaltatori />} />
               <Route path="lavoratori" element={<Lavoratori />} />
               <Route path="mezzi" element={<Mezzi />} />
+              <Route path="mezzi/nuovo" element={<NuovoMezzo />} />
               <Route path="mezzi/:id" element={<MezzoDetail />} />
               <Route path="accessi" element={<Accessi />} />
               <Route path="badge" element={<BadgeList />} />

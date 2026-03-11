@@ -1,7 +1,7 @@
-import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, IdCard } from "lucide-react";
+import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, IdCard, Truck, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { dashboardStats, mockCantieri, mockScadenze, mockAccessi } from "@/data/mock-data";
+import { dashboardStats, mockCantieri, mockScadenze, mockAccessi, mockMezzi, getScadenzaStatus } from "@/data/mock-data";
 import { CantiereSummaryCard } from "@/components/cantiere/CantiereSummaryCard";
 import { ScadenzaAlert } from "@/components/cantiere/ScadenzaAlert";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
