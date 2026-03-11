@@ -131,6 +131,9 @@ export default function CantiereDetail() {
             ))}
           </div>
         </TabsContent>
+        <TabsContent value="galleria">
+          <GalleriaCantiere cantiereId={id!} />
+        </TabsContent>
       </Tabs>
     </div>
   );
