@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { mockThreads } from "@/data/mock-comunicazioni";
+import { useAuth } from "@/contexts/AuthContext";
 
 const unreadCount = mockThreads.reduce((s, t) => s + t.non_letti, 0);
 
@@ -16,33 +17,33 @@ const navGroups = [
   {
     label: "Generale",
     items: [
-      { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard },
-      { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount },
-      { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock },
+      { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard, adminOnly: false },
+      { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount, adminOnly: false },
+      { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
     ],
   },
   {
     label: "Cantiere",
     items: [
-      { title: "Cantieri", url: "/app/cantieri", icon: Building2 },
-      { title: "Documenti", url: "/app/documenti", icon: FileText },
-      { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat },
-      { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building },
-      { title: "Mezzi", url: "/app/mezzi", icon: Truck },
+      { title: "Cantieri", url: "/app/cantieri", icon: Building2, adminOnly: false },
+      { title: "Documenti", url: "/app/documenti", icon: FileText, adminOnly: false },
+      { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat, adminOnly: false },
+      { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building, adminOnly: true },
+      { title: "Mezzi", url: "/app/mezzi", icon: Truck, adminOnly: false },
     ],
   },
   {
     label: "Presenze",
     items: [
-      { title: "Accessi", url: "/app/accessi", icon: ShieldCheck },
-      { title: "Badge Digitali", url: "/app/badge", icon: IdCard },
-      { title: "Timbrature", url: "/app/timbrature", icon: Clock },
+      { title: "Accessi", url: "/app/accessi", icon: ShieldCheck, adminOnly: false },
+      { title: "Badge Digitali", url: "/app/badge", icon: IdCard, adminOnly: false },
+      { title: "Timbrature", url: "/app/timbrature", icon: Clock, adminOnly: false },
     ],
   },
   {
     label: "Sistema",
     items: [
-      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings },
+      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: false },
     ],
   },
 ];
@@ -50,6 +51,8 @@ const navGroups = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const { role } = useAuth();
+  const isManager = role === "manager";
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border hidden md:flex">
@@ -62,42 +65,46 @@ export function AppSidebar() {
         )}
       </div>
       <SidebarContent>
-        {navGroups.map((group) => (
-          <SidebarGroup key={group.label}>
-            {!collapsed && (
-              <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-3 pt-3 pb-1">
-                {group.label}
-              </SidebarGroupLabel>
-            )}
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.url}
-                        className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-                        activeClassName="bg-primary/10 text-primary font-medium"
-                      >
-                        <item.icon className="h-4 w-4 shrink-0" />
-                        {!collapsed && (
-                          <span className="flex-1 flex items-center justify-between">
-                            <span>{item.title}</span>
-                            {"badge" in item && item.badge > 0 && (
-                              <Badge variant="destructive" className="text-[10px] h-4 min-w-4 flex items-center justify-center px-1 ml-auto">
-                                {item.badge}
-                              </Badge>
-                            )}
-                          </span>
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        {navGroups.map((group) => {
+          const visibleItems = group.items.filter(item => !isManager || !item.adminOnly);
+          if (visibleItems.length === 0) return null;
+          return (
+            <SidebarGroup key={group.label}>
+              {!collapsed && (
+                <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-3 pt-3 pb-1">
+                  {group.label}
+                </SidebarGroupLabel>
+              )}
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {visibleItems.map((item) => (
+                    <SidebarMenuItem key={item.url}>
+                      <SidebarMenuButton asChild>
+                        <NavLink
+                          to={item.url}
+                          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                          activeClassName="bg-primary/10 text-primary font-medium"
+                        >
+                          <item.icon className="h-4 w-4 shrink-0" />
+                          {!collapsed && (
+                            <span className="flex-1 flex items-center justify-between">
+                              <span>{item.title}</span>
+                              {"badge" in item && item.badge && item.badge > 0 && (
+                                <Badge variant="destructive" className="text-[10px] h-4 min-w-4 flex items-center justify-center px-1 ml-auto">
+                                  {item.badge}
+                                </Badge>
+                              )}
+                            </span>
+                          )}
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          );
+        })}
       </SidebarContent>
     </Sidebar>
   );

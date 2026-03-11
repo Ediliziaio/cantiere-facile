@@ -1,6 +1,9 @@
-import { useState } from "react";
-import { Settings, Plus, UserCog, Trash2, Shield, ShieldCheck, Building2, Check, X, MoreHorizontal } from "lucide-react";
-import { mockTenant, mockCantieri, mockUtentiAzienda, type UtenteAzienda, type UtenteRuolo } from "@/data/mock-data";
+import { useState, useMemo } from "react";
+import {
+  Settings, Plus, UserCog, Trash2, Shield, ShieldCheck, Building2,
+  MoreHorizontal, Activity, LogIn, Upload, PenLine, UserPlus, PlusCircle, XCircle,
+} from "lucide-react";
+import { mockTenant, mockCantieri, mockUtentiAzienda, mockLogAttivita, type UtenteAzienda, type UtenteRuolo, type LogTipoAzione } from "@/data/mock-data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +15,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import { formatDistanceToNow } from "date-fns";
+import { it } from "date-fns/locale";
+import { useAuth } from "@/contexts/AuthContext";
 
 const permessiRuolo = [
   { funzione: "Dashboard", admin: "✅ Completa", manager: "✅ Cantieri assegnati" },
@@ -23,10 +30,49 @@ const permessiRuolo = [
   { funzione: "Gestione Utenti", admin: "✅", manager: "❌" },
 ];
 
+const logIconMap: Record<LogTipoAzione, typeof LogIn> = {
+  login: LogIn,
+  modifica: PenLine,
+  upload: Upload,
+  creazione: PlusCircle,
+  eliminazione: XCircle,
+  invito: UserPlus,
+};
+
+const logColorMap: Record<LogTipoAzione, string> = {
+  login: "text-blue-600 bg-blue-500/10",
+  modifica: "text-amber-600 bg-amber-500/10",
+  upload: "text-green-600 bg-green-500/10",
+  creazione: "text-primary bg-primary/10",
+  eliminazione: "text-destructive bg-destructive/10",
+  invito: "text-violet-600 bg-violet-500/10",
+};
+
+const logLabelMap: Record<LogTipoAzione, string> = {
+  login: "Login",
+  modifica: "Modifica",
+  upload: "Upload",
+  creazione: "Creazione",
+  eliminazione: "Eliminazione",
+  invito: "Invito",
+};
+
 export default function Impostazioni() {
+  const { role } = useAuth();
   const [utenti, setUtenti] = useState<UtenteAzienda[]>(mockUtentiAzienda);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [cantieriDialogUser, setCantieriDialogUser] = useState<UtenteAzienda | null>(null);
+
+  // Log filters
+  const [logFilterTipo, setLogFilterTipo] = useState<LogTipoAzione | "tutti">("tutti");
+  const [logFilterUtente, setLogFilterUtente] = useState<string>("tutti");
+
+  const filteredLog = useMemo(() => {
+    return mockLogAttivita
+      .filter(l => logFilterTipo === "tutti" || l.tipo === logFilterTipo)
+      .filter(l => logFilterUtente === "tutti" || l.utente_id === logFilterUtente)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  }, [logFilterTipo, logFilterUtente]);
 
   // Invite form state
   const [invNome, setInvNome] = useState("");
@@ -101,6 +147,9 @@ export default function Impostazioni() {
     return <Badge variant="outline" className={s.cls}>{s.label}</Badge>;
   };
 
+  // Manager can only see profile tab
+  const isAdmin = role === "admin" || role === "superadmin" || !role;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -111,7 +160,12 @@ export default function Impostazioni() {
       <Tabs defaultValue="profilo" className="w-full">
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="profilo" className="gap-1.5"><Building2 className="h-4 w-4" /> Profilo Azienda</TabsTrigger>
-          <TabsTrigger value="utenti" className="gap-1.5"><UserCog className="h-4 w-4" /> Utenti & Accessi</TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="utenti" className="gap-1.5"><UserCog className="h-4 w-4" /> Utenti & Accessi</TabsTrigger>
+          )}
+          {isAdmin && (
+            <TabsTrigger value="log" className="gap-1.5"><Activity className="h-4 w-4" /> Log Attività</TabsTrigger>
+          )}
         </TabsList>
 
         {/* Tab Profilo */}
@@ -135,159 +189,240 @@ export default function Impostazioni() {
         </TabsContent>
 
         {/* Tab Utenti */}
-        <TabsContent value="utenti">
-          <div className="space-y-4 mt-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-heading font-semibold text-foreground">Utenti Azienda</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Admin: accesso completo · Manager: accesso ai cantieri assegnati, no impostazioni
-                </p>
-              </div>
-              <Dialog open={inviteOpen} onOpenChange={v => { setInviteOpen(v); if (!v) resetInviteForm(); }}>
-                <DialogTrigger asChild>
-                  <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Invita Utente</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader><DialogTitle>Invita Nuovo Utente</DialogTitle></DialogHeader>
-                  <div className="grid gap-3 py-2">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div><Label>Nome</Label><Input value={invNome} onChange={e => setInvNome(e.target.value)} /></div>
-                      <div><Label>Cognome</Label><Input value={invCognome} onChange={e => setInvCognome(e.target.value)} /></div>
-                    </div>
-                    <div><Label>Email</Label><Input type="email" value={invEmail} onChange={e => setInvEmail(e.target.value)} /></div>
-                    <div>
-                      <Label>Ruolo</Label>
-                      <Select value={invRuolo} onValueChange={v => setInvRuolo(v as UtenteRuolo)}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="admin">Admin — accesso completo</SelectItem>
-                          <SelectItem value="manager">Manager — cantieri assegnati</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {invRuolo === "manager" && (
-                      <div>
-                        <Label>Cantieri Assegnati</Label>
-                        <div className="grid gap-2 mt-1.5">
-                          {mockCantieri.map(c => (
-                            <label key={c.id} className="flex items-center gap-2 text-sm cursor-pointer">
-                              <Checkbox
-                                checked={invCantieri.includes(c.id)}
-                                onCheckedChange={checked => {
-                                  setInvCantieri(prev => checked ? [...prev, c.id] : prev.filter(x => x !== c.id));
-                                }}
-                              />
-                              {c.nome} — {c.comune}
-                            </label>
-                          ))}
-                        </div>
+        {isAdmin && (
+          <TabsContent value="utenti">
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-heading font-semibold text-foreground">Utenti Azienda</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Admin: accesso completo · Manager: accesso ai cantieri assegnati, no impostazioni
+                  </p>
+                </div>
+                <Dialog open={inviteOpen} onOpenChange={v => { setInviteOpen(v); if (!v) resetInviteForm(); }}>
+                  <DialogTrigger asChild>
+                    <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Invita Utente</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>Invita Nuovo Utente</DialogTitle></DialogHeader>
+                    <div className="grid gap-3 py-2">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div><Label>Nome</Label><Input value={invNome} onChange={e => setInvNome(e.target.value)} /></div>
+                        <div><Label>Cognome</Label><Input value={invCognome} onChange={e => setInvCognome(e.target.value)} /></div>
                       </div>
-                    )}
-                    <Button onClick={handleInvite} className="mt-2">Invia Invito</Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
+                      <div><Label>Email</Label><Input type="email" value={invEmail} onChange={e => setInvEmail(e.target.value)} /></div>
+                      <div>
+                        <Label>Ruolo</Label>
+                        <Select value={invRuolo} onValueChange={v => setInvRuolo(v as UtenteRuolo)}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Admin — accesso completo</SelectItem>
+                            <SelectItem value="manager">Manager — cantieri assegnati</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {invRuolo === "manager" && (
+                        <div>
+                          <Label>Cantieri Assegnati</Label>
+                          <div className="grid gap-2 mt-1.5">
+                            {mockCantieri.map(c => (
+                              <label key={c.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                                <Checkbox
+                                  checked={invCantieri.includes(c.id)}
+                                  onCheckedChange={checked => {
+                                    setInvCantieri(prev => checked ? [...prev, c.id] : prev.filter(x => x !== c.id));
+                                  }}
+                                />
+                                {c.nome} — {c.comune}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      <Button onClick={handleInvite} className="mt-2">Invia Invito</Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
 
-            {/* Users Table */}
-            <div className="border border-border rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Ruolo</TableHead>
-                    <TableHead>Stato</TableHead>
-                    <TableHead className="hidden md:table-cell">Cantieri</TableHead>
-                    <TableHead className="hidden lg:table-cell">Ultimo Accesso</TableHead>
-                    <TableHead className="w-10"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {utenti.map(u => (
-                    <TableRow key={u.id} className={u.stato === "disabilitato" ? "opacity-50" : ""}>
-                      <TableCell className="font-medium">{u.nome} {u.cognome}</TableCell>
-                      <TableCell className="text-muted-foreground text-xs">{u.email}</TableCell>
-                      <TableCell>{getRuoloBadge(u.ruolo)}</TableCell>
-                      <TableCell>{getStatoBadge(u.stato)}</TableCell>
-                      <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
-                        {u.ruolo === "admin" ? "Tutti" :
-                          u.cantieri_assegnati.length === 0 ? "Nessuno" :
-                          u.cantieri_assegnati.map(cid => mockCantieri.find(c => c.id === cid)?.nome || cid).join(", ")}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
-                        {u.ultimo_accesso ? new Date(u.ultimo_accesso).toLocaleString("it-IT") : "—"}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => changeRuolo(u.id, u.ruolo === "admin" ? "manager" : "admin")}>
-                              {u.ruolo === "admin" ? "Cambia a Manager" : "Promuovi ad Admin"}
-                            </DropdownMenuItem>
-                            {u.ruolo === "manager" && (
-                              <DropdownMenuItem onClick={() => setCantieriDialogUser(u)}>
-                                Gestisci Cantieri
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem onClick={() => toggleStato(u.id)}>
-                              {u.stato === "disabilitato" ? "Riabilita" : "Disabilita"}
-                            </DropdownMenuItem>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <DropdownMenuItem onSelect={e => e.preventDefault()} className="text-destructive">
-                                  <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Rimuovi
-                                </DropdownMenuItem>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Rimuovere {u.nome} {u.cognome}?</AlertDialogTitle>
-                                  <AlertDialogDescription>L'utente perderà l'accesso all'azienda. Questa azione non è reversibile.</AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Annulla</AlertDialogCancel>
-                                  <AlertDialogAction onClick={() => removeUser(u.id)}>Rimuovi</AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Permissions summary */}
-            <div className="border border-border rounded-lg p-4 space-y-3">
-              <h3 className="font-heading font-semibold text-sm text-foreground">Riepilogo Permessi per Ruolo</h3>
-              <div className="overflow-x-auto">
+              {/* Users Table */}
+              <div className="border border-border rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Funzione</TableHead>
-                      <TableHead className="text-center"><ShieldCheck className="h-3.5 w-3.5 inline mr-1" />Admin</TableHead>
-                      <TableHead className="text-center"><Shield className="h-3.5 w-3.5 inline mr-1" />Manager</TableHead>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Ruolo</TableHead>
+                      <TableHead>Stato</TableHead>
+                      <TableHead className="hidden md:table-cell">Cantieri</TableHead>
+                      <TableHead className="hidden lg:table-cell">Ultimo Accesso</TableHead>
+                      <TableHead className="w-10"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {permessiRuolo.map(p => (
-                      <TableRow key={p.funzione}>
-                        <TableCell className="font-medium text-sm">{p.funzione}</TableCell>
-                        <TableCell className="text-center text-sm">{p.admin}</TableCell>
-                        <TableCell className="text-center text-sm text-muted-foreground">{p.manager}</TableCell>
+                    {utenti.map(u => (
+                      <TableRow key={u.id} className={u.stato === "disabilitato" ? "opacity-50" : ""}>
+                        <TableCell className="font-medium">{u.nome} {u.cognome}</TableCell>
+                        <TableCell className="text-muted-foreground text-xs">{u.email}</TableCell>
+                        <TableCell>{getRuoloBadge(u.ruolo)}</TableCell>
+                        <TableCell>{getStatoBadge(u.stato)}</TableCell>
+                        <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
+                          {u.ruolo === "admin" ? "Tutti" :
+                            u.cantieri_assegnati.length === 0 ? "Nessuno" :
+                            u.cantieri_assegnati.map(cid => mockCantieri.find(c => c.id === cid)?.nome || cid).join(", ")}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
+                          {u.ultimo_accesso ? new Date(u.ultimo_accesso).toLocaleString("it-IT") : "—"}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8"><MoreHorizontal className="h-4 w-4" /></Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => changeRuolo(u.id, u.ruolo === "admin" ? "manager" : "admin")}>
+                                {u.ruolo === "admin" ? "Cambia a Manager" : "Promuovi ad Admin"}
+                              </DropdownMenuItem>
+                              {u.ruolo === "manager" && (
+                                <DropdownMenuItem onClick={() => setCantieriDialogUser(u)}>
+                                  Gestisci Cantieri
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => toggleStato(u.id)}>
+                                {u.stato === "disabilitato" ? "Riabilita" : "Disabilita"}
+                              </DropdownMenuItem>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <DropdownMenuItem onSelect={e => e.preventDefault()} className="text-destructive">
+                                    <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Rimuovi
+                                  </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Rimuovere {u.nome} {u.cognome}?</AlertDialogTitle>
+                                    <AlertDialogDescription>L'utente perderà l'accesso all'azienda. Questa azione non è reversibile.</AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Annulla</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => removeUser(u.id)}>Rimuovi</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </div>
+
+              {/* Permissions summary */}
+              <div className="border border-border rounded-lg p-4 space-y-3">
+                <h3 className="font-heading font-semibold text-sm text-foreground">Riepilogo Permessi per Ruolo</h3>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Funzione</TableHead>
+                        <TableHead className="text-center"><ShieldCheck className="h-3.5 w-3.5 inline mr-1" />Admin</TableHead>
+                        <TableHead className="text-center"><Shield className="h-3.5 w-3.5 inline mr-1" />Manager</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {permessiRuolo.map(p => (
+                        <TableRow key={p.funzione}>
+                          <TableCell className="font-medium text-sm">{p.funzione}</TableCell>
+                          <TableCell className="text-center text-sm">{p.admin}</TableCell>
+                          <TableCell className="text-center text-sm text-muted-foreground">{p.manager}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
+        )}
+
+        {/* Tab Log Attività */}
+        {isAdmin && (
+          <TabsContent value="log">
+            <div className="space-y-4 mt-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-heading font-semibold text-foreground">Log Attività</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Registro di login, modifiche, upload e altre azioni degli utenti
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select value={logFilterTipo} onValueChange={v => setLogFilterTipo(v as LogTipoAzione | "tutti")}>
+                    <SelectTrigger className="w-[140px] h-8 text-xs">
+                      <SelectValue placeholder="Tipo azione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="tutti">Tutte le azioni</SelectItem>
+                      <SelectItem value="login">Login</SelectItem>
+                      <SelectItem value="modifica">Modifiche</SelectItem>
+                      <SelectItem value="upload">Upload</SelectItem>
+                      <SelectItem value="creazione">Creazioni</SelectItem>
+                      <SelectItem value="eliminazione">Eliminazioni</SelectItem>
+                      <SelectItem value="invito">Inviti</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={logFilterUtente} onValueChange={setLogFilterUtente}>
+                    <SelectTrigger className="w-[160px] h-8 text-xs">
+                      <SelectValue placeholder="Utente" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="tutti">Tutti gli utenti</SelectItem>
+                      {mockUtentiAzienda.map(u => (
+                        <SelectItem key={u.id} value={u.id}>{u.nome} {u.cognome}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <ScrollArea className="h-[500px]">
+                <div className="space-y-1">
+                  {filteredLog.map(log => {
+                    const Icon = logIconMap[log.tipo];
+                    const colorCls = logColorMap[log.tipo];
+                    return (
+                      <div key={log.id} className="flex items-start gap-3 p-3 rounded-lg border border-border hover:bg-muted/30 transition-colors">
+                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${colorCls}`}>
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-medium text-foreground">{log.utente_nome}</span>
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                              {logLabelMap[log.tipo]}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-foreground mt-0.5">{log.descrizione}</p>
+                          {log.dettaglio && (
+                            <p className="text-xs text-muted-foreground mt-0.5">{log.dettaglio}</p>
+                          )}
+                        </div>
+                        <span className="text-[11px] text-muted-foreground whitespace-nowrap shrink-0">
+                          {formatDistanceToNow(new Date(log.timestamp), { addSuffix: true, locale: it })}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  {filteredLog.length === 0 && (
+                    <div className="text-center py-12 text-muted-foreground text-sm">
+                      Nessuna attività trovata con i filtri selezionati
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            </div>
+          </TabsContent>
+        )}
       </Tabs>
 
       {/* Cantieri assignment dialog */}

@@ -331,3 +331,60 @@ export const mockUtentiAzienda: UtenteAzienda[] = [
     ultimo_accesso: "2026-01-20T09:45:00", cantieri_assegnati: [],
   },
 ];
+
+export type LogTipoAzione = "login" | "modifica" | "upload" | "creazione" | "eliminazione" | "invito";
+
+export interface LogAttivita {
+  id: string;
+  tenant_id: string;
+  utente_id: string;
+  utente_nome: string;
+  tipo: LogTipoAzione;
+  descrizione: string;
+  dettaglio: string | null;
+  timestamp: string;
+}
+
+export const mockLogAttivita: LogAttivita[] = [
+  { id: "log1", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "login", descrizione: "Accesso al sistema", dettaglio: null, timestamp: "2026-03-11T08:30:00" },
+  { id: "log2", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "upload", descrizione: "Caricamento documento", dettaglio: "DURC_Bianchi_2026.pdf — Cantiere Via Roma 12", timestamp: "2026-03-11T09:15:00" },
+  { id: "log3", tenant_id: "t1", utente_id: "ua2", utente_nome: "Sara Colombo", tipo: "login", descrizione: "Accesso al sistema", dettaglio: null, timestamp: "2026-03-10T17:15:00" },
+  { id: "log4", tenant_id: "t1", utente_id: "ua2", utente_nome: "Sara Colombo", tipo: "modifica", descrizione: "Modifica dati lavoratore", dettaglio: "Aggiornato mansione di Giuseppe Bianchi", timestamp: "2026-03-10T17:30:00" },
+  { id: "log5", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "creazione", descrizione: "Nuovo cantiere creato", dettaglio: "Ristrutturazione Palazzina — Bergamo", timestamp: "2026-03-10T10:00:00" },
+  { id: "log6", tenant_id: "t1", utente_id: "ua3", utente_nome: "Fabio Galli", tipo: "login", descrizione: "Accesso al sistema", dettaglio: null, timestamp: "2026-03-09T14:00:00" },
+  { id: "log7", tenant_id: "t1", utente_id: "ua3", utente_nome: "Fabio Galli", tipo: "upload", descrizione: "Caricamento documento", dettaglio: "POS_Neri.pdf — Cantiere Palazzina Bergamo", timestamp: "2026-03-09T14:20:00" },
+  { id: "log8", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "invito", descrizione: "Invito utente", dettaglio: "Invitata Elena Martini come Manager", timestamp: "2026-03-08T11:00:00" },
+  { id: "log9", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "modifica", descrizione: "Modifica impostazioni azienda", dettaglio: "Aggiornata ragione sociale", timestamp: "2026-03-07T16:45:00" },
+  { id: "log10", tenant_id: "t1", utente_id: "ua2", utente_nome: "Sara Colombo", tipo: "eliminazione", descrizione: "Documento eliminato", dettaglio: "Vecchio_DURC_Verdi.pdf", timestamp: "2026-03-07T10:30:00" },
+  { id: "log11", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "upload", descrizione: "Caricamento documento", dettaglio: "Polizza_RC_Neri.pdf — Cantiere Palazzina Bergamo", timestamp: "2026-03-06T09:00:00" },
+  { id: "log12", tenant_id: "t1", utente_id: "ua3", utente_nome: "Fabio Galli", tipo: "login", descrizione: "Accesso al sistema", dettaglio: null, timestamp: "2026-03-05T08:00:00" },
+  { id: "log13", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "creazione", descrizione: "Nuovo subappaltatore aggiunto", dettaglio: "Carpenteria Metallica Neri — Cantiere Palazzina", timestamp: "2026-03-04T14:30:00" },
+  { id: "log14", tenant_id: "t1", utente_id: "ua5", utente_nome: "Roberto Conti", tipo: "login", descrizione: "Accesso al sistema", dettaglio: null, timestamp: "2026-01-20T09:45:00" },
+  { id: "log15", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "modifica", descrizione: "Utente disabilitato", dettaglio: "Disabilitato Roberto Conti", timestamp: "2026-01-21T10:00:00" },
+];
+  {
+    id: "ua1", tenant_id: "t1", nome: "Andrea", cognome: "Rossi",
+    email: "admin@rossicostruzioni.it", ruolo: "admin", stato: "attivo",
+    ultimo_accesso: "2026-03-11T08:30:00", cantieri_assegnati: [],
+  },
+  {
+    id: "ua2", tenant_id: "t1", nome: "Sara", cognome: "Colombo",
+    email: "s.colombo@rossicostruzioni.it", ruolo: "manager", stato: "attivo",
+    ultimo_accesso: "2026-03-10T17:15:00", cantieri_assegnati: ["c1"],
+  },
+  {
+    id: "ua3", tenant_id: "t1", nome: "Fabio", cognome: "Galli",
+    email: "f.galli@rossicostruzioni.it", ruolo: "manager", stato: "attivo",
+    ultimo_accesso: "2026-03-09T14:00:00", cantieri_assegnati: ["c1", "c2"],
+  },
+  {
+    id: "ua4", tenant_id: "t1", nome: "Elena", cognome: "Martini",
+    email: "e.martini@rossicostruzioni.it", ruolo: "manager", stato: "invitato",
+    ultimo_accesso: null, cantieri_assegnati: ["c2"],
+  },
+  {
+    id: "ua5", tenant_id: "t1", nome: "Roberto", cognome: "Conti",
+    email: "r.conti@rossicostruzioni.it", ruolo: "admin", stato: "disabilitato",
+    ultimo_accesso: "2026-01-20T09:45:00", cantieri_assegnati: [],
+  },
+];
