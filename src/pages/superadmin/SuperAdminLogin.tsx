@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,16 @@ export default function SuperAdminLogin() {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    login(
+      { id: mockSuperAdmin.id, email: mockSuperAdmin.email, nome: "Platform", cognome: "Admin" },
+      "superadmin",
+      null,
+      null
+    );
+    navigate("/superadmin/dashboard");
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
