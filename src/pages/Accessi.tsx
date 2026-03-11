@@ -14,6 +14,10 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/comp
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GraficiAccessi from "@/components/accessi/GraficiAccessi";
+
+const MappaAccessi = lazy(() => import("@/components/accessi/MappaAccessi"));
 
 const esitoColors: Record<string, string> = {
   autorizzato: "border-l-emerald-500",
