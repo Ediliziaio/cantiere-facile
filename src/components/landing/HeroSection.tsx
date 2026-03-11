@@ -1,8 +1,14 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { ArrowRight, FileText, MapPin, Shield, Clock, QrCode, CheckCircle2 } from "lucide-react";
+import { ArrowRight, FileText, MapPin, Shield, Clock, QrCode, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -19,6 +25,7 @@ const logos = [
 ];
 
 export default function HeroSection() {
+  const [videoOpen, setVideoOpen] = useState(false);
   const mockupRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -87,9 +94,11 @@ export default function HeroSection() {
             <Button
               variant="ghost"
               size="lg"
-              className="text-white/70 hover:text-white hover:bg-white/5 font-landing-body h-12"
+              onClick={() => setVideoOpen(true)}
+              className="text-white/70 hover:text-white hover:bg-white/5 font-landing-body h-12 gap-2"
             >
-              Guarda come funziona →
+              <Play className="h-4 w-4 fill-current" />
+              Guarda come funziona
             </Button>
           </motion.div>
 
@@ -179,6 +188,27 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+
+      {/* Video Demo Modal */}
+      <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
+        <DialogContent className="sm:max-w-3xl p-0 bg-[#0F0E0D] border-white/10 overflow-hidden">
+          <DialogHeader className="p-4 pb-0">
+            <DialogTitle className="text-white font-landing-heading font-bold">
+              Come funziona Cantiere in Cloud
+            </DialogTitle>
+          </DialogHeader>
+          <div className="relative w-full aspect-video bg-[#1A1918] flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <div className="w-20 h-20 rounded-full bg-[hsl(25,95%,53%)]/20 flex items-center justify-center mx-auto">
+                <Play className="h-8 w-8 text-[hsl(25,95%,53%)] fill-[hsl(25,95%,53%)]" />
+              </div>
+              <p className="text-white/50 font-landing-body text-sm">
+                Video demo in arrivo
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
