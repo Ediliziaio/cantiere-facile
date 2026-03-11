@@ -2,7 +2,8 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { mockCantieri, mockDocumenti, mockSubappaltatori, mockLavoratori, mockMezzi, mockAccessi } from "@/data/mock-data";
+import { mockCantieri, mockDocumenti, mockSubappaltatori, mockLavoratori, mockMezzi, mockAccessi, mockFileCantiere } from "@/data/mock-data";
+import { GalleriaCantiere } from "@/components/cantiere/GalleriaCantiere";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { ChecklistProgress } from "@/components/cantiere/ChecklistProgress";
@@ -28,6 +29,7 @@ export default function CantiereDetail() {
   const workers = mockLavoratori.filter((l) => subs.some((s) => s.id === l.subappaltatore_id) || l.tipo === "interno");
   const mezzi = mockMezzi.filter((m) => m.cantiere_id === id);
   const accessi = mockAccessi.filter((a) => a.cantiere_id === id);
+  const fileCantiere = mockFileCantiere.filter((f) => f.cantiere_id === id);
 
   return (
     <div className="space-y-6">
@@ -55,6 +57,7 @@ export default function CantiereDetail() {
           <TabsTrigger value="lavoratori">Lavoratori ({workers.length})</TabsTrigger>
           <TabsTrigger value="mezzi">Mezzi ({mezzi.length})</TabsTrigger>
           <TabsTrigger value="accessi">Accessi ({accessi.length})</TabsTrigger>
+          <TabsTrigger value="galleria">Galleria ({fileCantiere.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="documenti">
@@ -127,6 +130,9 @@ export default function CantiereDetail() {
               </div>
             ))}
           </div>
+        </TabsContent>
+        <TabsContent value="galleria">
+          <GalleriaCantiere cantiereId={id!} />
         </TabsContent>
       </Tabs>
     </div>
