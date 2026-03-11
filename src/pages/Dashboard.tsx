@@ -15,12 +15,29 @@ const badgeInScadenza = mockBadges.filter((b) => {
   return diff <= 30 && diff > 0 && b.stato === "attivo";
 }).length;
 
+// Mezzi con scadenze imminenti
+const mezziScadenze: { mezzo: typeof mockMezzi[0]; tipo_scad: string; data: string; stato: string }[] = [];
+mockMezzi.forEach((m) => {
+  const checks = [
+    { label: "Revisione", date: m.data_prossima_revisione },
+    { label: "Manutenzione", date: m.data_prossima_manutenzione },
+    { label: "Assicurazione", date: m.scadenza_assicurazione },
+    ...(m.scadenza_collaudo ? [{ label: "Collaudo", date: m.scadenza_collaudo }] : []),
+  ];
+  checks.forEach((c) => {
+    const s = getScadenzaStatus(c.date);
+    if (s !== "valido") mezziScadenze.push({ mezzo: m, tipo_scad: c.label, data: c.date, stato: s });
+  });
+});
+const mezziConScadenze = new Set(mezziScadenze.map((ms) => ms.mezzo.id)).size;
+
 const statCards = [
   { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/app/cantieri" },
   { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/app/scadenze", accent: true },
   { label: "Accessi oggi", value: dashboardStats.accessiOggi, icon: ShieldCheck, href: "/app/accessi" },
   { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/app/subappaltatori" },
   { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/app/badge" },
+  { label: "Mezzi con scadenze", value: mezziConScadenze, icon: Truck, href: "/app/mezzi", accent: mezziConScadenze > 0 },
 ];
 
 export default function Dashboard() {
