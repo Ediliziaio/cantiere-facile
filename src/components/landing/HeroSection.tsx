@@ -197,15 +197,16 @@ export default function HeroSection() {
               Come funziona Cantiere in Cloud
             </DialogTitle>
           </DialogHeader>
-          <div className="relative w-full aspect-video bg-[#1A1918] flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <div className="w-20 h-20 rounded-full bg-[hsl(25,95%,53%)]/20 flex items-center justify-center mx-auto">
-                <Play className="h-8 w-8 text-[hsl(25,95%,53%)] fill-[hsl(25,95%,53%)]" />
-              </div>
-              <p className="text-white/50 font-landing-body text-sm">
-                Video demo in arrivo
-              </p>
-            </div>
+          <div className="relative w-full aspect-video bg-[#1A1918]">
+            {videoOpen && (
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1"
+                title="Demo Cantiere in Cloud"
+                allow="autoplay; encrypted-media; fullscreen"
+                allowFullScreen
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>

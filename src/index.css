@@ -142,6 +142,16 @@
   display: none;
 }
 
+/* Shine animation for pricing card */
+@keyframes shine {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  60% { transform: translateX(300%) skewX(-12deg); }
+  100% { transform: translateX(300%) skewX(-12deg); }
+}
+.animate-shine {
+  animation: shine 4s ease-in-out infinite;
+}
+
 /* Landing page marquee */
 .marquee-track {
   display: flex;

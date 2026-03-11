@@ -226,7 +226,8 @@ export default function PricingSection() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: mobileIdx * 0.1 }}
-                className={`rounded-xl border border-[hsl(30,6%,90%)] bg-white p-6 flex flex-col ${
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                className={`rounded-xl border border-[hsl(30,6%,90%)] bg-white p-6 flex flex-col hover:shadow-lg transition-shadow ${
                   plan.name === "Starter" ? "md:order-1" : "md:order-3"
                 }`}
               >
