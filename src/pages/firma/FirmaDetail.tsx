@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, Send, Ban, CheckCircle2, Clock, XCircle, PenTool, Mail, Copy } from "lucide-react";
+import { ArrowLeft, Send, Ban, CheckCircle2, Clock, XCircle, PenTool, Mail, Copy, Settings, Users, Eye } from "lucide-react";
 import {
   mockDocumentiFirma, mockFirmatari, mockFirmaAuditLog,
   getStatoLabel, getTipoLabel, type StatoDocumentoFirma, type StatoFirmatario, type AzioneAudit
@@ -74,6 +74,19 @@ export default function FirmaDetail() {
         <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${statoColors[doc.stato]}`}>
           {getStatoLabel(doc.stato).label}
         </span>
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" asChild>
+          <Link to={`/app/firma/${id}/configura`}><Settings className="h-3.5 w-3.5 mr-1.5" /> Configura campi</Link>
+        </Button>
+        <Button variant="outline" size="sm" asChild>
+          <Link to={`/app/firma/${id}/firmatari`}><Users className="h-3.5 w-3.5 mr-1.5" /> Gestisci firmatari</Link>
+        </Button>
+        <Button variant="outline" size="sm" asChild>
+          <Link to={`/app/firma/${id}/anteprima`}><Eye className="h-3.5 w-3.5 mr-1.5" /> Anteprima</Link>
+        </Button>
       </div>
 
       {/* Pipeline stepper */}
