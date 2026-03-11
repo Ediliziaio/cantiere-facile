@@ -3,7 +3,8 @@ import { MapPin, QrCode, Clock, Shield, BarChart3, Users, Navigation, AlertTrian
 
 const data: FeaturePageData = {
   tag: "Controllo Accessi Geo",
-  headline: "GPS + QR code. Nessuno può timbrare da casa.",
+  headline: "GPS + QR code.",
+  headlineAccent: "Nessuno può timbrare da casa.",
   subtitle: "Sai esattamente chi è in cantiere, da quando, e se è autorizzato. In tempo reale. Con coordinate GPS verificate.",
   painHeadline: "Senza controllo accessi, il cantiere è una porta aperta.",
   pains: [

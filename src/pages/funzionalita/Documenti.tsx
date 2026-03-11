@@ -3,7 +3,8 @@ import { Upload, Bell, CheckCircle2, Shield, FolderOpen, Users, Clock, FileCheck
 
 const data: FeaturePageData = {
   tag: "Gestione Documenti",
-  headline: "Zero sanzioni. 100% documenti in regola.",
+  headline: "Zero sanzioni.",
+  headlineAccent: "100% documenti in regola.",
   subtitle: "Il 43% delle sanzioni in cantiere è per documenti scaduti o mancanti. Con Cantiere in Cloud, non succede più. Ogni documento è tracciato, ogni scadenza è sotto controllo.",
   painHeadline: "Senza Cantiere in Cloud, ogni giorno rischi questo.",
   pains: [

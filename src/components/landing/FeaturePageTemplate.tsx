@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import { motion, useSpring, useTransform, useMotionValue } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import { CheckCircle2, XCircle, ArrowRight, HardHat } from "lucide-react";
+import { ArrowRight, XCircle, CheckCircle2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import LandingNavbar from "./LandingNavbar";
 import LandingFooter from "./LandingFooter";
 
@@ -47,6 +48,7 @@ interface Testimonial {
 export interface FeaturePageData {
   tag: string;
   headline: string;
+  headlineAccent: string;
   subtitle: string;
   pains: Pain[];
   painHeadline: string;
@@ -58,6 +60,15 @@ export interface FeaturePageData {
   ctaHeadline: string;
   ctaSubtitle: string;
 }
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+  visible: { transition: { staggerChildren: 0.12 } },
+};
 
 function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix: string }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.5 });
@@ -78,50 +89,71 @@ export default function FeaturePageTemplate({ data }: { data: FeaturePageData })
       <LandingNavbar />
 
       {/* Hero */}
-      <section className="pt-28 pb-20 md:pt-36 md:pb-28 bg-[#0F0E0D]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="inline-block text-xs font-semibold uppercase tracking-widest text-[hsl(var(--primary))] bg-[hsl(var(--primary))]/10 px-3 py-1 rounded-full mb-6"
-          >
-            {data.tag}
-          </motion.span>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-landing-heading font-bold text-3xl md:text-5xl lg:text-6xl text-white leading-tight"
-          >
-            {data.headline}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-5 text-lg md:text-xl text-[hsl(30,6%,60%)] max-w-2xl mx-auto leading-relaxed"
-          >
-            {data.subtitle}
-          </motion.p>
+      <section className="relative bg-[#0F0E0D] overflow-hidden">
+        {/* Orange radial glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-[hsl(25,95%,53%)] opacity-[0.07] rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Floating shapes */}
+        <div className="absolute top-20 left-[10%] w-16 h-16 border border-[hsl(25,95%,53%)]/20 rounded-lg animate-float-slow pointer-events-none" />
+        <div className="absolute top-40 right-[15%] w-10 h-10 border border-[hsl(38,92%,64%)]/15 rounded-full animate-float-slow-reverse pointer-events-none" />
+        <div className="absolute bottom-32 left-[20%] w-8 h-8 bg-[hsl(25,95%,53%)]/10 rounded animate-float-slow pointer-events-none" />
+        <div className="absolute bottom-20 right-[10%] w-12 h-12 border border-[hsl(25,95%,53%)]/15 rounded-lg rotate-45 animate-float-slow-reverse pointer-events-none" />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-20 md:pt-36 md:pb-28">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3"
+            variants={stagger}
+            initial="hidden"
+            animate="visible"
+            className="max-w-2xl"
           >
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition-opacity"
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }}>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[hsl(25,95%,53%)]/30 text-[hsl(25,95%,53%)] text-sm font-landing-body font-medium">
+                {data.tag}
+              </span>
+            </motion.div>
+
+            <motion.h1
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-6 font-landing-heading font-bold text-3xl sm:text-4xl md:text-[3.5rem] text-white leading-[1.1] tracking-tight"
             >
-              Prova gratis 14 giorni <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/#funzionalita"
-              className="text-sm text-[hsl(30,6%,50%)] hover:text-white transition-colors"
+              {data.headline}
+              <br />
+              <span className="text-[hsl(25,95%,53%)]">{data.headlineAccent}</span>
+            </motion.h1>
+
+            <motion.p
+              variants={fadeUp}
+              transition={{ duration: 0.5 }}
+              className="mt-5 text-lg md:text-xl text-[hsl(30,6%,60%)] font-landing-body leading-relaxed max-w-[600px]"
             >
-              Torna alle funzionalità →
-            </Link>
+              {data.subtitle}
+            </motion.p>
+
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="mt-8 flex flex-col sm:flex-row items-start gap-3">
+              <Button
+                size="lg"
+                asChild
+                className="rounded-full bg-[hsl(25,95%,53%)] hover:bg-[hsl(25,95%,48%)] text-white font-landing-body text-base px-8 h-12"
+              >
+                <Link to="/register">
+                  Prova gratis 14 giorni
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Link
+                to="/#funzionalita"
+                className="text-sm text-[hsl(30,6%,50%)] hover:text-white transition-colors h-12 flex items-center"
+              >
+                ← Torna alle funzionalità
+              </Link>
+            </motion.div>
+
+            <motion.div variants={fadeUp} transition={{ duration: 0.5 }} className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-[hsl(30,6%,50%)] font-landing-body">
+              <span>✓ Setup in 15 minuti</span>
+              <span>✓ Prova 14 giorni gratis</span>
+              <span>✓ Cancelli quando vuoi</span>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -145,8 +177,9 @@ export default function FeaturePageTemplate({ data }: { data: FeaturePageData })
       <FaqSection faqs={data.faqs} />
 
       {/* CTA */}
-      <section className="py-20 md:py-28 bg-[#0F0E0D]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <section className="relative py-20 md:py-28 bg-[#0F0E0D] overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[hsl(25,95%,53%)] opacity-[0.06] rounded-full blur-[120px] pointer-events-none" />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -156,12 +189,15 @@ export default function FeaturePageTemplate({ data }: { data: FeaturePageData })
             {data.ctaHeadline}
           </motion.h2>
           <p className="text-[hsl(30,6%,50%)] mb-8">{data.ctaSubtitle}</p>
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] text-white font-semibold px-8 py-3.5 rounded-lg text-lg hover:opacity-90 transition-opacity"
+          <Button
+            size="lg"
+            asChild
+            className="rounded-full bg-[hsl(25,95%,53%)] hover:bg-[hsl(25,95%,48%)] text-white font-landing-body text-lg px-10 h-14"
           >
-            Inizia gratis oggi <ArrowRight className="h-5 w-5" />
-          </Link>
+            <Link to="/register">
+              Inizia gratis oggi <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </Button>
         </div>
       </section>
 
@@ -173,12 +209,12 @@ export default function FeaturePageTemplate({ data }: { data: FeaturePageData })
 function PainSection({ headline, pains }: { headline: string; pains: Pain[] }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
   return (
-    <section className="py-20 md:py-28 bg-white" ref={ref}>
+    <section className="py-20 md:py-28 bg-[#0F0E0D] border-t border-white/5" ref={ref}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="font-landing-heading font-bold text-2xl md:text-3xl text-[hsl(var(--foreground))] text-center mb-12"
+          className="font-landing-heading font-bold text-2xl md:text-3xl text-white text-center mb-12"
         >
           {headline}
         </motion.h2>
@@ -189,12 +225,12 @@ function PainSection({ headline, pains }: { headline: string; pains: Pain[] }) {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.1 }}
-              className="flex items-start gap-3 bg-[hsl(var(--destructive))]/5 border border-[hsl(var(--destructive))]/10 rounded-lg p-5"
+              className="flex items-start gap-3 bg-[hsl(0,84%,60%)]/5 border border-[hsl(0,84%,60%)]/10 rounded-lg p-5"
             >
-              <XCircle className="h-5 w-5 text-[hsl(var(--destructive))] shrink-0 mt-0.5" />
+              <XCircle className="h-5 w-5 text-[hsl(0,84%,60%)] shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-[hsl(var(--foreground))]">{p.text}</p>
-                {p.cost && <p className="text-xs text-[hsl(var(--destructive))] font-semibold mt-1">{p.cost}</p>}
+                <p className="text-sm font-medium text-white/90">{p.text}</p>
+                {p.cost && <p className="text-xs text-[hsl(0,84%,60%)] font-semibold mt-1">{p.cost}</p>}
               </div>
             </motion.div>
           ))}
@@ -207,30 +243,32 @@ function PainSection({ headline, pains }: { headline: string; pains: Pain[] }) {
 function StepsSection({ steps }: { steps: Step[] }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
   return (
-    <section className="py-20 md:py-28 bg-[hsl(var(--muted))]" ref={ref}>
+    <section className="py-20 md:py-28 bg-[#131211]" ref={ref}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="font-landing-heading font-bold text-2xl md:text-3xl text-[hsl(var(--foreground))] text-center mb-14"
+          className="font-landing-heading font-bold text-2xl md:text-3xl text-white text-center mb-14"
         >
           Come funziona
         </motion.h2>
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-3 relative">
+          {/* Connector line */}
+          <div className="hidden md:block absolute top-7 left-[16.67%] right-[16.67%] h-px bg-gradient-to-r from-[hsl(25,95%,53%)]/30 via-[hsl(25,95%,53%)]/50 to-[hsl(25,95%,53%)]/30" />
           {steps.map((s, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.15 }}
-              className="text-center"
+              className="text-center relative"
             >
-              <div className="mx-auto w-14 h-14 rounded-full bg-[hsl(var(--primary))]/10 flex items-center justify-center mb-4">
-                <s.icon className="h-6 w-6 text-[hsl(var(--primary))]" />
+              <div className="mx-auto w-14 h-14 rounded-full bg-[hsl(25,95%,53%)]/10 border border-[hsl(25,95%,53%)]/20 flex items-center justify-center mb-4 relative z-10">
+                <s.icon className="h-6 w-6 text-[hsl(25,95%,53%)]" />
               </div>
-              <div className="text-xs font-bold text-[hsl(var(--primary))] mb-2">STEP {i + 1}</div>
-              <h3 className="font-landing-heading font-bold text-lg text-[hsl(var(--foreground))] mb-2">{s.title}</h3>
-              <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{s.description}</p>
+              <div className="text-xs font-bold text-[hsl(25,95%,53%)] mb-2 font-landing-body tracking-widest">STEP {i + 1}</div>
+              <h3 className="font-landing-heading font-bold text-lg text-white mb-2">{s.title}</h3>
+              <p className="text-sm text-[hsl(30,6%,50%)] leading-relaxed">{s.description}</p>
             </motion.div>
           ))}
         </div>
@@ -242,8 +280,9 @@ function StepsSection({ steps }: { steps: Step[] }) {
 function StatsSection({ stats }: { stats: Stat[] }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
   return (
-    <section className="py-16 md:py-24 bg-[#0F0E0D]" ref={ref}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+    <section className="relative py-16 md:py-24 bg-[#0F0E0D] overflow-hidden" ref={ref}>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[hsl(25,95%,53%)] opacity-[0.05] rounded-full blur-[100px] pointer-events-none" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
         <motion.h2
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -258,9 +297,9 @@ function StatsSection({ stats }: { stats: Stat[] }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: i * 0.1 }}
-              className="text-center"
+              className="text-center bg-white/5 rounded-xl p-6 border border-white/5"
             >
-              <div className="font-landing-heading font-bold text-3xl md:text-4xl text-[hsl(var(--primary))]">
+              <div className="font-landing-heading font-bold text-3xl md:text-4xl text-[hsl(25,95%,53%)]">
                 <AnimatedCounter value={s.value} prefix={s.prefix} suffix={s.suffix} />
               </div>
               <div className="text-sm text-[hsl(30,6%,50%)] mt-2">{s.label}</div>
@@ -275,12 +314,12 @@ function StatsSection({ stats }: { stats: Stat[] }) {
 function FeaturesGrid({ features }: { features: SubFeature[] }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
   return (
-    <section className="py-20 md:py-28 bg-white" ref={ref}>
+    <section className="py-20 md:py-28 bg-[#131211]" ref={ref}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="font-landing-heading font-bold text-2xl md:text-3xl text-[hsl(var(--foreground))] text-center mb-14"
+          className="font-landing-heading font-bold text-2xl md:text-3xl text-white text-center mb-14"
         >
           Tutto nel dettaglio
         </motion.h2>
@@ -291,13 +330,13 @@ function FeaturesGrid({ features }: { features: SubFeature[] }) {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08 }}
-              className="bg-[hsl(var(--muted))] rounded-xl p-6 hover:shadow-lg transition-shadow"
+              className="bg-white/5 rounded-xl p-6 border border-white/5 hover:border-[hsl(25,95%,53%)]/20 hover:bg-white/[0.07] transition-all duration-300 group"
             >
-              <div className="w-10 h-10 rounded-lg bg-[hsl(var(--primary))]/10 flex items-center justify-center mb-4">
-                <f.icon className="h-5 w-5 text-[hsl(var(--primary))]" />
+              <div className="w-10 h-10 rounded-lg bg-[hsl(25,95%,53%)]/10 flex items-center justify-center mb-4 group-hover:bg-[hsl(25,95%,53%)]/20 transition-colors">
+                <f.icon className="h-5 w-5 text-[hsl(25,95%,53%)]" />
               </div>
-              <h3 className="font-landing-heading font-bold text-base text-[hsl(var(--foreground))] mb-2">{f.title}</h3>
-              <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{f.description}</p>
+              <h3 className="font-landing-heading font-bold text-base text-white mb-2">{f.title}</h3>
+              <p className="text-sm text-[hsl(30,6%,50%)] leading-relaxed">{f.description}</p>
             </motion.div>
           ))}
         </div>
@@ -309,20 +348,21 @@ function FeaturesGrid({ features }: { features: SubFeature[] }) {
 function TestimonialSection({ testimonial }: { testimonial: Testimonial }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
   return (
-    <section className="py-20 md:py-28 bg-[hsl(var(--muted))]" ref={ref}>
+    <section className="py-20 md:py-28 bg-[#0F0E0D]" ref={ref}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.5 }}
+          className="bg-white/5 rounded-2xl p-8 md:p-12 border border-white/5"
         >
           <div className="text-4xl mb-6">💬</div>
-          <blockquote className="font-landing-heading text-xl md:text-2xl text-[hsl(var(--foreground))] leading-relaxed italic">
+          <blockquote className="font-landing-heading text-xl md:text-2xl text-white leading-relaxed italic">
             "{testimonial.quote}"
           </blockquote>
           <div className="mt-6">
-            <div className="font-semibold text-[hsl(var(--foreground))]">{testimonial.name}</div>
-            <div className="text-sm text-[hsl(var(--muted-foreground))]">{testimonial.role} — {testimonial.company}</div>
+            <div className="font-semibold text-white">{testimonial.name}</div>
+            <div className="text-sm text-[hsl(30,6%,50%)]">{testimonial.role} — {testimonial.company}</div>
           </div>
         </motion.div>
       </div>
@@ -333,12 +373,12 @@ function TestimonialSection({ testimonial }: { testimonial: Testimonial }) {
 function FaqSection({ faqs }: { faqs: Faq[] }) {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
   return (
-    <section className="py-20 md:py-28 bg-white" ref={ref}>
+    <section className="py-20 md:py-28 bg-[#131211]" ref={ref}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="font-landing-heading font-bold text-2xl md:text-3xl text-[hsl(var(--foreground))] text-center mb-12"
+          className="font-landing-heading font-bold text-2xl md:text-3xl text-white text-center mb-12"
         >
           Domande frequenti
         </motion.h2>
@@ -350,11 +390,11 @@ function FaqSection({ faqs }: { faqs: Faq[] }) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1 }}
             >
-              <AccordionItem value={`faq-${i}`} className="border border-[hsl(var(--border))] rounded-lg px-4">
-                <AccordionTrigger className="text-sm font-medium text-[hsl(var(--foreground))] hover:no-underline">
+              <AccordionItem value={`faq-${i}`} className="border border-white/10 rounded-lg px-4 bg-white/5">
+                <AccordionTrigger className="text-sm font-medium text-white hover:no-underline">
                   {f.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">
+                <AccordionContent className="text-sm text-[hsl(30,6%,50%)] leading-relaxed">
                   {f.answer}
                 </AccordionContent>
               </AccordionItem>

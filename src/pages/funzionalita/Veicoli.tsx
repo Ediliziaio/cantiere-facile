@@ -3,7 +3,8 @@ import { Truck, Bell, ClipboardList, Shield, MapPin, FileText, Wrench, BarChart3
 
 const data: FeaturePageData = {
   tag: "Gestione Veicoli",
-  headline: "Revisione scaduta = mezzo fermo = cantiere fermo. Mai più.",
+  headline: "Revisione scaduta = mezzo fermo = cantiere fermo.",
+  headlineAccent: "Mai più.",
   subtitle: "Ogni mezzo d'opera ha la sua anagrafica digitale: targa, assicurazione, revisione, cantiere di assegnazione. Scadenze sotto controllo, sempre.",
   painHeadline: "Senza gestione veicoli, il rischio è enorme.",
   pains: [

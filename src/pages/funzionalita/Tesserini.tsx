@@ -4,6 +4,7 @@ import { CreditCard, QrCode, Smartphone, Camera, Shield, UserCheck, Printer, Ref
 const data: FeaturePageData = {
   tag: "Tesserini Digitali",
   headline: "Il badge che l'ASL vuole vedere.",
+  headlineAccent: "Sempre aggiornato. Sempre con sé.",
   subtitle: "Conforme al D.L. 159/2025. Ogni lavoratore ha il suo tesserino digitale con QR code, sempre aggiornato, sempre con sé. Nessun hardware, nessuna stampante.",
   painHeadline: "Senza tesserini digitali, in cantiere succede questo.",
   pains: [

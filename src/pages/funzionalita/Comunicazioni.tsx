@@ -3,7 +3,8 @@ import { MessageSquare, Paperclip, Clock, Shield, Download, Users, Search, Bell 
 
 const data: FeaturePageData = {
   tag: "Comunicazioni",
-  headline: "Ogni messaggio è timestampato. Hai sempre le prove.",
+  headline: "Ogni messaggio è timestampato.",
+  headlineAccent: "Hai sempre le prove.",
   subtitle: "Basta WhatsApp, basta email perse, basta 'non l'ho mai ricevuto'. Ogni comunicazione è tracciata, archiviata e scaricabile in PDF. In caso di controversia, hai tutto.",
   painHeadline: "Senza comunicazioni tracciate, sei vulnerabile.",
   pains: [
