@@ -108,6 +108,7 @@ const App = () => (
               <Route path="firma/:id/configura" element={<FirmaConfigura />} />
               <Route path="firma/:id/firmatari" element={<FirmaFirmatari />} />
               <Route path="firma/:id/anteprima" element={<FirmaAnteprima />} />
+              <Route path="firma/:id/certificato" element={<CertificatoFirma />} />
               <Route path="impostazioni" element={<Impostazioni />} />
             </Route>
 
