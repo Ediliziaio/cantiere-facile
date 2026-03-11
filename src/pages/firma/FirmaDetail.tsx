@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, Send, Ban, CheckCircle2, Clock, XCircle, PenTool, Mail, Copy, Settings, Users, Eye, Award } from "lucide-react";
+import { ArrowLeft, Send, Ban, CheckCircle2, Clock, XCircle, PenTool, Mail, Copy, Settings, Users, Eye, Award, Download, Loader2 } from "lucide-react";
 import {
   mockDocumentiFirma, mockFirmatari, mockFirmaAuditLog,
   getStatoLabel, getTipoLabel, type StatoDocumentoFirma, type StatoFirmatario, type AzioneAudit
@@ -11,6 +12,7 @@ import {
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import { downloadSignedPdf } from "@/lib/pdf-generator";
 
 const statoColors: Record<StatoDocumentoFirma, string> = {
   bozza: "bg-muted text-muted-foreground",
@@ -56,7 +58,22 @@ export default function FirmaDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [downloading, setDownloading] = useState(false);
   const doc = mockDocumentiFirma.find(d => d.id === id);
+
+  const handleDownloadPdf = async () => {
+    if (!id) return;
+    setDownloading(true);
+    try {
+      await downloadSignedPdf(id);
+      toast({ title: "PDF scaricato", description: "Il documento firmato è stato generato e scaricato" });
+    } catch {
+      toast({ title: "Errore", description: "Impossibile generare il PDF", variant: "destructive" });
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (!doc) return <div className="p-8 text-center text-muted-foreground">Documento non trovato</div>;
 
   const signers = mockFirmatari.filter(f => f.documento_id === doc.id);
@@ -88,8 +105,20 @@ export default function FirmaDetail() {
           <Link to={`/app/firma/${id}/anteprima`}><Eye className="h-3.5 w-3.5 mr-1.5" /> Anteprima</Link>
         </Button>
         {doc.stato === "completato" && (
-          <Button variant="outline" size="sm" asChild>
-            <Link to={`/app/firma/${id}/certificato`}><Award className="h-3.5 w-3.5 mr-1.5" /> Certificato</Link>
+          <>
+            <Button variant="outline" size="sm" asChild>
+              <Link to={`/app/firma/${id}/certificato`}><Award className="h-3.5 w-3.5 mr-1.5" /> Certificato</Link>
+            </Button>
+            <Button size="sm" onClick={handleDownloadPdf} disabled={downloading}>
+              {downloading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Download className="h-3.5 w-3.5 mr-1.5" />}
+              Scarica PDF firmato
+            </Button>
+          </>
+        )}
+        {doc.stato !== "completato" && (
+          <Button variant="outline" size="sm" onClick={handleDownloadPdf} disabled={downloading}>
+            {downloading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Download className="h-3.5 w-3.5 mr-1.5" />}
+            Genera PDF anteprima
           </Button>
         )}
       </div>
