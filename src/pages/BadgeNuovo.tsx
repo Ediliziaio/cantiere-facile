@@ -26,9 +26,11 @@ export default function BadgeNuovo() {
 
   const selectedLav = mockLavoratori.find((l) => l.id === lavoratoreId);
   const nextNum = String(mockBadges.length + 1).padStart(3, "0") + "/2026";
-  const fakeHash = Array.from(`preview-${lavoratoreId}-${cantiereId}`).reduce(
-    (h, c) => (((h << 5) - h + c.charCodeAt(0)) | 0).toString(16), "a3f8"
-  ).padEnd(64, "0").slice(0, 64);
+  const fakeHash = (() => {
+    let h = 0;
+    for (const c of `preview-${lavoratoreId}-${cantiereId}`) h = ((h << 5) - h + c.charCodeAt(0)) | 0;
+    return Math.abs(h).toString(16).padEnd(64, "0").slice(0, 64);
+  })();
 
   const previewBadge: Badge | null =
     cantiereId && lavoratoreId && selectedLav

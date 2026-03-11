@@ -64,8 +64,11 @@ const genCode = (i: number) => `CIC-2026-${String(i).padStart(6, "0")}`;
 
 const ENTE = "Edilizia Moderna S.r.l. — P.IVA 01234567890";
 const NORMA = "D.L. 159/2025 — Art. 4";
-const fakeHash = (seed: string) =>
-  Array.from(seed + "sha256salt").reduce((h, c) => (((h << 5) - h + c.charCodeAt(0)) | 0).toString(16), "a3f8").padEnd(64, "0").slice(0, 64);
+const fakeHash = (seed: string) => {
+  let h = 0;
+  for (const c of seed + "sha256salt") h = ((h << 5) - h + c.charCodeAt(0)) | 0;
+  return Math.abs(h).toString(16).padEnd(64, "0").slice(0, 64);
+};
 
 export const mockBadges: Badge[] = [
   {
