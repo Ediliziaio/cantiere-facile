@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { mockDocumenti, mockCantieri } from "@/data/mock-data";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { DocumentUploadZone } from "@/components/cantiere/DocumentUploadZone";
+import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { toast } from "sonner";
 import type { DocumentoStato } from "@/data/mock-data";
 
