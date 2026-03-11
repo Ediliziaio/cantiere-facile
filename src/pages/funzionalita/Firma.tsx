@@ -3,7 +3,8 @@ import { PenTool, Send, FileCheck, Shield, Clock, Smartphone, Lock, BarChart3 } 
 
 const data: FeaturePageData = {
   tag: "Firma Digitale",
-  headline: "60 secondi per firmare un verbale. Dal cantiere. Col dito.",
+  headline: "60 secondi per firmare un verbale.",
+  headlineAccent: "Dal cantiere. Col dito.",
   subtitle: "Niente più 'te lo mando per email'. Carica, posiziona, invia. Il firmatario apre il link dal telefono e firma. Il PDF certificato si genera in automatico.",
   painHeadline: "Senza firma digitale, i tuoi documenti non valgono niente.",
   pains: [
