@@ -1,13 +1,32 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, HardHat } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, HardHat, Download, Loader2 } from "lucide-react";
 import { mockFirmatari, mockDocumentiFirma } from "@/data/mock-firma";
+import { downloadSignedPdf } from "@/lib/pdf-generator";
+import { useToast } from "@/hooks/use-toast";
 
 export default function FirmaCompletata() {
   const { token } = useParams();
+  const { toast } = useToast();
+  const [downloading, setDownloading] = useState(false);
   const signer = mockFirmatari.find(f => f.token_firma === token);
   const doc = signer ? mockDocumentiFirma.find(d => d.id === signer.documento_id) : null;
   const now = new Date();
+
+  const handleDownload = async () => {
+    if (!doc) return;
+    setDownloading(true);
+    try {
+      await downloadSignedPdf(doc.id);
+      toast({ title: "PDF scaricato" });
+    } catch {
+      toast({ title: "Errore durante il download", variant: "destructive" });
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -32,6 +51,13 @@ export default function FirmaCompletata() {
               <div className="flex justify-between"><span>Firmatario</span><span className="font-medium text-foreground">{signer ? `${signer.nome} ${signer.cognome}` : "—"}</span></div>
               <div className="flex justify-between"><span>Hash documento</span><span className="font-mono text-foreground">a3f9c2e8...b71d</span></div>
             </div>
+
+            {doc && (
+              <Button onClick={handleDownload} disabled={downloading} className="w-full">
+                {downloading ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Download className="h-4 w-4 mr-1.5" />}
+                Scarica PDF firmato
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
