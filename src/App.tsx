@@ -61,6 +61,9 @@ const App = () => (
             <Route path="/verifica/:codice" element={<VerificaBadge />} />
             <Route path="/scan" element={<Scan />} />
             <Route path="/portale/:token" element={<PortaleSubappaltatore />} />
+            <Route path="/firma/:token" element={<FirmaPublica />} />
+            <Route path="/firma/:token/completa" element={<FirmaCompletata />} />
+            <Route path="/firma/:token/rifiuta" element={<FirmaRifiuta />} />
 
             {/* SuperAdmin routes */}
             <Route path="/superadmin/login" element={<SuperAdminLogin />} />
