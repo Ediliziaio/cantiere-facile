@@ -12,19 +12,83 @@ import { useToast } from "@/hooks/use-toast";
 const MOCK_OTP = "123456";
 
 const stepLabels = ["Identifica", "Leggi", "Firma", "Conferma"];
+const stepIcons = [PenTool, FileText, PenTool, ShieldCheck];
 
 function ProgressStepper({ current }: { current: number }) {
+  const progress = (current / (stepLabels.length - 1)) * 100;
   return (
-    <div className="flex items-center justify-between mb-6">
-      {stepLabels.map((label, i) => (
-        <div key={label} className="flex items-center flex-1">
-          <div className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold shrink-0 transition-colors ${
-            i < current ? "bg-primary text-primary-foreground" : i === current ? "bg-primary text-primary-foreground ring-4 ring-primary/20" : "bg-muted text-muted-foreground"
-          }`}>{i + 1}</div>
-          <span className={`ml-1 text-xs font-medium hidden sm:inline ${i <= current ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
-          {i < stepLabels.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${i < current ? "bg-primary" : "bg-border"}`} />}
-        </div>
-      ))}
+    <div className="space-y-3 mb-6">
+      {/* Animated progress bar */}
+      <div className="relative h-1.5 bg-muted rounded-full overflow-hidden">
+        <div
+          className="absolute inset-y-0 left-0 bg-primary rounded-full"
+          style={{
+            width: `${progress}%`,
+            transition: "width 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        {stepLabels.map((label, i) => {
+          const Icon = stepIcons[i];
+          const done = i < current;
+          const active = i === current;
+          return (
+            <div key={label} className="flex flex-col items-center gap-1">
+              <div
+                className={`flex items-center justify-center w-9 h-9 rounded-full text-xs font-bold shrink-0 ${
+                  done
+                    ? "bg-primary text-primary-foreground scale-90"
+                    : active
+                    ? "bg-primary text-primary-foreground ring-4 ring-primary/20 scale-110"
+                    : "bg-muted text-muted-foreground scale-90"
+                }`}
+                style={{ transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)" }}
+              >
+                {done ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <Icon className="h-4 w-4" />
+                )}
+              </div>
+              <span
+                className={`text-[10px] font-medium ${
+                  active ? "text-primary" : done ? "text-foreground" : "text-muted-foreground"
+                }`}
+                style={{ transition: "color 0.3s ease" }}
+              >
+                {label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Step Transition Wrapper ────────────────────────────────
+
+function StepTransition({ children, stepKey }: { children: React.ReactNode; stepKey: number }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setVisible(false);
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true));
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [stepKey]);
+
+  return (
+    <div
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(16px)",
+        transition: "opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
+    >
+      {children}
     </div>
   );
 }
