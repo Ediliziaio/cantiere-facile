@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { mockDocumenti, mockCantieri } from "@/data/mock-data";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { DocumentUploadZone } from "@/components/cantiere/DocumentUploadZone";
+import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { toast } from "sonner";
 import type { DocumentoStato } from "@/data/mock-data";
 
@@ -65,7 +66,10 @@ export default function Documenti() {
                   {d.categoria} · {cantiere?.nome} · {d.data_scadenza ? new Date(d.data_scadenza).toLocaleDateString("it-IT") : "—"}
                 </p>
               </div>
-              <DocumentStatusBadge stato={d.stato as DocumentoStato} />
+              <div className="flex items-center gap-2 shrink-0">
+                <DocumentActions nomeFile={d.nome_file} categoria={d.categoria} dataCaricamento={d.data_caricamento} />
+                <DocumentStatusBadge stato={d.stato as DocumentoStato} />
+              </div>
             </div>
           );
         })}

@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { mockMezzi, mockCantieri, mockDocumenti, mockManutenzioni, getScadenzaStatus, type MezzoStatoOperativo } from "@/data/mock-data";
 
 const statoChip: Record<MezzoStatoOperativo, { label: string; className: string }> = {
@@ -195,11 +196,14 @@ export default function MezzoDetail() {
                   <p className="text-sm text-foreground">{d.nome_file}</p>
                   <p className="text-xs text-muted-foreground">{d.categoria} · Caricato il {new Date(d.data_caricamento).toLocaleDateString("it-IT")}</p>
                 </div>
-                {d.data_scadenza && (
-                  <span className={`text-xs font-medium ${getScadenzaStatus(d.data_scadenza) === "scaduto" ? "text-destructive" : getScadenzaStatus(d.data_scadenza) === "in_scadenza" ? "text-amber-600" : "text-emerald-600"}`}>
-                    Scade: {new Date(d.data_scadenza).toLocaleDateString("it-IT")}
-                  </span>
-                )}
+                <div className="flex items-center gap-2 shrink-0">
+                  <DocumentActions nomeFile={d.nome_file} categoria={d.categoria} dataCaricamento={d.data_caricamento} />
+                  {d.data_scadenza && (
+                    <span className={`text-xs font-medium ${getScadenzaStatus(d.data_scadenza) === "scaduto" ? "text-destructive" : getScadenzaStatus(d.data_scadenza) === "in_scadenza" ? "text-amber-600" : "text-emerald-600"}`}>
+                      Scade: {new Date(d.data_scadenza).toLocaleDateString("it-IT")}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
