@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         heading: ['Inter', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
+        'landing-heading': ['Syne', 'sans-serif'],
+        'landing-body': ['DM Sans', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
