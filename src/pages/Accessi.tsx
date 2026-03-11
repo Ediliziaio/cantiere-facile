@@ -206,8 +206,13 @@ export default function Accessi() {
 
   const showDataColumn = dateMode !== "giorno";
 
+  const formatDistanza = (m: number | null) => {
+    if (m == null) return "—";
+    return m < 1000 ? `${Math.round(m)}m` : `${(m / 1000).toFixed(1)}km`;
+  };
+
   const exportCSV = useCallback(() => {
-    const headers = ["Lavoratore", "Mansione", "Cantiere", "Data", "Entrata", "Uscita", "Ore Lavorate", "Esito"];
+    const headers = ["Lavoratore", "Mansione", "Cantiere", "Data", "Entrata", "Uscita", "Ore Lavorate", "Esito", "Lat Entrata", "Lon Entrata", "Distanza Entrata (m)", "Lat Uscita", "Lon Uscita", "Distanza Uscita (m)", "Fuori Zona"];
     const rows = filtered.map((s) => {
       const lav = getLav(s.lavoratoreId);
       return [
@@ -219,6 +224,13 @@ export default function Accessi() {
         s.inCorso ? "In corso" : formatTime(s.uscita),
         s.inCorso ? "—" : (formatDurata(s.minutiLavorati, false) ?? "—"),
         s.esito,
+        s.latEntrata?.toFixed(6) ?? "",
+        s.lonEntrata?.toFixed(6) ?? "",
+        s.distanzaEntrata != null ? Math.round(s.distanzaEntrata).toString() : "",
+        s.latUscita?.toFixed(6) ?? "",
+        s.lonUscita?.toFixed(6) ?? "",
+        s.distanzaUscita != null ? Math.round(s.distanzaUscita).toString() : "",
+        s.fuoriZona ? "Sì" : "No",
       ].map((v) => `"${v}"`).join(",");
     });
     const csv = [headers.join(","), ...rows].join("\n");
