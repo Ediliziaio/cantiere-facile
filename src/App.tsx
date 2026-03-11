@@ -81,6 +81,9 @@ const App = () => (
             <Route path="/firma/:token/rifiuta" element={<FirmaRifiuta />} />
             <Route path="/verifica/:hash" element={<VerificaDocumento />} />
             <Route path="/verifica" element={<VerificaDocumento />} />
+            <Route path="/chi-siamo" element={<ChiSiamo />} />
+            <Route path="/tariffe" element={<Tariffe />} />
+            <Route path="/funzionalita" element={<FunzionalitaOverview />} />
             <Route path="/funzionalita/documenti" element={<FunzionalitaDocumenti />} />
             <Route path="/funzionalita/tesserini" element={<FunzionalitaTesserini />} />
             <Route path="/funzionalita/accessi" element={<FunzionalitaAccessi />} />

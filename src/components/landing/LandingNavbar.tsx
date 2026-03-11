@@ -98,14 +98,14 @@ export default function LandingNavbar() {
           </div>
           <div className="flex flex-col items-center gap-6 pt-12">
             {navLinks.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
+              <Link
+                key={l.to}
+                to={l.to}
                 onClick={() => setMobileOpen(false)}
                 className="font-landing-body text-xl font-medium text-[hsl(20,14%,8%)]"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
             <div className="flex flex-col gap-3 w-full px-8 pt-6">
               <Button variant="outline" asChild className="font-landing-body w-full">
