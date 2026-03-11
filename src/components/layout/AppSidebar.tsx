@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -27,6 +27,7 @@ const navGroups = [
     items: [
       { title: "Cantieri", url: "/app/cantieri", icon: Building2, adminOnly: false },
       { title: "Documenti", url: "/app/documenti", icon: FileText, adminOnly: false },
+      { title: "Firma Digitale", url: "/app/firma", icon: PenTool, adminOnly: false },
       { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat, adminOnly: false },
       { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building, adminOnly: true },
       { title: "Mezzi", url: "/app/mezzi", icon: Truck, adminOnly: false },

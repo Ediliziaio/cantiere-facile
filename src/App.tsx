@@ -31,6 +31,12 @@ import Timbrature from "./pages/Timbrature";
 import Scan from "./pages/Scan";
 import VerificaBadge from "./pages/VerificaBadge";
 import PortaleSubappaltatore from "./pages/PortaleSubappaltatore";
+import FirmaDashboard from "./pages/firma/FirmaDashboard";
+import FirmaNuovo from "./pages/firma/FirmaNuovo";
+import FirmaDetail from "./pages/firma/FirmaDetail";
+import FirmaPublica from "./pages/firma/FirmaPublica";
+import FirmaCompletata from "./pages/firma/FirmaCompletata";
+import FirmaRifiuta from "./pages/firma/FirmaRifiuta";
 import SuperAdminLogin from "./pages/superadmin/SuperAdminLogin";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
 import SuperAdminAziende from "./pages/superadmin/SuperAdminAziende";
@@ -55,6 +61,9 @@ const App = () => (
             <Route path="/verifica/:codice" element={<VerificaBadge />} />
             <Route path="/scan" element={<Scan />} />
             <Route path="/portale/:token" element={<PortaleSubappaltatore />} />
+            <Route path="/firma/:token" element={<FirmaPublica />} />
+            <Route path="/firma/:token/completa" element={<FirmaCompletata />} />
+            <Route path="/firma/:token/rifiuta" element={<FirmaRifiuta />} />
 
             {/* SuperAdmin routes */}
             <Route path="/superadmin/login" element={<SuperAdminLogin />} />
@@ -84,6 +93,9 @@ const App = () => (
               <Route path="badge/:id" element={<BadgeDetail />} />
               <Route path="timbrature" element={<Timbrature />} />
               <Route path="comunicazioni" element={<Comunicazioni />} />
+              <Route path="firma" element={<FirmaDashboard />} />
+              <Route path="firma/nuovo" element={<FirmaNuovo />} />
+              <Route path="firma/:id" element={<FirmaDetail />} />
               <Route path="impostazioni" element={<Impostazioni />} />
             </Route>
 

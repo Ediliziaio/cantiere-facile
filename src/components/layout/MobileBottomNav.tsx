@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
-  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine
+  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine, PenTool
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -27,6 +27,7 @@ const menuGroups = [
     label: "Cantiere",
     items: [
       { title: "Documenti", url: "/app/documenti", icon: FileText, adminOnly: false },
+      { title: "Firma Digitale", url: "/app/firma", icon: PenTool, adminOnly: false },
       { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat, adminOnly: false },
       { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building, adminOnly: true },
       { title: "Mezzi", url: "/app/mezzi", icon: Truck, adminOnly: false },
