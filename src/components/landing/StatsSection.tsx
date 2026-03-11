@@ -1,12 +1,36 @@
-import { motion } from "framer-motion";
+import { motion, useSpring, useMotionValue } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
 const stats = [
-  { value: "78%", label: "delle sanzioni edili è per documentazione non conforme", source: "Dati INAIL 2024" },
-  { value: "€18.500", label: "multa media per irregolarità in cantiere", source: "Ispettorato Nazionale del Lavoro" },
-  { value: "3 ore", label: "risparmiate a settimana con gestione digitale", source: "Media utenti Cantiere in Cloud" },
-  { value: "60 sec", label: "per una firma digitale vs 5 giorni per una cartacea", source: "Benchmark interno" },
+  { value: 78, suffix: "%", prefix: "", label: "delle sanzioni edili è per documentazione non conforme", source: "Dati INAIL 2024" },
+  { value: 18500, suffix: "", prefix: "€", label: "multa media per irregolarità in cantiere", source: "Ispettorato Nazionale del Lavoro" },
+  { value: 3, suffix: " ore", prefix: "", label: "risparmiate a settimana con gestione digitale", source: "Media utenti Cantiere in Cloud" },
+  { value: 60, suffix: " sec", prefix: "", label: "per una firma digitale vs 5 giorni per una cartacea", source: "Benchmark interno" },
 ];
+
+function CountUp({ target, inView }: { target: number; inView: boolean }) {
+  const count = useMotionValue(0);
+  const spring = useSpring(count, { stiffness: 80, damping: 25 });
+
+  useEffect(() => {
+    if (inView) count.set(target);
+  }, [inView, target, count]);
+
+  useEffect(() => {
+    const unsubscribe = spring.on("change", (v) => {
+      const el = document.getElementById(`stats-counter-${target}`);
+      if (el) {
+        el.textContent = target >= 1000
+          ? Math.round(v).toLocaleString("it-IT")
+          : v.toFixed(target % 1 !== 0 ? 1 : 0);
+      }
+    });
+    return unsubscribe;
+  }, [spring, target]);
+
+  return <span id={`stats-counter-${target}`}>0</span>;
+}
 
 export default function StatsSection() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -39,7 +63,7 @@ export default function StatsSection() {
               className="text-center"
             >
               <p className="font-landing-heading font-bold text-3xl md:text-4xl text-[hsl(25,95%,53%)] mb-2">
-                {s.value}
+                {s.prefix}<CountUp target={s.value} inView={inView} />{s.suffix}
               </p>
               <p className="text-sm text-white/80 mb-1">{s.label}</p>
               <p className="text-xs text-white/40">{s.source}</p>
