@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 import { FileText, MapPin, PenTool, ArrowRight, CheckCircle2, Upload, Shield } from "lucide-react";
 
 const rows = [
@@ -124,9 +125,9 @@ export default function AlternatingFeatures() {
                 <p className="mt-4 font-landing-body text-[hsl(25,5%,45%)] text-sm leading-relaxed">
                   {row.body}
                 </p>
-                <a href="#" className="mt-5 inline-flex items-center gap-1.5 text-sm font-landing-body font-semibold text-[hsl(25,95%,53%)] hover:underline">
+                <Link to={`/funzionalita/${row.visual === "upload" ? "documenti" : row.visual === "geo" ? "accessi" : "firma"}`} className="mt-5 inline-flex items-center gap-1.5 text-sm font-landing-body font-semibold text-[hsl(25,95%,53%)] hover:underline">
                   {row.cta} <ArrowRight className="h-4 w-4" />
-                </a>
+                </Link>
               </div>
               <div className={!isEven ? "md:[direction:ltr]" : ""}>
                 <RowVisual type={row.visual} />

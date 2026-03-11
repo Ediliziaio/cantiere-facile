@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 import { FileText, CreditCard, MapPin, PenTool, MessageSquare, Truck, CheckCircle2, ArrowRight } from "lucide-react";
 
 const tabs = [
@@ -310,9 +311,9 @@ export default function FeatureTabsSection() {
                     </li>
                   ))}
                 </ul>
-                <a href="#" className="mt-6 inline-flex items-center gap-1.5 text-sm font-landing-body font-semibold text-[hsl(25,95%,53%)] hover:underline">
+                <Link to={`/funzionalita/${tabs[active].id}`} className="mt-6 inline-flex items-center gap-1.5 text-sm font-landing-body font-semibold text-[hsl(25,95%,53%)] hover:underline">
                   {tabs[active].cta} <ArrowRight className="h-4 w-4" />
-                </a>
+                </Link>
               </div>
               <MockupCard tab={tabs[active]} />
             </motion.div>

@@ -49,6 +49,12 @@ import SuperAdminAziende from "./pages/superadmin/SuperAdminAziende";
 import SuperAdminAziendaDetail from "./pages/superadmin/SuperAdminAziendaDetail";
 import SuperAdminImpostazioni from "./pages/superadmin/SuperAdminImpostazioni";
 import NotFound from "./pages/NotFound";
+import FunzionalitaDocumenti from "./pages/funzionalita/Documenti";
+import FunzionalitaTesserini from "./pages/funzionalita/Tesserini";
+import FunzionalitaAccessi from "./pages/funzionalita/Accessi";
+import FunzionalitaFirma from "./pages/funzionalita/Firma";
+import FunzionalitaComunicazioni from "./pages/funzionalita/Comunicazioni";
+import FunzionalitaVeicoli from "./pages/funzionalita/Veicoli";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +78,12 @@ const App = () => (
             <Route path="/firma/:token/rifiuta" element={<FirmaRifiuta />} />
             <Route path="/verifica/:hash" element={<VerificaDocumento />} />
             <Route path="/verifica" element={<VerificaDocumento />} />
+            <Route path="/funzionalita/documenti" element={<FunzionalitaDocumenti />} />
+            <Route path="/funzionalita/tesserini" element={<FunzionalitaTesserini />} />
+            <Route path="/funzionalita/accessi" element={<FunzionalitaAccessi />} />
+            <Route path="/funzionalita/firma" element={<FunzionalitaFirma />} />
+            <Route path="/funzionalita/comunicazioni" element={<FunzionalitaComunicazioni />} />
+            <Route path="/funzionalita/veicoli" element={<FunzionalitaVeicoli />} />
 
             {/* SuperAdmin routes */}
             <Route path="/superadmin/login" element={<SuperAdminLogin />} />

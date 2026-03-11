@@ -5,10 +5,10 @@ const cols = [
   {
     title: "Prodotto",
     links: [
-      { label: "Funzionalità", href: "#funzionalita" },
-      { label: "Prezzi", href: "#prezzi" },
-      { label: "Demo", href: "#" },
-      { label: "Changelog", href: "#" },
+      { label: "Documenti", href: "/funzionalita/documenti" },
+      { label: "Tesserini", href: "/funzionalita/tesserini" },
+      { label: "Accessi Geo", href: "/funzionalita/accessi" },
+      { label: "Firma Digitale", href: "/funzionalita/firma" },
     ],
   },
   {
