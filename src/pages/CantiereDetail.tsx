@@ -60,6 +60,7 @@ export default function CantiereDetail() {
           <TabsTrigger value="mezzi">Mezzi ({mezzi.length})</TabsTrigger>
           <TabsTrigger value="accessi">Accessi ({accessi.length})</TabsTrigger>
           <TabsTrigger value="galleria">Galleria ({fileCantiere.length})</TabsTrigger>
+          <TabsTrigger value="diario">Diario ({diario.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="documenti">
