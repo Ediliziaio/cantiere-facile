@@ -58,7 +58,22 @@ export default function FirmaDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [downloading, setDownloading] = useState(false);
   const doc = mockDocumentiFirma.find(d => d.id === id);
+
+  const handleDownloadPdf = async () => {
+    if (!id) return;
+    setDownloading(true);
+    try {
+      await downloadSignedPdf(id);
+      toast({ title: "PDF scaricato", description: "Il documento firmato è stato generato e scaricato" });
+    } catch {
+      toast({ title: "Errore", description: "Impossibile generare il PDF", variant: "destructive" });
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (!doc) return <div className="p-8 text-center text-muted-foreground">Documento non trovato</div>;
 
   const signers = mockFirmatari.filter(f => f.documento_id === doc.id);
