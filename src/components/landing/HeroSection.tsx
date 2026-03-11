@@ -177,7 +177,7 @@ export default function HeroSection() {
       </div>
 
       {/* Social proof marquee */}
-      <div className="bg-[#FAFAF9] py-6 border-t border-[hsl(30,6%,90%)]">
+      <div className="bg-[#FAFAF9] py-10 border-t border-[hsl(30,6%,90%)]">
         <p className="text-center text-sm text-[hsl(25,5%,45%)] font-landing-body mb-4">
           Scelto da imprese edili in tutta Italia
         </p>
@@ -186,9 +186,9 @@ export default function HeroSection() {
             {[...logos, ...logos].map((logo, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 mx-8 select-none shrink-0"
+                className="flex items-center gap-3 mx-12 select-none shrink-0"
               >
-                <img src={logo.src} alt={logo.name} className="h-8 w-auto grayscale opacity-50 hover:opacity-70 transition-opacity" />
+                <img src={logo.src} alt={logo.name} className="h-14 w-auto grayscale opacity-50 hover:opacity-70 transition-opacity" />
               </div>
             ))}
           </div>
