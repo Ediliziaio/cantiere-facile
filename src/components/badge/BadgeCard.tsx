@@ -1,5 +1,5 @@
 import { QRCodeSVG } from "qrcode.react";
-import { HardHat, User } from "lucide-react";
+import { HardHat, User, Shield } from "lucide-react";
 import type { Badge } from "@/data/mock-badges";
 import { getBadgeLavoratore, getBadgeCantiere } from "@/data/mock-badges";
 import { mockTenant, mockSubappaltatori } from "@/data/mock-data";
@@ -25,9 +25,8 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
       className={`bg-[hsl(var(--badge-bg,20_14%_11%))] text-white rounded-xl overflow-hidden ${
         compact ? "max-w-sm" : "max-w-lg"
       }`}
-      style={{ aspectRatio: compact ? undefined : "85.6/54" }}
     >
-      <div className="p-4 h-full flex flex-col justify-between gap-3">
+      <div className="p-4 h-full flex flex-col justify-between gap-2">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -36,13 +35,16 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
               CANTIERE IN CLOUD
             </span>
           </div>
-          <QRCodeSVG
-            value={verifyUrl}
-            size={compact ? 56 : 72}
-            bgColor="transparent"
-            fgColor="white"
-            level="M"
-          />
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] text-white/50 font-mono">N° {badge.numero_progressivo}</span>
+            <QRCodeSVG
+              value={verifyUrl}
+              size={compact ? 56 : 72}
+              bgColor="transparent"
+              fgColor="white"
+              level="M"
+            />
+          </div>
         </div>
 
         {/* Body */}
@@ -53,6 +55,9 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
           <div className="min-w-0 space-y-0.5">
             <p className="font-heading font-bold text-base leading-tight truncate">
               {lavoratore ? `${lavoratore.nome} ${lavoratore.cognome}` : "—"}
+            </p>
+            <p className="text-[10px] text-white/50 font-mono tracking-wide">
+              CF: {badge.codice_fiscale_lavoratore}
             </p>
             <p className="text-[11px] text-white/70">
               Mansione: {lavoratore?.mansione ?? "—"}
@@ -69,12 +74,20 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
           <div className="space-y-0.5 text-white/60">
             <p>Cantiere: {cantiere ? `${cantiere.indirizzo}, ${cantiere.comune}` : "—"}</p>
             <p>Badge ID: {badge.codice_univoco}</p>
+            <p>Emesso: {new Date(badge.data_emissione).toLocaleDateString("it-IT")}</p>
             <p>
               Valido fino:{" "}
               {new Date(badge.data_scadenza).toLocaleDateString("it-IT")}
             </p>
           </div>
-          <BadgeStatusChip stato={badge.stato} />
+          <div className="flex flex-col items-end gap-1">
+            <BadgeStatusChip stato={badge.stato} />
+            <div className="flex items-center gap-1 text-emerald-400">
+              <Shield className="h-3 w-3" />
+              <span className="text-[8px] font-medium">D.L. 159/2025</span>
+            </div>
+            <span className="text-[7px] text-white/40 font-mono">{badge.firma_digitale_hash.slice(0, 12)}</span>
+          </div>
         </div>
       </div>
     </div>

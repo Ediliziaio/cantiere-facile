@@ -1,6 +1,6 @@
 import { useRef, useCallback, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Download, ShieldCheck, ShieldAlert, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Download, ShieldCheck, ShieldAlert, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, FileCheck, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere, mockVerificheAccesso, mockTimbrature } from "@/data/mock-badges";
 import { mockDocumenti } from "@/data/mock-data";
@@ -152,6 +152,31 @@ export default function BadgeDetail() {
               </div>
             </div>
           )}
+
+          {/* Dati Legali D.L. 159/2025 */}
+          <div className="border border-border rounded-lg p-4 space-y-3">
+            <div className="flex items-center gap-2">
+              <FileCheck className="h-4 w-4 text-primary" />
+              <h3 className="font-heading font-semibold text-sm text-foreground">Dati Legali — D.L. 159/2025</h3>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-muted-foreground">N° Progressivo</span><span className="text-foreground font-medium">{badge.numero_progressivo}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">CF Lavoratore</span><span className="text-foreground font-mono text-xs">{badge.codice_fiscale_lavoratore}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Ente emittente</span><span className="text-foreground text-xs text-right max-w-[200px]">{badge.ente_emittente}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Rif. normativo</span><span className="text-foreground">{badge.riferimento_normativo}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Emissione</span><span className="text-foreground">{new Date(badge.data_emissione).toLocaleDateString("it-IT")}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Ultima verifica</span><span className="text-foreground">{new Date(badge.data_verifica_documenti).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span></div>
+              <div>
+                <p className="text-muted-foreground text-xs mb-1">Firma digitale (SHA-256)</p>
+                <p className="text-[10px] font-mono text-foreground bg-muted rounded p-2 break-all">{badge.firma_digitale_hash}</p>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" className="w-full" asChild>
+              <Link to={`/verifica/${badge.codice_univoco}`} target="_blank">
+                <ExternalLink className="h-3.5 w-3.5 mr-1" /> Verifica autenticità
+              </Link>
+            </Button>
+          </div>
 
           {/* Documenti lavoratore */}
           {docLav.length > 0 && (
