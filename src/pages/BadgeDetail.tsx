@@ -1,13 +1,15 @@
 import { useRef, useCallback, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Download, ShieldCheck, ShieldAlert, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, FileCheck, ExternalLink } from "lucide-react";
+import { ArrowLeft, Download, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, FileCheck, ExternalLink, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere, mockVerificheAccesso, mockTimbrature } from "@/data/mock-badges";
+import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere, calcolaStatoConformita, mockTimbrature } from "@/data/mock-badges";
 import { mockDocumenti } from "@/data/mock-data";
 import { BadgeCard } from "@/components/badge/BadgeCard";
 import { BadgeStatusChip } from "@/components/badge/BadgeStatusChip";
 import { TimbratureCalendar } from "@/components/badge/TimbratureCalendar";
+import { CertificatoConformita } from "@/components/badge/CertificatoConformita";
 import { toast } from "sonner";
+import { ShieldCheck, ShieldAlert } from "lucide-react";
 
 const esitoColors: Record<string, string> = {
   autorizzato: "text-emerald-600",
@@ -32,7 +34,8 @@ export default function BadgeDetail() {
   const { id } = useParams<{ id: string }>();
   const badge = mockBadges.find((b) => b.id === id);
   const badgeCardRef = useRef<HTMLDivElement>(null);
-  const [calMonth, setCalMonth] = useState(2); // March (0-indexed)
+  const certRef = useRef<HTMLDivElement>(null);
+  const [calMonth, setCalMonth] = useState(2);
   const [calYear, setCalYear] = useState(2026);
 
   const exportPdf = useCallback(async () => {
@@ -45,6 +48,22 @@ export default function BadgeDetail() {
       link.href = canvas.toDataURL("image/png");
       link.click();
       toast.success("Badge esportato come immagine");
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Errore durante l'esportazione");
+    }
+  }, [badge]);
+
+  const exportCertificato = useCallback(async () => {
+    if (!certRef.current) return;
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(certRef.current, { scale: 3, backgroundColor: "#ffffff", useCORS: true });
+      const link = document.createElement("a");
+      link.download = `certificato-${badge?.codice_univoco ?? "export"}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("Certificato di conformità scaricato");
     } catch (err) {
       console.error("Export error:", err);
       toast.error("Errore durante l'esportazione");
@@ -64,9 +83,8 @@ export default function BadgeDetail() {
 
   const lav = getBadgeLavoratore(badge);
   const timbrature = getTimbratureForBadge(badge.id).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-  const verifica = mockVerificheAccesso.find((v) => v.badge_id === badge.id);
+  const conformita = calcolaStatoConformita(badge);
 
-  // Stats presenze
   const stats = useMemo(() => {
     const monthTs = timbrature.filter((t) => {
       const d = new Date(t.timestamp);
@@ -93,7 +111,6 @@ export default function BadgeDetail() {
     return { giorni, oreTotali, mediaOre };
   }, [timbrature, calMonth, calYear]);
 
-  // Documenti del lavoratore
   const docLav = mockDocumenti.filter((d) => d.riferimento_tipo === "lavoratore" && d.riferimento_id === badge.lavoratore_id);
 
   const prevMonth = () => {
@@ -107,6 +124,9 @@ export default function BadgeDetail() {
 
   return (
     <div className="space-y-6">
+      {/* Hidden certificate for export */}
+      <CertificatoConformita ref={certRef} badge={badge} />
+
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
           <Link to="/app/badge"><ArrowLeft className="h-4 w-4" /></Link>
@@ -125,6 +145,9 @@ export default function BadgeDetail() {
             <Button variant="outline" size="sm" onClick={exportPdf}>
               <Download className="h-3.5 w-3.5 mr-1" /> Esporta PDF
             </Button>
+            <Button variant="outline" size="sm" onClick={exportCertificato}>
+              <FileDown className="h-3.5 w-3.5 mr-1" /> Scarica Certificato
+            </Button>
             <Button variant="outline" size="sm" asChild>
               <Link to={`/app/timbrature`}>
                 <Clock className="h-3.5 w-3.5 mr-1" /> Tutte le timbrature
@@ -132,26 +155,27 @@ export default function BadgeDetail() {
             </Button>
           </div>
 
-          {/* Stato conformità */}
-          {verifica && (
-            <div className="border border-border rounded-lg p-4 space-y-3">
-              <h3 className="font-heading font-semibold text-sm text-foreground">Stato conformità</h3>
-              <div className="space-y-2">
-                {[
-                  { label: "Documenti", stato: verifica.stato_documenti },
-                  { label: "Formazione", stato: verifica.stato_formazione },
-                  { label: "Idoneità sanitaria", stato: verifica.stato_idoneita_sanitaria },
-                ].map((c) => (
-                  <div key={c.label} className="flex items-center justify-between py-1">
-                    <span className="text-sm text-foreground">{c.label}</span>
+          {/* Stato conformità — dinamico */}
+          <div className="border border-border rounded-lg p-4 space-y-3">
+            <h3 className="font-heading font-semibold text-sm text-foreground">Stato conformità</h3>
+            <div className="space-y-2">
+              {conformita.checks.map((c) => (
+                <div key={c.label} className="flex items-center justify-between py-1">
+                  <span className="text-sm text-foreground">{c.label}</span>
+                  <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1 text-xs font-medium">
                       {checkIcon(c.stato)} {checkLabel[c.stato]}
                     </span>
+                    {c.scadenza && (
+                      <span className="text-[10px] text-muted-foreground">
+                        scad. {new Date(c.scadenza).toLocaleDateString("it-IT")}
+                      </span>
+                    )}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
 
           {/* Dati Legali D.L. 159/2025 */}
           <div className="border border-border rounded-lg p-4 space-y-3">
@@ -195,7 +219,6 @@ export default function BadgeDetail() {
         </div>
 
         <div className="space-y-6">
-          {/* Calendar with navigation */}
           <div className="border border-border rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <Button variant="ghost" size="icon" className="h-7 w-7" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
@@ -205,7 +228,6 @@ export default function BadgeDetail() {
             <TimbratureCalendar badgeId={badge.id} month={calMonth} year={calYear} />
           </div>
 
-          {/* Stats presenze */}
           <div className="grid grid-cols-3 gap-3">
             <div className="border border-border rounded-lg p-3 text-center">
               <p className="font-heading font-bold text-xl text-foreground">{stats.giorni}</p>

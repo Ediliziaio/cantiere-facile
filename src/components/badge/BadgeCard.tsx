@@ -23,9 +23,12 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
 
   return (
     <div
-      className={`bg-[hsl(var(--badge-bg,20_14%_11%))] text-white rounded-xl overflow-hidden ${
+      className={`bg-[hsl(var(--badge-bg,20_14%_11%))] text-white rounded-xl overflow-hidden relative ${
         compact ? "max-w-sm" : "max-w-lg"
       }`}
+    >
+      {/* Conformità indicator */}
+      <div className={`absolute top-3 right-3 h-2.5 w-2.5 rounded-full ${conformitaColor} ring-2 ring-white/20`} title={`Conformità: ${conformita.esito_finale}`} />
     >
       <div className="p-4 h-full flex flex-col justify-between gap-2">
         {/* Header */}
