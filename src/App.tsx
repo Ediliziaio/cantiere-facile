@@ -41,6 +41,8 @@ import FirmaPublica from "./pages/firma/FirmaPublica";
 import FirmaCompletata from "./pages/firma/FirmaCompletata";
 import FirmaRifiuta from "./pages/firma/FirmaRifiuta";
 import VerificaDocumento from "./pages/firma/VerificaDocumento";
+import FirmaTemplates from "./pages/firma/FirmaTemplates";
+import CertificatoFirma from "./pages/firma/CertificatoFirma";
 import SuperAdminLogin from "./pages/superadmin/SuperAdminLogin";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
 import SuperAdminAziende from "./pages/superadmin/SuperAdminAziende";
@@ -101,10 +103,12 @@ const App = () => (
               <Route path="comunicazioni" element={<Comunicazioni />} />
               <Route path="firma" element={<FirmaDashboard />} />
               <Route path="firma/nuovo" element={<FirmaNuovo />} />
+              <Route path="firma/templates" element={<FirmaTemplates />} />
               <Route path="firma/:id" element={<FirmaDetail />} />
               <Route path="firma/:id/configura" element={<FirmaConfigura />} />
               <Route path="firma/:id/firmatari" element={<FirmaFirmatari />} />
               <Route path="firma/:id/anteprima" element={<FirmaAnteprima />} />
+              <Route path="firma/:id/certificato" element={<CertificatoFirma />} />
               <Route path="impostazioni" element={<Impostazioni />} />
             </Route>
 
