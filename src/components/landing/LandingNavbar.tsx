@@ -45,15 +45,15 @@ export default function LandingNavbar() {
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((l) => (
-              <motion.a
-                key={l.href}
-                href={l.href}
-                className="font-landing-body text-sm font-medium transition-colors"
-                style={{ color: linkColor }}
-                whileHover={{ color: linkHoverColor }}
-              >
-                {l.label}
-              </motion.a>
+              <Link key={l.to} to={l.to}>
+                <motion.span
+                  className="font-landing-body text-sm font-medium transition-colors"
+                  style={{ color: linkColor }}
+                  whileHover={{ color: linkHoverColor }}
+                >
+                  {l.label}
+                </motion.span>
+              </Link>
             ))}
           </div>
 
