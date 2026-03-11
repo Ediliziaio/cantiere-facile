@@ -1,6 +1,23 @@
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Truck, CheckCircle2, AlertTriangle, Wrench, OctagonX, FileText, Clock } from "lucide-react";
+import { useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Truck, CheckCircle2, AlertTriangle, Wrench, OctagonX, FileText, Clock, Pencil } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { format } from "date-fns";
+import { it } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
 import { mockMezzi, mockCantieri, mockDocumenti, mockManutenzioni, getScadenzaStatus, type MezzoStatoOperativo } from "@/data/mock-data";
 
 const statoChip: Record<MezzoStatoOperativo, { label: string; className: string }> = {
@@ -15,9 +32,52 @@ const scadenzaStatusChip = (status: string) => {
   return { label: "Valido", className: "text-emerald-600", icon: <CheckCircle2 className="h-3.5 w-3.5" /> };
 };
 
+const tipiMezzo = ["Escavatore", "Gru a torre", "Autocarro", "Piattaforma aerea", "Betoniera", "Altro"] as const;
+
+const editSchema = z.object({
+  tipo: z.string().min(1, "Seleziona un tipo"),
+  targa_o_matricola: z.string().trim().min(1, "Obbligatorio").max(30),
+  descrizione: z.string().trim().min(1, "Obbligatoria").max(200),
+  cantiere_id: z.string().min(1, "Seleziona un cantiere"),
+  stato_operativo: z.enum(["operativo", "in_manutenzione", "fermo"]),
+  data_immatricolazione: z.date(),
+  data_prossima_revisione: z.date(),
+  data_prossima_manutenzione: z.date(),
+  scadenza_assicurazione: z.date(),
+  scadenza_collaudo: z.date().optional(),
+  ore_lavoro: z.coerce.number().min(0),
+  km_percorsi: z.coerce.number().min(0).optional(),
+  responsabile: z.string().trim().min(1, "Obbligatorio").max(100),
+  note: z.string().max(500).optional(),
+});
+
+type EditValues = z.infer<typeof editSchema>;
+
+function DatePickerField({ field, label }: { field: any; label: string }) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <FormControl>
+          <Button
+            variant="outline"
+            className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {field.value ? format(field.value, "dd/MM/yyyy", { locale: it }) : <span>{label}</span>}
+          </Button>
+        </FormControl>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus className={cn("p-3 pointer-events-auto")} />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export default function MezzoDetail() {
   const { id } = useParams<{ id: string }>();
   const mezzo = mockMezzi.find((m) => m.id === id);
+  const [editOpen, setEditOpen] = useState(false);
 
   if (!mezzo) {
     return (
@@ -44,17 +104,30 @@ export default function MezzoDetail() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/app/mezzi"><ArrowLeft className="h-4 w-4" /></Link>
-        </Button>
-        <Truck className="h-5 w-5 text-primary" />
-        <h1 className="font-heading font-bold text-2xl text-foreground">
-          {mezzo.tipo} — {mezzo.targa_o_matricola}
-        </h1>
-        <span className={`inline-flex items-center text-[11px] font-medium border rounded-full px-2 py-0.5 ${chip.className}`}>
-          {chip.label}
-        </span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/app/mezzi"><ArrowLeft className="h-4 w-4" /></Link>
+          </Button>
+          <Truck className="h-5 w-5 text-primary" />
+          <h1 className="font-heading font-bold text-2xl text-foreground">
+            {mezzo.tipo} — {mezzo.targa_o_matricola}
+          </h1>
+          <span className={`inline-flex items-center text-[11px] font-medium border rounded-full px-2 py-0.5 ${chip.className}`}>
+            {chip.label}
+          </span>
+        </div>
+        <Dialog open={editOpen} onOpenChange={setEditOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm"><Pencil className="h-3.5 w-3.5 mr-1" /> Modifica</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Modifica mezzo</DialogTitle>
+            </DialogHeader>
+            <EditMezzoForm mezzo={mezzo} onSuccess={() => setEditOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -174,5 +247,178 @@ export default function MezzoDetail() {
         )}
       </div>
     </div>
+  );
+}
+
+// --- Edit form component ---
+function EditMezzoForm({ mezzo, onSuccess }: { mezzo: typeof mockMezzi[0]; onSuccess: () => void }) {
+  const form = useForm<EditValues>({
+    resolver: zodResolver(editSchema),
+    defaultValues: {
+      tipo: mezzo.tipo,
+      targa_o_matricola: mezzo.targa_o_matricola,
+      descrizione: mezzo.descrizione,
+      cantiere_id: mezzo.cantiere_id,
+      stato_operativo: mezzo.stato_operativo,
+      data_immatricolazione: new Date(mezzo.data_immatricolazione),
+      data_prossima_revisione: new Date(mezzo.data_prossima_revisione),
+      data_prossima_manutenzione: new Date(mezzo.data_prossima_manutenzione),
+      scadenza_assicurazione: new Date(mezzo.scadenza_assicurazione),
+      scadenza_collaudo: mezzo.scadenza_collaudo ? new Date(mezzo.scadenza_collaudo) : undefined,
+      ore_lavoro: mezzo.ore_lavoro,
+      km_percorsi: mezzo.km_percorsi ?? undefined,
+      responsabile: mezzo.responsabile,
+      note: mezzo.note ?? "",
+    },
+  });
+
+  function onSubmit(data: EditValues) {
+    console.log("Mezzo aggiornato:", data);
+    toast.success("Mezzo aggiornato con successo", {
+      description: `${data.tipo} — ${data.targa_o_matricola}`,
+    });
+    onSuccess();
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField control={form.control} name="tipo" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tipo mezzo</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                <SelectContent>
+                  {tipiMezzo.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="targa_o_matricola" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Targa / Matricola</FormLabel>
+              <FormControl><Input {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+        </div>
+
+        <FormField control={form.control} name="descrizione" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Descrizione</FormLabel>
+            <FormControl><Textarea className="resize-none" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField control={form.control} name="cantiere_id" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cantiere</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                <SelectContent>
+                  {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="stato_operativo" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Stato operativo</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                <SelectContent>
+                  <SelectItem value="operativo">Operativo</SelectItem>
+                  <SelectItem value="in_manutenzione">In manutenzione</SelectItem>
+                  <SelectItem value="fermo">Fermo</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )} />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField control={form.control} name="responsabile" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Responsabile</FormLabel>
+              <FormControl><Input {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="ore_lavoro" render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ore lavoro</FormLabel>
+              <FormControl><Input type="number" min={0} {...field} /></FormControl>
+              <FormMessage />
+            </FormItem>
+          )} />
+        </div>
+
+        <FormField control={form.control} name="km_percorsi" render={({ field }) => (
+          <FormItem className="sm:w-1/2">
+            <FormLabel>Km percorsi (opzionale)</FormLabel>
+            <FormControl><Input type="number" min={0} {...field} value={field.value ?? ""} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+
+        <h3 className="font-heading font-semibold text-sm text-foreground pt-2">Scadenze e revisioni</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField control={form.control} name="data_immatricolazione" render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Immatricolazione</FormLabel>
+              <DatePickerField field={field} label="Seleziona data" />
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="data_prossima_revisione" render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Prossima revisione</FormLabel>
+              <DatePickerField field={field} label="Seleziona data" />
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="data_prossima_manutenzione" render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Prossima manutenzione</FormLabel>
+              <DatePickerField field={field} label="Seleziona data" />
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="scadenza_assicurazione" render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Scadenza assicurazione</FormLabel>
+              <DatePickerField field={field} label="Seleziona data" />
+              <FormMessage />
+            </FormItem>
+          )} />
+          <FormField control={form.control} name="scadenza_collaudo" render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Scadenza collaudo (opzionale)</FormLabel>
+              <DatePickerField field={field} label="Seleziona data" />
+              <FormMessage />
+            </FormItem>
+          )} />
+        </div>
+
+        <FormField control={form.control} name="note" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Note (opzionale)</FormLabel>
+            <FormControl><Textarea className="resize-none" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+
+        <div className="flex gap-3 pt-2">
+          <Button type="submit">Salva modifiche</Button>
+          <Button type="button" variant="outline" onClick={onSuccess}>Annulla</Button>
+        </div>
+      </form>
+    </Form>
   );
 }
