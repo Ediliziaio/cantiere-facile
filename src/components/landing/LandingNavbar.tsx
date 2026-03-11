@@ -16,6 +16,13 @@ export default function LandingNavbar() {
   const bgOpacity = useTransform(scrollY, [0, 80], [0, 1]);
   const shadow = useTransform(scrollY, [0, 80], ["0px 0px 0px rgba(0,0,0,0)", "0px 1px 12px rgba(0,0,0,0.08)"]);
 
+  // Color transitions: white (on dark hero) → dark (on scrolled white bg)
+  const logoColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
+  const linkColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,0.7)", "hsl(25,5%,45%)"]);
+  const linkHoverColor = "hsl(25,95%,53%)";
+  const menuIconColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
+  const btnTextColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,0.9)", "hsl(20,14%,8%)"]);
+
   return (
     <>
       <motion.nav
@@ -29,39 +36,47 @@ export default function LandingNavbar() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <HardHat className="h-7 w-7 text-[hsl(25,95%,53%)]" />
-            <span className="font-landing-heading font-bold text-lg text-[hsl(20,14%,8%)]">
+            <motion.span
+              className="font-landing-heading font-bold text-lg"
+              style={{ color: logoColor }}
+            >
               Cantiere in Cloud
-            </span>
+            </motion.span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((l) => (
-              <a
+              <motion.a
                 key={l.href}
                 href={l.href}
-                className="font-landing-body text-sm font-medium text-[hsl(25,5%,45%)] hover:text-[hsl(20,14%,8%)] transition-colors"
+                className="font-landing-body text-sm font-medium transition-colors"
+                style={{ color: linkColor }}
+                whileHover={{ color: linkHoverColor }}
               >
                 {l.label}
-              </a>
+              </motion.a>
             ))}
           </div>
 
           <div className="hidden md:flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild className="font-landing-body">
-              <Link to="/login">Accedi</Link>
+              <Link to="/login">
+                <motion.span style={{ color: btnTextColor }}>Accedi</motion.span>
+              </Link>
             </Button>
             <Button size="sm" asChild className="font-landing-body rounded-full bg-[hsl(25,95%,53%)] hover:bg-[hsl(25,95%,48%)]">
               <Link to="/register">Prova gratis</Link>
             </Button>
           </div>
 
-          <button
+          <motion.button
             className="md:hidden p-2"
             onClick={() => setMobileOpen(true)}
             aria-label="Menu"
+            style={{ color: menuIconColor }}
           >
-            <Menu className="h-6 w-6 text-[hsl(20,14%,8%)]" />
-          </button>
+            <Menu className="h-6 w-6" />
+          </motion.button>
         </div>
       </motion.nav>
 
