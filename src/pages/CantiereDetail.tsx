@@ -29,6 +29,7 @@ export default function CantiereDetail() {
   const workers = mockLavoratori.filter((l) => subs.some((s) => s.id === l.subappaltatore_id) || l.tipo === "interno");
   const mezzi = mockMezzi.filter((m) => m.cantiere_id === id);
   const accessi = mockAccessi.filter((a) => a.cantiere_id === id);
+  const fileCantiere = mockFileCantiere.filter((f) => f.cantiere_id === id);
 
   return (
     <div className="space-y-6">
