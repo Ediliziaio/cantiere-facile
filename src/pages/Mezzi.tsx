@@ -72,27 +72,29 @@ export default function Mezzi() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Cerca mezzo…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
-            {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={filtroStato} onValueChange={setFiltroStato}>
-          <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti gli stati</SelectItem>
-            <SelectItem value="operativo">Operativo</SelectItem>
-            <SelectItem value="in_manutenzione">In manutenzione</SelectItem>
-            <SelectItem value="fermo">Fermo</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
+            <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+              {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={filtroStato} onValueChange={setFiltroStato}>
+            <SelectTrigger className="w-full sm:w-44"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti gli stati</SelectItem>
+              <SelectItem value="operativo">Operativo</SelectItem>
+              <SelectItem value="in_manutenzione">In manutenzione</SelectItem>
+              <SelectItem value="fermo">Fermo</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Cards */}
