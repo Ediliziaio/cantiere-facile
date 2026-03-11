@@ -11,6 +11,7 @@ import {
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import { downloadSignedPdf } from "@/lib/pdf-generator";
 
 const statoColors: Record<StatoDocumentoFirma, string> = {
   bozza: "bg-muted text-muted-foreground",
