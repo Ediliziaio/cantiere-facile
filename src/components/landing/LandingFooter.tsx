@@ -5,16 +5,16 @@ const cols = [
   {
     title: "Prodotto",
     links: [
+      { label: "Funzionalità", href: "/funzionalita" },
+      { label: "Tariffe", href: "/tariffe" },
       { label: "Documenti", href: "/funzionalita/documenti" },
-      { label: "Tesserini", href: "/funzionalita/tesserini" },
-      { label: "Accessi Geo", href: "/funzionalita/accessi" },
       { label: "Firma Digitale", href: "/funzionalita/firma" },
     ],
   },
   {
     title: "Azienda",
     links: [
-      { label: "Chi siamo", href: "#manifesto" },
+      { label: "Chi siamo", href: "/chi-siamo" },
       { label: "Blog", href: "#" },
       { label: "Contatti", href: "#" },
       { label: "Partnership", href: "#" },
@@ -52,12 +52,12 @@ export default function LandingFooter() {
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={link.href}
+                    <Link
+                      to={link.href}
                       className="font-landing-body text-sm text-[hsl(30,6%,50%)] hover:text-white transition-colors"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

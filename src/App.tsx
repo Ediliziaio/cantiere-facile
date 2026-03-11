@@ -55,6 +55,9 @@ import FunzionalitaAccessi from "./pages/funzionalita/Accessi";
 import FunzionalitaFirma from "./pages/funzionalita/Firma";
 import FunzionalitaComunicazioni from "./pages/funzionalita/Comunicazioni";
 import FunzionalitaVeicoli from "./pages/funzionalita/Veicoli";
+import ChiSiamo from "./pages/ChiSiamo";
+import Tariffe from "./pages/Tariffe";
+import FunzionalitaOverview from "./pages/FunzionalitaOverview";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +81,9 @@ const App = () => (
             <Route path="/firma/:token/rifiuta" element={<FirmaRifiuta />} />
             <Route path="/verifica/:hash" element={<VerificaDocumento />} />
             <Route path="/verifica" element={<VerificaDocumento />} />
+            <Route path="/chi-siamo" element={<ChiSiamo />} />
+            <Route path="/tariffe" element={<Tariffe />} />
+            <Route path="/funzionalita" element={<FunzionalitaOverview />} />
             <Route path="/funzionalita/documenti" element={<FunzionalitaDocumenti />} />
             <Route path="/funzionalita/tesserini" element={<FunzionalitaTesserini />} />
             <Route path="/funzionalita/accessi" element={<FunzionalitaAccessi />} />

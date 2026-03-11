@@ -5,9 +5,9 @@ import { HardHat, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { label: "Funzionalità", href: "#funzionalita" },
-  { label: "Prezzi", href: "#prezzi" },
-  { label: "Chi siamo", href: "#manifesto" },
+  { label: "Funzionalità", to: "/funzionalita" },
+  { label: "Tariffe", to: "/tariffe" },
+  { label: "Chi siamo", to: "/chi-siamo" },
 ];
 
 export default function LandingNavbar() {
@@ -45,15 +45,15 @@ export default function LandingNavbar() {
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((l) => (
-              <motion.a
-                key={l.href}
-                href={l.href}
-                className="font-landing-body text-sm font-medium transition-colors"
-                style={{ color: linkColor }}
-                whileHover={{ color: linkHoverColor }}
-              >
-                {l.label}
-              </motion.a>
+              <Link key={l.to} to={l.to}>
+                <motion.span
+                  className="font-landing-body text-sm font-medium transition-colors"
+                  style={{ color: linkColor }}
+                  whileHover={{ color: linkHoverColor }}
+                >
+                  {l.label}
+                </motion.span>
+              </Link>
             ))}
           </div>
 
@@ -98,14 +98,14 @@ export default function LandingNavbar() {
           </div>
           <div className="flex flex-col items-center gap-6 pt-12">
             {navLinks.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
+              <Link
+                key={l.to}
+                to={l.to}
                 onClick={() => setMobileOpen(false)}
                 className="font-landing-body text-xl font-medium text-[hsl(20,14%,8%)]"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
             <div className="flex flex-col gap-3 w-full px-8 pt-6">
               <Button variant="outline" asChild className="font-landing-body w-full">
