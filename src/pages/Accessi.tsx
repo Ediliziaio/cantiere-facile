@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown } from "lucide-react";
+import { useState, useMemo, useCallback } from "react";
+import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown, Download } from "lucide-react";
 import { mockTimbrature, getPresentiOra } from "@/data/mock-badges";
 import { mockCantieri, mockLavoratori } from "@/data/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -168,11 +168,42 @@ export default function Accessi() {
 
   const showDataColumn = dateMode !== "giorno";
 
+  const exportCSV = useCallback(() => {
+    const headers = ["Lavoratore", "Mansione", "Cantiere", "Data", "Entrata", "Uscita", "Ore Lavorate", "Esito"];
+    const rows = filtered.map((s) => {
+      const lav = getLav(s.lavoratoreId);
+      return [
+        lav ? `${lav.nome} ${lav.cognome}` : "—",
+        lav?.mansione ?? "—",
+        getCantName(s.cantiereId),
+        formatDateLabel(s.data),
+        formatTime(s.entrata),
+        s.inCorso ? "In corso" : formatTime(s.uscita),
+        s.inCorso ? "—" : (formatDurata(s.minutiLavorati, false) ?? "—"),
+        s.esito,
+      ].map((v) => `"${v}"`).join(",");
+    });
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `accessi_${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [filtered]);
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="h-5 w-5 text-primary" />
-        <h1 className="font-heading font-bold text-2xl text-foreground">Registro Accessi</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="h-5 w-5 text-primary" />
+          <h1 className="font-heading font-bold text-2xl text-foreground">Registro Accessi</h1>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportCSV}>
+          <Download className="h-4 w-4 mr-1.5" />
+          Esporta CSV
+        </Button>
       </div>
 
       {/* Stats */}
