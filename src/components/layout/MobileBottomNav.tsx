@@ -1,46 +1,66 @@
-import { LayoutDashboard, Building2, FileText, ShieldCheck, Menu } from "lucide-react";
+import { LayoutDashboard, Building2, ShieldCheck, IdCard, Menu } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
-  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, IdCard, Clock, ScanLine
+  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine
 } from "lucide-react";
 
 const tabs = [
   { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard },
   { title: "Cantieri", url: "/app/cantieri", icon: Building2 },
-  { title: "Documenti", url: "/app/documenti", icon: FileText },
   { title: "Accessi", url: "/app/accessi", icon: ShieldCheck },
+  { title: "Badge", url: "/app/badge", icon: IdCard },
 ];
 
-const menuItems = [
-  { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat },
-  { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building },
-  { title: "Mezzi", url: "/app/mezzi", icon: Truck },
-  { title: "Badge Digitali", url: "/app/badge", icon: IdCard },
-  { title: "Timbrature", url: "/app/timbrature", icon: Clock },
-  { title: "Scansiona", url: "/app/scan", icon: ScanLine },
-  { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock },
-  { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare },
-  { title: "Impostazioni", url: "/app/impostazioni", icon: Settings },
+const menuGroups = [
+  {
+    label: "Generale",
+    items: [
+      { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare },
+      { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock },
+    ],
+  },
+  {
+    label: "Cantiere",
+    items: [
+      { title: "Documenti", url: "/app/documenti", icon: FileText },
+      { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat },
+      { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building },
+      { title: "Mezzi", url: "/app/mezzi", icon: Truck },
+    ],
+  },
+  {
+    label: "Presenze",
+    items: [
+      { title: "Timbrature", url: "/app/timbrature", icon: Clock },
+      { title: "Scansiona", url: "/app/scan", icon: ScanLine },
+    ],
+  },
+  {
+    label: "Sistema",
+    items: [
+      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings },
+    ],
+  },
 ];
 
 export function MobileBottomNav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card safe-area-bottom">
       <div className="flex items-center justify-around h-14">
         {tabs.map((tab) => (
           <NavLink
             key={tab.url}
             to={tab.url}
-            className="flex flex-col items-center gap-0.5 text-muted-foreground py-1 px-2"
+            className="flex flex-col items-center gap-0.5 text-muted-foreground py-1 px-2 min-w-0"
             activeClassName="text-primary"
           >
             <tab.icon className="h-5 w-5" />
-            <span className="text-[10px]">{tab.title}</span>
+            <span className="text-[10px] truncate">{tab.title}</span>
           </NavLink>
         ))}
         <Sheet open={open} onOpenChange={setOpen}>
@@ -48,18 +68,30 @@ export function MobileBottomNav() {
             <Menu className="h-5 w-5" />
             <span className="text-[10px]">Menu</span>
           </SheetTrigger>
-          <SheetContent side="bottom" className="max-h-[70vh]">
-            <div className="grid grid-cols-3 gap-3 py-4">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.url}
-                  to={item.url}
-                  onClick={() => setOpen(false)}
-                  className="flex flex-col items-center gap-1.5 p-3 rounded-lg hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span className="text-xs text-center">{item.title}</span>
-                </Link>
+          <SheetContent side="bottom" className="max-h-[75vh] overflow-y-auto rounded-t-2xl">
+            <SheetTitle className="sr-only">Menu di navigazione</SheetTitle>
+            <div className="space-y-5 py-4">
+              {menuGroups.map((group) => (
+                <div key={group.label}>
+                  <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-1 mb-2">
+                    {group.label}
+                  </h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.url}
+                        to={item.url}
+                        onClick={() => setOpen(false)}
+                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl hover:bg-accent text-muted-foreground hover:text-foreground transition-colors active:scale-95"
+                      >
+                        <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                          <item.icon className="h-5 w-5" />
+                        </div>
+                        <span className="text-xs text-center leading-tight">{item.title}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </SheetContent>

@@ -1,4 +1,4 @@
-import { Bell, HelpCircle, User } from "lucide-react";
+import { Bell, HelpCircle, User, HardHat } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { mockTenant, mockNotifiche } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,16 @@ export function TopBar() {
   };
 
   return (
-    <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4">
+    <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4 safe-area-top">
       <div className="flex items-center gap-3">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground hidden md:flex" />
-        <span className="text-sm font-medium text-foreground hidden sm:inline">
+        {/* Mobile: logo + app name */}
+        <div className="flex items-center gap-2 md:hidden">
+          <HardHat className="h-5 w-5 text-primary" />
+          <span className="text-sm font-bold text-foreground tracking-tight">Cantiere in Cloud</span>
+        </div>
+        {/* Desktop: tenant name */}
+        <span className="text-sm font-medium text-foreground hidden md:inline">
           {mockTenant.nome_azienda}
         </span>
       </div>
