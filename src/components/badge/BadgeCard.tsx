@@ -17,6 +17,8 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
     : null;
   const impresa = sub ? sub.ragione_sociale : mockTenant.nome_azienda;
   const piva = sub ? sub.p_iva : mockTenant.p_iva;
+  const conformita = calcolaStatoConformita(badge);
+  const conformitaColor = conformita.esito_finale === "verde" ? "bg-emerald-500" : conformita.esito_finale === "giallo" ? "bg-amber-500" : "bg-red-500";
   const verifyUrl = `https://app.cantiereincloud.it/verifica/${badge.codice_univoco}`;
 
   return (
