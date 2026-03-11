@@ -45,9 +45,14 @@ export default function Mezzi() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Truck className="h-5 w-5 text-primary" />
-        <h1 className="font-heading font-bold text-2xl text-foreground">Mezzi d'opera</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Truck className="h-5 w-5 text-primary" />
+          <h1 className="font-heading font-bold text-2xl text-foreground">Mezzi d'opera</h1>
+        </div>
+        <Button size="sm" asChild>
+          <Link to="/app/mezzi/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Nuovo mezzo</Link>
+        </Button>
       </div>
 
       {/* Stats */}
