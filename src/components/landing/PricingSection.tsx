@@ -2,7 +2,26 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
+import {
+  Check,
+  Building2,
+  Users,
+  FileText,
+  QrCode,
+  MapPin,
+  Mail,
+  PenTool,
+  Truck,
+  Download,
+  MessageSquare,
+  Shield,
+  Headphones,
+  Globe,
+  Zap,
+  UserCheck,
+  Receipt,
+  LayoutDashboard,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const plans = [
@@ -12,48 +31,48 @@ const plans = [
     annual: 0,
     audience: "Per iniziare — fino a 1 cantiere",
     features: [
-      "1 cantiere attivo",
-      "5 lavoratori",
-      "Gestione documenti base",
-      "Tesserini digitali QR",
-      "Accessi geolocalizzati",
-      "Supporto email",
+      { text: "1 cantiere attivo", icon: Building2 },
+      { text: "5 lavoratori", icon: Users },
+      { text: "Gestione documenti base", icon: FileText },
+      { text: "Tesserini digitali QR", icon: QrCode },
+      { text: "Accessi geolocalizzati", icon: MapPin },
+      { text: "Supporto email", icon: Mail },
     ],
     cta: "Inizia gratis",
     highlighted: false,
   },
   {
     name: "Professional",
-    monthly: 42,
-    annual: 32,
+    monthly: 32,
+    annual: 26,
     audience: "Imprese con più cantieri",
     badge: "Più popolare",
     features: [
-      "Cantieri illimitati",
-      "Lavoratori illimitati",
-      "Firma digitale nativa (inclusa)",
-      "Portale subappaltatori",
-      "Comunicazioni tracciate",
-      "Gestione veicoli e mezzi",
-      "Report e export PDF",
-      "Supporto prioritario chat",
+      { text: "Cantieri illimitati", icon: Building2 },
+      { text: "Lavoratori illimitati", icon: Users },
+      { text: "Firma digitale nativa (inclusa)", icon: PenTool },
+      { text: "Portale subappaltatori", icon: UserCheck },
+      { text: "Comunicazioni tracciate", icon: MessageSquare },
+      { text: "Gestione veicoli e mezzi", icon: Truck },
+      { text: "Report e export PDF", icon: Download },
+      { text: "Supporto prioritario chat", icon: Headphones },
     ],
     cta: "Inizia gratis 14 giorni",
     highlighted: true,
   },
   {
     name: "Business",
-    monthly: 52,
-    annual: 42,
+    monthly: 42,
+    annual: 34,
     audience: "General contractor, grandi imprese",
     features: [
-      "Tutto in Professional, più:",
-      "SuperAdmin multi-sede",
-      "API e integrazioni custom",
-      "SLA garantito",
-      "Onboarding dedicato",
-      "Account manager dedicato",
-      "Fatturazione centralizzata",
+      { text: "Tutto in Professional, più:", icon: Zap },
+      { text: "SuperAdmin multi-sede", icon: LayoutDashboard },
+      { text: "API e integrazioni custom", icon: Globe },
+      { text: "SLA garantito", icon: Shield },
+      { text: "Onboarding dedicato", icon: UserCheck },
+      { text: "Account manager dedicato", icon: Headphones },
+      { text: "Fatturazione centralizzata", icon: Receipt },
     ],
     cta: "Inizia gratis 14 giorni",
     highlighted: false,
@@ -102,90 +121,114 @@ export default function PricingSection() {
         </div>
 
         {/* Cards — on mobile Pro comes first */}
-        <div className="grid md:grid-cols-3 gap-5">
-          {[plans[1], plans[0], plans[2]].map((plan, mobileIdx) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: mobileIdx * 0.1 }}
-              className={`rounded-xl border p-6 flex flex-col ${
-                plan.highlighted
-                  ? "border-[hsl(25,95%,53%)] bg-white shadow-xl shadow-[hsl(25,95%,53%)]/10 md:order-2 order-first"
-                  : "border-[hsl(30,6%,90%)] bg-white md:order-none"
-              } ${plan.name === "Starter" ? "md:order-1" : ""} ${plan.name === "Business" ? "md:order-3" : ""}`}
-            >
-              {plan.badge && (
-                <span className="self-start bg-[hsl(25,95%,53%)] text-white text-xs font-landing-body font-semibold px-3 py-1 rounded-full mb-4">
-                  {plan.badge}
-                </span>
-              )}
-              <h3 className="font-landing-heading font-bold text-xl text-[hsl(20,14%,8%)]">{plan.name}</h3>
-              <p className="font-landing-body text-sm text-[hsl(25,5%,45%)] mt-1">{plan.audience}</p>
-
-              <div className="mt-5 mb-6 min-h-[60px]">
-                {plan.monthly === 0 ? (
-                  <div className="font-landing-heading font-bold text-4xl text-[hsl(25,95%,53%)]">
-                    Gratis
-                  </div>
-                ) : (
-                  <div>
-                    <div className="flex items-baseline gap-1">
-                      <AnimatePresence mode="wait">
-                        <motion.span
-                          key={annual ? "annual" : "monthly"}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="font-landing-heading font-bold text-4xl text-[hsl(20,14%,8%)]"
-                        >
-                          €{annual ? plan.annual : plan.monthly}
-                        </motion.span>
-                      </AnimatePresence>
-                      <span className="font-landing-body text-sm text-[hsl(25,5%,45%)]">/mese</span>
-                    </div>
-                    <AnimatePresence>
-                      {annual && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <span className="text-sm font-landing-body text-[hsl(25,5%,45%)] line-through decoration-red-400">
-                            €{plan.monthly}/mese
-                          </span>
-                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-[hsl(142,71%,45%)]/10 text-[hsl(142,71%,45%)] text-xs font-semibold">
-                            Risparmi €{(plan.monthly - plan.annual!) * 12}/anno
-                          </span>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+        <div className="grid md:grid-cols-3 gap-5 items-start">
+          {[plans[1], plans[0], plans[2]].map((plan, mobileIdx) => {
+            const cardContent = (
+              <>
+                {plan.badge && (
+                  <span className="self-start bg-[hsl(25,95%,53%)] text-white text-xs font-landing-body font-semibold px-3 py-1 rounded-full mb-4">
+                    {plan.badge}
+                  </span>
                 )}
-              </div>
+                <h3 className="font-landing-heading font-bold text-xl text-[hsl(20,14%,8%)]">{plan.name}</h3>
+                <p className="font-landing-body text-sm text-[hsl(25,5%,45%)] mt-1">{plan.audience}</p>
 
-              <ul className="space-y-2.5 flex-1">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm font-landing-body text-[hsl(25,5%,45%)]">
-                    <Check className="h-4 w-4 mt-0.5 text-[hsl(25,95%,53%)] shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+                <div className="mt-5 mb-6 min-h-[60px]">
+                  {plan.monthly === 0 ? (
+                    <div className="font-landing-heading font-bold text-4xl text-[hsl(25,95%,53%)]">
+                      Gratis
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-baseline gap-1">
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={annual ? "annual" : "monthly"}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="font-landing-heading font-bold text-4xl text-[hsl(20,14%,8%)]"
+                          >
+                            €{annual ? plan.annual : plan.monthly}
+                          </motion.span>
+                        </AnimatePresence>
+                        <span className="font-landing-body text-sm text-[hsl(25,5%,45%)]">/mese</span>
+                      </div>
+                      <AnimatePresence>
+                        {annual && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <span className="text-sm font-landing-body text-[hsl(25,5%,45%)] line-through decoration-red-400">
+                              €{plan.monthly}/mese
+                            </span>
+                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-[hsl(142,71%,45%)]/10 text-[hsl(142,71%,45%)] text-xs font-semibold">
+                              Risparmi €{(plan.monthly - plan.annual!) * 12}/anno
+                            </span>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
+                </div>
 
-              <Button
-                asChild
-                className={`mt-6 w-full rounded-full font-landing-body ${
-                  plan.highlighted
-                    ? "bg-[hsl(25,95%,53%)] hover:bg-[hsl(25,95%,48%)] text-white"
-                    : "bg-[hsl(20,14%,8%)] hover:bg-[hsl(20,14%,15%)] text-white"
+                <ul className="space-y-2.5 flex-1">
+                  {plan.features.map((f) => (
+                    <li key={f.text} className="flex items-start gap-2.5 text-sm font-landing-body text-[hsl(25,5%,45%)]">
+                      <f.icon className="h-4 w-4 mt-0.5 text-[hsl(25,95%,53%)] shrink-0" />
+                      {f.text}
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  asChild
+                  className={`mt-6 w-full rounded-full font-landing-body ${
+                    plan.highlighted
+                      ? "bg-[hsl(25,95%,53%)] hover:bg-[hsl(25,95%,48%)] text-white"
+                      : "bg-[hsl(20,14%,8%)] hover:bg-[hsl(20,14%,15%)] text-white"
+                  }`}
+                >
+                  <Link to="/register">{plan.cta}</Link>
+                </Button>
+              </>
+            );
+
+            if (plan.highlighted) {
+              return (
+                <motion.div
+                  key={plan.name}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: mobileIdx * 0.1 }}
+                  className="md:order-2 order-first"
+                >
+                  <div className="rounded-2xl bg-gradient-to-b from-[hsl(25,95%,53%)] to-[hsl(38,92%,55%)] p-[2px] shadow-xl shadow-[hsl(25,95%,53%)]/20">
+                    <div className="rounded-[14px] bg-white p-6 flex flex-col">
+                      {cardContent}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            }
+
+            return (
+              <motion.div
+                key={plan.name}
+                initial={{ opacity: 0, y: 30 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: mobileIdx * 0.1 }}
+                className={`rounded-xl border border-[hsl(30,6%,90%)] bg-white p-6 flex flex-col ${
+                  plan.name === "Starter" ? "md:order-1" : "md:order-3"
                 }`}
               >
-                <Link to="/register">{plan.cta}</Link>
-              </Button>
-            </motion.div>
-          ))}
+                {cardContent}
+              </motion.div>
+            );
+          })}
         </div>
 
         <p className="mt-8 text-center text-sm font-landing-body text-[hsl(25,5%,45%)]">
