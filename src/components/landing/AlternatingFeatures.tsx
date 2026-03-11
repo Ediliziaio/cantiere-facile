@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 import { FileText, MapPin, PenTool, ArrowRight, CheckCircle2, Upload, Shield } from "lucide-react";
 
 const rows = [
