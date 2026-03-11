@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 import { FileText, CreditCard, MapPin, PenTool, MessageSquare, Truck, CheckCircle2, ArrowRight } from "lucide-react";
 
 const tabs = [
