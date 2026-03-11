@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown, Download } from "lucide-react";
+import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown, Download, MapPin } from "lucide-react";
 import { mockTimbrature, getPresentiOra } from "@/data/mock-badges";
 import { mockCantieri, mockLavoratori } from "@/data/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,16 @@ const esitoColors: Record<string, string> = {
   warning: "border-l-amber-500",
   bloccato: "border-l-red-500",
 };
+
+// Haversine distance in meters
+function calcolaDistanza(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000;
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 interface DaySummary {
   lavoratoreId: string;
@@ -30,6 +41,13 @@ interface DaySummary {
   inCorso: boolean;
   esito: string;
   motivoBlocco?: string;
+  latEntrata: number | null;
+  lonEntrata: number | null;
+  latUscita: number | null;
+  lonUscita: number | null;
+  distanzaEntrata: number | null;
+  distanzaUscita: number | null;
+  fuoriZona: boolean;
 }
 
 type DateMode = "giorno" | "intervallo" | "tutte";
