@@ -106,18 +106,46 @@ export default function FirmaDashboard() {
         </Select>
       </div>
 
-      {/* Table */}
-      <Card>
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {filtered.map(doc => {
+          const signers = mockFirmatari.filter(f => f.documento_id === doc.id);
+          const signed = signers.filter(f => f.stato === "firmato").length;
+          const stato = getStatoLabel(doc.stato);
+          return (
+            <Link key={doc.id} to={`/app/firma/${doc.id}`} className="block border border-border rounded-lg p-4 hover:border-primary/30 active:scale-[0.99] transition-all">
+              <div className="flex items-start justify-between mb-2">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-foreground text-sm truncate">{doc.nome}</p>
+                  <p className="text-xs text-muted-foreground">{getTipoLabel(doc.tipo_documento)}</p>
+                </div>
+                <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full border shrink-0 ml-2 ${statoColors[doc.stato]}`}>
+                  {stato.label}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                <div><span className="text-muted-foreground">Cantiere: </span><span className="text-foreground">{doc.cantiere_nome}</span></div>
+                <div><span className="text-muted-foreground">Firmatari: </span><span className="text-foreground">{signed}/{signers.length}</span></div>
+                <div><span className="text-muted-foreground">Scadenza: </span><span className="text-foreground">{format(new Date(doc.data_scadenza_firma), "dd MMM yyyy", { locale: it })}</span></div>
+              </div>
+            </Link>
+          );
+        })}
+        {filtered.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">Nessun documento trovato</p>}
+      </div>
+
+      {/* Desktop table view */}
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Documento</TableHead>
-                <TableHead className="hidden md:table-cell">Tipo</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead className="hidden lg:table-cell">Cantiere</TableHead>
                 <TableHead>Firmatari</TableHead>
                 <TableHead>Stato</TableHead>
-                <TableHead className="hidden md:table-cell">Scadenza</TableHead>
+                <TableHead>Scadenza</TableHead>
                 <TableHead className="w-10"></TableHead>
               </TableRow>
             </TableHeader>
@@ -128,11 +156,8 @@ export default function FirmaDashboard() {
                 const stato = getStatoLabel(doc.stato);
                 return (
                   <TableRow key={doc.id}>
-                    <TableCell>
-                      <div className="font-medium text-sm">{doc.nome}</div>
-                      <div className="text-xs text-muted-foreground md:hidden">{getTipoLabel(doc.tipo_documento)}</div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm">{getTipoLabel(doc.tipo_documento)}</TableCell>
+                    <TableCell><div className="font-medium text-sm">{doc.nome}</div></TableCell>
+                    <TableCell className="text-sm">{getTipoLabel(doc.tipo_documento)}</TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{doc.cantiere_nome}</TableCell>
                     <TableCell className="text-sm">{signed}/{signers.length}</TableCell>
                     <TableCell>
@@ -140,7 +165,7 @@ export default function FirmaDashboard() {
                         {stato.label}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                    <TableCell className="text-sm text-muted-foreground">
                       {format(new Date(doc.data_scadenza_firma), "dd MMM yyyy", { locale: it })}
                     </TableCell>
                     <TableCell>
