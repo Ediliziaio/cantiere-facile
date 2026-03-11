@@ -66,7 +66,10 @@ export default function CantiereDetail() {
                   <p className="text-sm font-medium text-foreground truncate">{d.nome_file}</p>
                   <p className="text-xs text-muted-foreground">{d.categoria} · {d.data_scadenza ? `Scade il ${new Date(d.data_scadenza).toLocaleDateString("it-IT")}` : "Nessuna scadenza"}</p>
                 </div>
-                <DocumentStatusBadge stato={d.stato as DocumentoStato} />
+                <div className="flex items-center gap-2 shrink-0">
+                  <DocumentActions nomeFile={d.nome_file} categoria={d.categoria} dataCaricamento={d.data_caricamento} />
+                  <DocumentStatusBadge stato={d.stato as DocumentoStato} />
+                </div>
               </div>
             ))}
           </div>
