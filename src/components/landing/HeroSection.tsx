@@ -58,7 +58,7 @@ export default function HeroSection() {
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.5 }}
-            className="mt-6 font-landing-heading font-extrabold text-4xl sm:text-5xl md:text-[4.25rem] text-white leading-[1.1] tracking-tight"
+            className="mt-6 font-landing-heading font-bold text-3xl sm:text-4xl md:text-[3.5rem] text-white leading-[1.1] tracking-tight"
           >
             Il cantiere sotto controllo.
             <br />
