@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import {
   Check, Building2, Users, FileText, QrCode, MapPin, Mail, PenTool, Truck,
   Download, MessageSquare, Shield, Headphones, Globe, Zap, UserCheck, Receipt, LayoutDashboard,
+  BadgeCheck, Cpu, CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -66,6 +67,24 @@ const plans = [
   },
 ];
 
+const whyCheap = [
+  {
+    icon: Users,
+    title: "Nessun costo per utente",
+    description: "Altri software cantiere ti fanno pagare per ogni lavoratore aggiunto. Noi no. Aggiungi 10 o 200 persone: il prezzo non cambia.",
+  },
+  {
+    icon: PenTool,
+    title: "Firma digitale inclusa",
+    description: "Competitor ti chiedono €1-2 per ogni firma. Con Cantiere in Cloud la firma digitale è inclusa in tutti i piani — firme illimitate, zero costi extra.",
+  },
+  {
+    icon: Cpu,
+    title: "Zero hardware da comprare",
+    description: "Niente tornelli, niente badge fisici, niente stampanti. Tutto funziona con lo smartphone che hai già in tasca. Risparmio immediato.",
+  },
+];
+
 const faqs = [
   { q: "Posso cambiare piano in qualsiasi momento?", a: "Sì, puoi fare upgrade o downgrade in qualsiasi momento. Il cambio è immediato e il costo viene ricalcolato pro-rata." },
   { q: "Cosa succede alla fine della prova gratuita?", a: "Il tuo account passa automaticamente al piano Starter gratuito. Non perdi nessun dato e non ti viene addebitato nulla." },
@@ -78,6 +97,7 @@ const faqs = [
 export default function Tariffe() {
   const [annual, setAnnual] = useState(false);
   const [cardsRef, cardsInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [cheapRef, cheapInView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
   return (
     <div className="font-landing-body">
@@ -94,8 +114,8 @@ export default function Tariffe() {
             <h1 className="mt-4 font-landing-heading font-bold text-4xl md:text-5xl text-white leading-tight">
               Tariffe chiare. Zero sorprese.
             </h1>
-            <p className="mt-4 text-lg text-[hsl(30,6%,60%)]">
-              Scegli il piano giusto per la tua impresa. Cancelli quando vuoi.
+            <p className="mt-4 text-lg text-[hsl(30,6%,60%)] max-w-2xl mx-auto">
+              Un DURC scaduto costa <strong className="text-white">€12.000 di multa</strong>. Il piano Professional costa <strong className="text-white">€26/mese</strong>. Fai i conti.
             </p>
           </motion.div>
         </div>
@@ -238,6 +258,39 @@ export default function Tariffe() {
         </div>
       </section>
 
+      {/* Perché costa così poco */}
+      <section className="py-20 md:py-24 bg-[#0F0E0D]" ref={cheapRef}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={cheapInView ? { opacity: 1, y: 0 } : {}}
+            className="font-landing-heading font-bold text-3xl md:text-4xl text-white text-center mb-4"
+          >
+            Perché costa così poco?
+          </motion.h2>
+          <p className="text-center text-[hsl(30,6%,60%)] mb-12 max-w-xl mx-auto">
+            Abbiamo eliminato tutto ciò che gonfia i costi dei software tradizionali per cantiere.
+          </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {whyCheap.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={cheapInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-[hsl(25,95%,53%)]/10 flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="h-7 w-7 text-[hsl(25,95%,53%)]" />
+                </div>
+                <h3 className="font-landing-heading font-bold text-lg text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-[hsl(30,6%,60%)] leading-relaxed">{item.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="py-20 md:py-28 bg-white">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
@@ -259,12 +312,28 @@ export default function Tariffe() {
         </div>
       </section>
 
+      {/* Garanzia */}
+      <section className="py-16 md:py-20 bg-[#FAFAF9]">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-[hsl(142,71%,45%)]/10 flex items-center justify-center mx-auto mb-6">
+            <BadgeCheck className="h-8 w-8 text-[hsl(142,71%,45%)]" />
+          </div>
+          <h2 className="font-landing-heading font-bold text-2xl md:text-3xl text-[hsl(20,14%,8%)]">
+            Soddisfatto o rimborsato. 30 giorni.
+          </h2>
+          <p className="mt-4 text-[hsl(25,5%,45%)] leading-relaxed max-w-lg mx-auto">
+            Nessun rischio, nessun vincolo contrattuale. Prova Cantiere in Cloud per 30 giorni:
+            se non fa per te, ti rimborsiamo al 100%. Cancelli in 2 click, senza domande.
+          </p>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 md:py-24 bg-[#0F0E0D] relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[hsl(25,95%,53%)]/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="font-landing-heading font-bold text-3xl md:text-4xl text-white">
-            Inizia gratis. Nessun rischio.
+            Ogni mese senza Cantiere in Cloud ti costa più del piano Professional.
           </h2>
           <p className="mt-4 text-[hsl(30,6%,60%)]">
             14 giorni di prova gratuita su tutti i piani. Nessuna carta di credito.
