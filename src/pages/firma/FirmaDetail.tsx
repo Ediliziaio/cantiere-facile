@@ -105,8 +105,20 @@ export default function FirmaDetail() {
           <Link to={`/app/firma/${id}/anteprima`}><Eye className="h-3.5 w-3.5 mr-1.5" /> Anteprima</Link>
         </Button>
         {doc.stato === "completato" && (
-          <Button variant="outline" size="sm" asChild>
-            <Link to={`/app/firma/${id}/certificato`}><Award className="h-3.5 w-3.5 mr-1.5" /> Certificato</Link>
+          <>
+            <Button variant="outline" size="sm" asChild>
+              <Link to={`/app/firma/${id}/certificato`}><Award className="h-3.5 w-3.5 mr-1.5" /> Certificato</Link>
+            </Button>
+            <Button size="sm" onClick={handleDownloadPdf} disabled={downloading}>
+              {downloading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Download className="h-3.5 w-3.5 mr-1.5" />}
+              Scarica PDF firmato
+            </Button>
+          </>
+        )}
+        {doc.stato !== "completato" && (
+          <Button variant="outline" size="sm" onClick={handleDownloadPdf} disabled={downloading}>
+            {downloading ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Download className="h-3.5 w-3.5 mr-1.5" />}
+            Genera PDF anteprima
           </Button>
         )}
       </div>
