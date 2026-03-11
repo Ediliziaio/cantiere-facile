@@ -109,8 +109,8 @@ export default function AlternatingFeatures() {
             <motion.div
               ref={ref}
               key={row.tag}
-              initial={{ opacity: 0, x: isEven ? -40 : 40 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
+              initial={{ opacity: 0, x: isEven ? -40 : 40, scale: 0.98 }}
+              animate={inView ? { opacity: 1, x: 0, scale: 1 } : {}}
               transition={{ duration: 0.6 }}
               className={`grid md:grid-cols-2 gap-10 md:gap-16 items-center ${!isEven ? "md:[direction:rtl]" : ""}`}
             >

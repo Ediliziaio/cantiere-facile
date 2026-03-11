@@ -33,7 +33,7 @@ const stats = [
 
 function CountUp({ target, inView }: { target: number; inView: boolean }) {
   const count = useMotionValue(0);
-  const spring = useSpring(count, { stiffness: 50, damping: 20 });
+  const spring = useSpring(count, { stiffness: 80, damping: 25 });
   
   useEffect(() => {
     if (inView) count.set(target);

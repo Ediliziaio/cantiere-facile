@@ -23,6 +23,7 @@ export default function Landing() {
       <AlternatingFeatures />
       <TestimonialsSection />
       <PricingSection />
+      <FaqSection />
       <ManifestoSection />
       <FinalCtaSection />
       <LandingFooter />
