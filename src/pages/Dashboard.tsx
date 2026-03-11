@@ -59,7 +59,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-2">
               <s.icon className={`h-4 w-4 ${s.accent ? "text-warning" : "text-muted-foreground"}`} />
             </div>
-            <p className="font-heading font-bold text-2xl text-foreground">{s.value}</p>
+            <p className="font-heading font-bold text-xl sm:text-2xl text-foreground">{s.value}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
           </Link>
         ))}
