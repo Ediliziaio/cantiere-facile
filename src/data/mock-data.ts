@@ -361,3 +361,4 @@ export const mockLogAttivita: LogAttivita[] = [
   { id: "log13", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "creazione", descrizione: "Nuovo subappaltatore aggiunto", dettaglio: "Carpenteria Metallica Neri — Cantiere Palazzina", timestamp: "2026-03-04T14:30:00" },
   { id: "log14", tenant_id: "t1", utente_id: "ua5", utente_nome: "Roberto Conti", tipo: "login", descrizione: "Accesso al sistema", dettaglio: null, timestamp: "2026-01-20T09:45:00" },
   { id: "log15", tenant_id: "t1", utente_id: "ua1", utente_nome: "Andrea Rossi", tipo: "modifica", descrizione: "Utente disabilitato", dettaglio: "Disabilitato Roberto Conti", timestamp: "2026-01-21T10:00:00" },
+];
