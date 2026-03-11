@@ -19,6 +19,13 @@ export interface Badge {
   data_scadenza: string;
   note: string | null;
   created_at: string;
+  // D.L. 159/2025 fields
+  codice_fiscale_lavoratore: string;
+  numero_progressivo: string;
+  ente_emittente: string;
+  firma_digitale_hash: string;
+  riferimento_normativo: string;
+  data_verifica_documenti: string;
 }
 
 export interface Timbratura {
