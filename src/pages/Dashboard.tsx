@@ -44,7 +44,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading font-bold text-2xl text-foreground">Dashboard</h1>
+        <h1 className="font-heading font-bold text-xl sm:text-2xl text-foreground">Dashboard</h1>
       </div>
 
       <ScadenzaAlert count={dashboardStats.documentiInScadenza} scadutiCount={dashboardStats.documentiScaduti} />
