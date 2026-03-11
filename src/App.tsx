@@ -20,6 +20,7 @@ import Subappaltatori from "./pages/Subappaltatori";
 import Lavoratori from "./pages/Lavoratori";
 import Mezzi from "./pages/Mezzi";
 import MezzoDetail from "./pages/MezzoDetail";
+import NuovoMezzo from "./pages/NuovoMezzo";
 import Accessi from "./pages/Accessi";
 import Comunicazioni from "./pages/Comunicazioni";
 import Impostazioni from "./pages/Impostazioni";
@@ -75,6 +76,7 @@ const App = () => (
               <Route path="subappaltatori" element={<Subappaltatori />} />
               <Route path="lavoratori" element={<Lavoratori />} />
               <Route path="mezzi" element={<Mezzi />} />
+              <Route path="mezzi/nuovo" element={<NuovoMezzo />} />
               <Route path="mezzi/:id" element={<MezzoDetail />} />
               <Route path="accessi" element={<Accessi />} />
               <Route path="badge" element={<BadgeList />} />

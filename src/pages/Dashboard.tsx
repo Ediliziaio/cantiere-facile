@@ -1,7 +1,7 @@
-import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, IdCard } from "lucide-react";
+import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, IdCard, Truck, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { dashboardStats, mockCantieri, mockScadenze, mockAccessi } from "@/data/mock-data";
+import { dashboardStats, mockCantieri, mockScadenze, mockAccessi, mockMezzi, getScadenzaStatus } from "@/data/mock-data";
 import { CantiereSummaryCard } from "@/components/cantiere/CantiereSummaryCard";
 import { ScadenzaAlert } from "@/components/cantiere/ScadenzaAlert";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
@@ -15,12 +15,29 @@ const badgeInScadenza = mockBadges.filter((b) => {
   return diff <= 30 && diff > 0 && b.stato === "attivo";
 }).length;
 
+// Mezzi con scadenze imminenti
+const mezziScadenze: { mezzo: typeof mockMezzi[0]; tipo_scad: string; data: string; stato: string }[] = [];
+mockMezzi.forEach((m) => {
+  const checks = [
+    { label: "Revisione", date: m.data_prossima_revisione },
+    { label: "Manutenzione", date: m.data_prossima_manutenzione },
+    { label: "Assicurazione", date: m.scadenza_assicurazione },
+    ...(m.scadenza_collaudo ? [{ label: "Collaudo", date: m.scadenza_collaudo }] : []),
+  ];
+  checks.forEach((c) => {
+    const s = getScadenzaStatus(c.date);
+    if (s !== "valido") mezziScadenze.push({ mezzo: m, tipo_scad: c.label, data: c.date, stato: s });
+  });
+});
+const mezziConScadenze = new Set(mezziScadenze.map((ms) => ms.mezzo.id)).size;
+
 const statCards = [
   { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/app/cantieri" },
   { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/app/scadenze", accent: true },
   { label: "Accessi oggi", value: dashboardStats.accessiOggi, icon: ShieldCheck, href: "/app/accessi" },
   { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/app/subappaltatori" },
   { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/app/badge" },
+  { label: "Mezzi con scadenze", value: mezziConScadenze, icon: Truck, href: "/app/mezzi", accent: mezziConScadenze > 0 },
 ];
 
 export default function Dashboard() {
@@ -32,7 +49,7 @@ export default function Dashboard() {
 
       <ScadenzaAlert count={dashboardStats.documentiInScadenza} scadutiCount={dashboardStats.documentiScaduti} />
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
         {statCards.map((s) => (
           <Link
             key={s.label}
@@ -92,6 +109,39 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
+
+      {mezziScadenze.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-heading font-semibold text-lg text-foreground">Scadenze mezzi</h2>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/app/mezzi">Vedi tutti</Link>
+            </Button>
+          </div>
+          <div className="border border-border rounded-lg divide-y divide-border">
+            {mezziScadenze.map((ms, i) => (
+              <Link key={i} to={`/app/mezzi/${ms.mezzo.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {ms.mezzo.tipo} — {ms.mezzo.targa_o_matricola}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {ms.tipo_scad} · {new Date(ms.data).toLocaleDateString("it-IT")}
+                  </p>
+                </div>
+                <span className={`inline-flex items-center gap-1 text-[11px] font-medium border rounded-full px-2 py-0.5 ${
+                  ms.stato === "scaduto"
+                    ? "bg-destructive/10 text-destructive border-destructive/30"
+                    : "bg-warning/10 text-warning border-warning/30"
+                }`}>
+                  <AlertTriangle className="h-3 w-3" />
+                  {ms.stato === "scaduto" ? "Scaduto" : "In scadenza"}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
         <div className="flex items-center justify-between mb-3">
