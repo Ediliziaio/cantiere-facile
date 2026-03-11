@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PenTool, Plus, Clock, CheckCircle2, AlertTriangle, FileX2, Eye } from "lucide-react";
+import { PenTool, Plus, Clock, CheckCircle2, AlertTriangle, FileX2, Eye, LayoutTemplate } from "lucide-react";
 import { mockDocumentiFirma, mockFirmatari, getStatoLabel, getTipoLabel, type StatoDocumentoFirma } from "@/data/mock-firma";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
