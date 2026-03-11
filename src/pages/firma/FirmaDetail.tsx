@@ -76,6 +76,19 @@ export default function FirmaDetail() {
         </span>
       </div>
 
+      {/* Action buttons */}
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" asChild>
+          <Link to={`/app/firma/${id}/configura`}><Settings className="h-3.5 w-3.5 mr-1.5" /> Configura campi</Link>
+        </Button>
+        <Button variant="outline" size="sm" asChild>
+          <Link to={`/app/firma/${id}/firmatari`}><Users className="h-3.5 w-3.5 mr-1.5" /> Gestisci firmatari</Link>
+        </Button>
+        <Button variant="outline" size="sm" asChild>
+          <Link to={`/app/firma/${id}/anteprima`}><Eye className="h-3.5 w-3.5 mr-1.5" /> Anteprima</Link>
+        </Button>
+      </div>
+
       {/* Pipeline stepper */}
       {currentStep >= 0 && (
         <div className="flex items-center gap-1">
