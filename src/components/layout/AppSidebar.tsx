@@ -7,13 +7,17 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
+import { mockThreads } from "@/data/mock-comunicazioni";
+
+const unreadCount = mockThreads.reduce((s, t) => s + t.non_letti, 0);
 
 const navGroups = [
   {
     label: "Generale",
     items: [
       { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard },
-      { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare },
+      { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock },
     ],
   },
@@ -76,7 +80,16 @@ export function AppSidebar() {
                         activeClassName="bg-primary/10 text-primary font-medium"
                       >
                         <item.icon className="h-4 w-4 shrink-0" />
-                        {!collapsed && <span>{item.title}</span>}
+                        {!collapsed && (
+                          <span className="flex-1 flex items-center justify-between">
+                            <span>{item.title}</span>
+                            {"badge" in item && item.badge > 0 && (
+                              <Badge variant="destructive" className="text-[10px] h-4 min-w-4 flex items-center justify-center px-1 ml-auto">
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </span>
+                        )}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
