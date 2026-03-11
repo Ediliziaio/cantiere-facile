@@ -49,6 +49,12 @@ import SuperAdminAziende from "./pages/superadmin/SuperAdminAziende";
 import SuperAdminAziendaDetail from "./pages/superadmin/SuperAdminAziendaDetail";
 import SuperAdminImpostazioni from "./pages/superadmin/SuperAdminImpostazioni";
 import NotFound from "./pages/NotFound";
+import FunzionalitaDocumenti from "./pages/funzionalita/Documenti";
+import FunzionalitaTesserini from "./pages/funzionalita/Tesserini";
+import FunzionalitaAccessi from "./pages/funzionalita/Accessi";
+import FunzionalitaFirma from "./pages/funzionalita/Firma";
+import FunzionalitaComunicazioni from "./pages/funzionalita/Comunicazioni";
+import FunzionalitaVeicoli from "./pages/funzionalita/Veicoli";
 
 const queryClient = new QueryClient();
 
