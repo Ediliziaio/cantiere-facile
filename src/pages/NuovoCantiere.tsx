@@ -49,7 +49,9 @@ export default function NuovoCantiere() {
             <Input id="data_fine" type="date" value={form.data_fine} onChange={update("data_fine")} />
           </div>
         </div>
-        <Button type="submit">Crea cantiere</Button>
+        <div className="sticky bottom-16 sm:bottom-0 bg-background pt-3 pb-3 -mb-3">
+          <Button type="submit" className="w-full sm:w-auto">Crea cantiere</Button>
+        </div>
       </form>
     </div>
   );

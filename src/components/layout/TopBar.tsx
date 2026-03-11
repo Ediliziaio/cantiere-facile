@@ -48,7 +48,7 @@ export function TopBar() {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 max-h-96 overflow-y-auto">
+          <DropdownMenuContent align="end" className="w-[calc(100vw-2rem)] max-w-80 max-h-96 overflow-y-auto">
             {/* System notifications */}
             {mockNotifiche.map((n) => (
               <DropdownMenuItem key={n.id} className="flex items-start gap-2 py-2">

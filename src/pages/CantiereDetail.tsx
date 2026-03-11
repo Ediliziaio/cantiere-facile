@@ -53,15 +53,17 @@ export default function CantiereDetail() {
       </div>
 
       <Tabs defaultValue="documenti">
-        <TabsList>
-          <TabsTrigger value="documenti">Documenti ({docs.length})</TabsTrigger>
-          <TabsTrigger value="subappaltatori">Subappaltatori ({subs.length})</TabsTrigger>
-          <TabsTrigger value="lavoratori">Lavoratori ({workers.length})</TabsTrigger>
-          <TabsTrigger value="mezzi">Mezzi ({mezzi.length})</TabsTrigger>
-          <TabsTrigger value="accessi">Accessi ({accessi.length})</TabsTrigger>
-          <TabsTrigger value="galleria">Galleria ({fileCantiere.length})</TabsTrigger>
-          <TabsTrigger value="diario">Diario ({diario.length})</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+          <TabsList className="w-max flex-nowrap">
+            <TabsTrigger value="documenti">Documenti <span className="hidden sm:inline ml-1">({docs.length})</span></TabsTrigger>
+            <TabsTrigger value="subappaltatori">Subappaltatori <span className="hidden sm:inline ml-1">({subs.length})</span></TabsTrigger>
+            <TabsTrigger value="lavoratori">Lavoratori <span className="hidden sm:inline ml-1">({workers.length})</span></TabsTrigger>
+            <TabsTrigger value="mezzi">Mezzi <span className="hidden sm:inline ml-1">({mezzi.length})</span></TabsTrigger>
+            <TabsTrigger value="accessi">Accessi <span className="hidden sm:inline ml-1">({accessi.length})</span></TabsTrigger>
+            <TabsTrigger value="galleria">Galleria <span className="hidden sm:inline ml-1">({fileCantiere.length})</span></TabsTrigger>
+            <TabsTrigger value="diario">Diario <span className="hidden sm:inline ml-1">({diario.length})</span></TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="documenti">
           <div className="border border-border rounded-lg divide-y divide-border">

@@ -45,12 +45,14 @@ export default function Documenti() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Cerca documento..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <div className="flex gap-1">
-          {stati.map((s) => (
-            <Button key={s} variant={statoFilter === s ? "default" : "outline"} size="sm" onClick={() => setStatoFilter(s)} className="text-xs capitalize">
-              {s === "tutti" ? "Tutti" : s.replace("_", " ")}
-            </Button>
-          ))}
+        <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+          <div className="flex gap-1 w-max">
+            {stati.map((s) => (
+              <Button key={s} variant={statoFilter === s ? "default" : "outline"} size="sm" onClick={() => setStatoFilter(s)} className="text-xs capitalize whitespace-nowrap">
+                {s === "tutti" ? "Tutti" : s.replace("_", " ")}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 

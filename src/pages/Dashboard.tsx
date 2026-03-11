@@ -65,14 +65,14 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" asChild>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button size="sm" className="w-full sm:w-auto" asChild>
           <Link to="/app/cantieri/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Nuovo cantiere</Link>
         </Button>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto" asChild>
           <Link to="/app/documenti"><Upload className="h-3.5 w-3.5 mr-1" /> Carica documento</Link>
         </Button>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto" asChild>
           <Link to="/app/subappaltatori"><UserPlus className="h-3.5 w-3.5 mr-1" /> Aggiungi subappaltatore</Link>
         </Button>
       </div>
