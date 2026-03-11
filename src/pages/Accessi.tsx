@@ -72,6 +72,10 @@ function buildSummaries(timbrature: typeof mockTimbrature): DaySummary[] {
         inCorso: false,
         esito: t.esito,
         motivoBlocco: t.motivo_blocco,
+        latEntrata: null, lonEntrata: null,
+        latUscita: null, lonUscita: null,
+        distanzaEntrata: null, distanzaUscita: null,
+        fuoriZona: false,
       });
     }
     const s = map.get(key)!;
@@ -83,9 +87,13 @@ function buildSummaries(timbrature: typeof mockTimbrature): DaySummary[] {
     }
     if (t.tipo === "entrata" && (!s.entrata || t.timestamp < s.entrata)) {
       s.entrata = t.timestamp;
+      s.latEntrata = t.latitudine;
+      s.lonEntrata = t.longitudine;
     }
     if (t.tipo === "uscita" && (!s.uscita || t.timestamp > s.uscita)) {
       s.uscita = t.timestamp;
+      s.latUscita = t.latitudine;
+      s.lonUscita = t.longitudine;
     }
   }
 
@@ -94,6 +102,18 @@ function buildSummaries(timbrature: typeof mockTimbrature): DaySummary[] {
       s.minutiLavorati = Math.round((new Date(s.uscita).getTime() - new Date(s.entrata).getTime()) / 60000);
     } else if (s.entrata && !s.uscita && s.esito !== "bloccato") {
       s.inCorso = true;
+    }
+    // Calculate distances
+    const cantiere = mockCantieri.find((c) => c.id === s.cantiereId);
+    if (cantiere) {
+      if (s.latEntrata != null && s.lonEntrata != null) {
+        s.distanzaEntrata = calcolaDistanza(s.latEntrata, s.lonEntrata, cantiere.latitudine, cantiere.longitudine);
+        if (s.distanzaEntrata > cantiere.raggio_geofence) s.fuoriZona = true;
+      }
+      if (s.latUscita != null && s.lonUscita != null) {
+        s.distanzaUscita = calcolaDistanza(s.latUscita, s.lonUscita, cantiere.latitudine, cantiere.longitudine);
+        if (s.distanzaUscita > cantiere.raggio_geofence) s.fuoriZona = true;
+      }
     }
   }
 
