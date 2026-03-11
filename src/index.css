@@ -53,8 +53,8 @@
     --sidebar-border: 30 6% 90%;
     --sidebar-ring: 25 95% 53%;
 
-    --font-heading: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
   }
 
   .dark {
