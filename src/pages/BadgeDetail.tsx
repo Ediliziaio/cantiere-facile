@@ -1,6 +1,6 @@
 import { useRef, useCallback, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Download, ShieldCheck, ShieldAlert, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Download, ShieldCheck, ShieldAlert, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, FileCheck, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { mockBadges, getTimbratureForBadge, getBadgeLavoratore, getBadgeCantiere, mockVerificheAccesso, mockTimbrature } from "@/data/mock-badges";
 import { mockDocumenti } from "@/data/mock-data";
