@@ -41,19 +41,19 @@ export default function FirmaDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <PenTool className="h-6 w-6 text-primary" />
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <PenTool className="h-5 sm:h-6 w-5 sm:w-6 text-primary" />
             Firma Digitale
           </h1>
           <p className="text-muted-foreground text-sm mt-1">Gestisci i documenti da firmare digitalmente</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button variant="outline" className="w-full sm:w-auto" asChild>
             <Link to="/app/firma/templates"><LayoutTemplate className="h-4 w-4 mr-1" /> Template</Link>
           </Button>
-          <Button asChild>
+          <Button className="w-full sm:w-auto" asChild>
             <Link to="/app/firma/nuovo"><Plus className="h-4 w-4 mr-1" /> Nuovo documento</Link>
           </Button>
         </div>
