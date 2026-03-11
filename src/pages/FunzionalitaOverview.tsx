@@ -49,56 +49,6 @@ const features = [
   },
 ];
 
-const penalties = [
-  {
-    icon: AlertTriangle,
-    value: "€12.000 – €30.000",
-    title: "Sanzione per documentazione non conforme",
-    description: "DURC scaduto, POS mancante, idoneità sanitaria assente. Art. 90 D.Lgs. 81/2008: la sanzione è immediata e non negoziabile. Un singolo documento mancante può costare più di un anno di software.",
-  },
-  {
-    icon: ShieldOff,
-    value: "Blocco cantiere",
-    title: "Sospensione immediata dei lavori",
-    description: "Lavoratori non tracciati, accessi non registrati, irregolarità formali. L'ispettorato può sospendere il cantiere in giornata. Ogni giorno di fermo costa migliaia di euro tra ritardi, penali contrattuali e manodopera ferma.",
-  },
-  {
-    icon: Gavel,
-    value: "Da 3 a 7 anni",
-    title: "Responsabilità penale del datore di lavoro",
-    description: "In caso di incidente con documentazione incompleta o assente, il responsabile della sicurezza rischia la reclusione. Non è teoria: succede ogni settimana nei tribunali italiani. La documentazione è la tua prima difesa legale.",
-  },
-];
-
-const questions = [
-  {
-    question: "Sai quanti documenti scadono questo mese?",
-    detail: "Se la risposta è no, stai lavorando alla cieca. Un DURC scaduto da un giorno è un DURC non valido. E la sanzione è la stessa che avresti con un documento scaduto da un anno.",
-  },
-  {
-    question: "Sai chi è in cantiere adesso?",
-    detail: "Non chi dovrebbe esserci. Chi c'è davvero. Se arriva un'ispezione e non puoi dimostrarlo in tempo reale, il problema è tuo.",
-  },
-  {
-    question: "I tuoi verbali sono firmati e archiviati?",
-    detail: "Un verbale di sopralluogo non firmato non ha valore legale. Un verbale firmato ma non archiviato è come se non esistesse. In caso di contenzioso, devi produrlo in minuti, non in giorni.",
-  },
-  {
-    question: "Cosa succede se arriva un'ispezione tra 10 minuti?",
-    detail: "Riesci a produrre: lista lavoratori presenti, DURC aggiornati, idoneità sanitarie, POS firmato, registro accessi? Se la risposta è 'ci provo', non è abbastanza.",
-  },
-  {
-    question: "I tuoi subappaltatori hanno i documenti in regola?",
-    detail: "La responsabilità solidale significa che se il tuo subappaltatore non è in regola, la sanzione arriva anche a te. Art. 26 D.Lgs. 81/2008: il committente è corresponsabile.",
-  },
-];
-
-const stats = [
-  { value: "78%", label: "delle sanzioni edili è per documentazione non conforme", source: "Dati INAIL 2024" },
-  { value: "€18.500", label: "multa media per irregolarità in cantiere", source: "Ispettorato Nazionale del Lavoro" },
-  { value: "3 ore", label: "risparmiate a settimana con gestione digitale", source: "Media utenti Cantiere in Cloud" },
-  { value: "60 sec", label: "per una firma digitale vs 5 giorni per una cartacea", source: "Benchmark interno" },
-];
 
 const comparison = [
   { before: "Documenti sparsi tra email, WhatsApp e cartelle condivise", after: "Dashboard unica con ricerca istantanea e filtri" },
