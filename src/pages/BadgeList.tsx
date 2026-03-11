@@ -80,27 +80,29 @@ export default function BadgeList() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Cerca lavoratore…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
-            {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={filtroStato} onValueChange={setFiltroStato}>
-          <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti</SelectItem>
-            <SelectItem value="attivo">Attivo</SelectItem>
-            <SelectItem value="sospeso">Sospeso</SelectItem>
-            <SelectItem value="revocato">Revocato</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
+            <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+              {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={filtroStato} onValueChange={setFiltroStato}>
+            <SelectTrigger className="w-full sm:w-36"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti</SelectItem>
+              <SelectItem value="attivo">Attivo</SelectItem>
+              <SelectItem value="sospeso">Sospeso</SelectItem>
+              <SelectItem value="revocato">Revocato</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden">
