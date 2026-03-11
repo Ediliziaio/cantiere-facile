@@ -177,7 +177,7 @@ export default function HeroSection() {
       </div>
 
       {/* Social proof marquee */}
-      <div className="bg-[#FAFAF9] py-6 border-t border-[hsl(30,6%,90%)]">
+      <div className="bg-[#FAFAF9] py-10 border-t border-[hsl(30,6%,90%)]">
         <p className="text-center text-sm text-[hsl(25,5%,45%)] font-landing-body mb-4">
           Scelto da imprese edili in tutta Italia
         </p>
