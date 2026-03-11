@@ -249,12 +249,12 @@ export default function Accessi() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-primary" />
-          <h1 className="font-heading font-bold text-2xl text-foreground">Registro Accessi</h1>
+          <h1 className="font-heading font-bold text-xl sm:text-2xl text-foreground">Registro Accessi</h1>
         </div>
-        <Button variant="outline" size="sm" onClick={exportCSV}>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={exportCSV}>
           <Download className="h-4 w-4 mr-1.5" />
           Esporta CSV
         </Button>
