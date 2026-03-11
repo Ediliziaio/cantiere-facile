@@ -4,6 +4,10 @@ import PainSection from "@/components/landing/PainSection";
 import FeatureTabsSection from "@/components/landing/FeatureTabsSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import AlternatingFeatures from "@/components/landing/AlternatingFeatures";
+import PenaltiesSection from "@/components/landing/PenaltiesSection";
+import ScenarioSection from "@/components/landing/ScenarioSection";
+import RetoricalQuestionsSection from "@/components/landing/RetoricalQuestionsSection";
+import StatsSection from "@/components/landing/StatsSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import PricingSection from "@/components/landing/PricingSection";
 import FaqSection from "@/components/landing/FaqSection";
@@ -21,6 +25,10 @@ export default function Landing() {
       <FeatureTabsSection />
       <HowItWorksSection />
       <AlternatingFeatures />
+      <PenaltiesSection />
+      <ScenarioSection />
+      <RetoricalQuestionsSection />
+      <StatsSection />
       <TestimonialsSection />
       <PricingSection />
       <FaqSection />

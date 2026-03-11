@@ -1,10 +1,14 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Link } from "react-router-dom";
-import { FileText, CreditCard, MapPin, PenTool, MessageSquare, Truck, ArrowRight, X, Check, AlertTriangle, ShieldOff, Gavel, Clock } from "lucide-react";
+import { FileText, CreditCard, MapPin, PenTool, MessageSquare, Truck, ArrowRight, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import PenaltiesSection from "@/components/landing/PenaltiesSection";
+import ScenarioSection from "@/components/landing/ScenarioSection";
+import RetoricalQuestionsSection from "@/components/landing/RetoricalQuestionsSection";
+import StatsSection from "@/components/landing/StatsSection";
 
 const features = [
   {
