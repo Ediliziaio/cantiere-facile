@@ -182,14 +182,17 @@ export default function HeroSection() {
           Scelto da imprese edili in tutta Italia
         </p>
         <div className="overflow-hidden">
-          <div className="marquee-track whitespace-nowrap">
-            {[...logos, ...logos].map((name, i) => (
-              <span
+          <div className="marquee-track">
+            {[...logos, ...logos].map((logo, i) => (
+              <div
                 key={i}
-                className="inline-block mx-8 text-lg font-landing-heading font-semibold text-[hsl(25,5%,45%)]/30 select-none"
+                className="flex items-center gap-2 mx-8 text-[hsl(25,5%,45%)]/30 select-none shrink-0"
               >
-                {name}
-              </span>
+                {logo.icon}
+                <span className="text-lg font-landing-heading font-semibold whitespace-nowrap">
+                  {logo.name}
+                </span>
+              </div>
             ))}
           </div>
         </div>
