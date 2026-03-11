@@ -20,14 +20,14 @@ const stagger = {
 };
 
 const logos = [
-  { name: "Costruzioni Rossi", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="8" width="7" height="13" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/><line x1="5" y1="11" x2="8" y2="11"/><line x1="5" y1="14" x2="8" y2="14"/><line x1="16" y1="6" x2="19" y2="6"/><line x1="16" y1="9" x2="19" y2="9"/><line x1="16" y1="12" x2="19" y2="12"/></svg> },
-  { name: "Impresa Bianchi", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="2" x2="12" y2="18"/><line x1="12" y1="6" x2="20" y2="6"/><line x1="20" y1="6" x2="20" y2="10"/><circle cx="20" cy="11" r="1"/><line x1="4" y1="22" x2="20" y2="22"/><rect x="10" y="18" width="4" height="4"/></svg> },
-  { name: "General Contracting Sud", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2C9 2 4 6 4 10c0 0 0 2 8 2s8-2 8-2c0-4-5-8-8-8z"/><line x1="4" y1="10" x2="4" y2="14"/><line x1="20" y1="10" x2="20" y2="14"/><line x1="12" y1="12" x2="12" y2="16"/></svg> },
-  { name: "Edilmaster Group", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="14" width="6" height="4" rx="0.5"/><rect x="9" y="14" width="6" height="4" rx="0.5"/><rect x="16" y="14" width="6" height="4" rx="0.5"/><rect x="5.5" y="9" width="6" height="4" rx="0.5"/><rect x="12.5" y="9" width="6" height="4" rx="0.5"/><rect x="9" y="4" width="6" height="4" rx="0.5"/></svg> },
-  { name: "Cantieri del Nord", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 20L12 4l8 16H4z"/><line x1="8" y1="20" x2="12" y2="10"/><line x1="16" y1="20" x2="12" y2="10"/></svg> },
-  { name: "Rizzo Costruzioni", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><rect x="9" y="14" width="6" height="7"/><line x1="12" y1="5" x2="12" y2="3"/></svg> },
-  { name: "GEC Lombarda", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 20L12 4l10 16H2z"/><path d="M7 20L12 10l5 10"/></svg> },
-  { name: "Impresa Verdi", icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="22" x2="12" y2="12"/><path d="M12 12C12 12 8 8 8 5c0-2 1.5-3 4-3s4 1 4 3c0 3-4 7-4 7z"/><path d="M12 16c-3 0-5-1.5-5-3.5S10 8 12 12c2-4 5-2 5 .5S15 16 12 16z"/></svg> },
+  { name: "Costruzioni Rossi", src: "/logos/costruzioni-rossi.png" },
+  { name: "Impresa Bianchi", src: "/logos/impresa-bianchi.png" },
+  { name: "General Contracting Sud", src: "/logos/general-contracting-sud.png" },
+  { name: "Edilmaster Group", src: "/logos/edilmaster-group.png" },
+  { name: "Cantieri del Nord", src: "/logos/cantieri-del-nord.png" },
+  { name: "Rizzo Costruzioni", src: "/logos/rizzo-costruzioni.png" },
+  { name: "GEC Lombarda", src: "/logos/gec-lombarda.png" },
+  { name: "Impresa Verdi", src: "/logos/impresa-verdi.png" },
 ];
 
 export default function HeroSection() {
