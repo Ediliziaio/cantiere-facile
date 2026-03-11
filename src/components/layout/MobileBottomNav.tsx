@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import {
   HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const tabs = [
   { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard },
@@ -18,36 +19,38 @@ const menuGroups = [
   {
     label: "Generale",
     items: [
-      { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare },
-      { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock },
+      { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, adminOnly: false },
+      { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
     ],
   },
   {
     label: "Cantiere",
     items: [
-      { title: "Documenti", url: "/app/documenti", icon: FileText },
-      { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat },
-      { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building },
-      { title: "Mezzi", url: "/app/mezzi", icon: Truck },
+      { title: "Documenti", url: "/app/documenti", icon: FileText, adminOnly: false },
+      { title: "Lavoratori", url: "/app/lavoratori", icon: HardHat, adminOnly: false },
+      { title: "Subappaltatori", url: "/app/subappaltatori", icon: Building, adminOnly: true },
+      { title: "Mezzi", url: "/app/mezzi", icon: Truck, adminOnly: false },
     ],
   },
   {
     label: "Presenze",
     items: [
-      { title: "Timbrature", url: "/app/timbrature", icon: Clock },
-      { title: "Scansiona", url: "/app/scan", icon: ScanLine },
+      { title: "Timbrature", url: "/app/timbrature", icon: Clock, adminOnly: false },
+      { title: "Scansiona", url: "/app/scan", icon: ScanLine, adminOnly: false },
     ],
   },
   {
     label: "Sistema",
     items: [
-      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings },
+      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: false },
     ],
   },
 ];
 
 export function MobileBottomNav() {
   const [open, setOpen] = useState(false);
+  const { role } = useAuth();
+  const isManager = role === "manager";
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card safe-area-bottom">
@@ -71,28 +74,32 @@ export function MobileBottomNav() {
           <SheetContent side="bottom" className="max-h-[75vh] overflow-y-auto rounded-t-2xl">
             <SheetTitle className="sr-only">Menu di navigazione</SheetTitle>
             <div className="space-y-5 py-4">
-              {menuGroups.map((group) => (
-                <div key={group.label}>
-                  <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-1 mb-2">
-                    {group.label}
-                  </h3>
-                  <div className="grid grid-cols-3 gap-2">
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.url}
-                        to={item.url}
-                        onClick={() => setOpen(false)}
-                        className="flex flex-col items-center gap-1.5 p-3 rounded-xl hover:bg-accent text-muted-foreground hover:text-foreground transition-colors active:scale-95"
-                      >
-                        <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                          <item.icon className="h-5 w-5" />
-                        </div>
-                        <span className="text-xs text-center leading-tight">{item.title}</span>
-                      </Link>
-                    ))}
+              {menuGroups.map((group) => {
+                const visibleItems = group.items.filter(item => !isManager || !item.adminOnly);
+                if (visibleItems.length === 0) return null;
+                return (
+                  <div key={group.label}>
+                    <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-1 mb-2">
+                      {group.label}
+                    </h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {visibleItems.map((item) => (
+                        <Link
+                          key={item.url}
+                          to={item.url}
+                          onClick={() => setOpen(false)}
+                          className="flex flex-col items-center gap-1.5 p-3 rounded-xl hover:bg-accent text-muted-foreground hover:text-foreground transition-colors active:scale-95"
+                        >
+                          <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
+                            <item.icon className="h-5 w-5" />
+                          </div>
+                          <span className="text-xs text-center leading-tight">{item.title}</span>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </SheetContent>
         </Sheet>
