@@ -19,6 +19,7 @@ import Scadenze from "./pages/Scadenze";
 import Subappaltatori from "./pages/Subappaltatori";
 import Lavoratori from "./pages/Lavoratori";
 import Mezzi from "./pages/Mezzi";
+import MezzoDetail from "./pages/MezzoDetail";
 import Accessi from "./pages/Accessi";
 import Comunicazioni from "./pages/Comunicazioni";
 import Impostazioni from "./pages/Impostazioni";
