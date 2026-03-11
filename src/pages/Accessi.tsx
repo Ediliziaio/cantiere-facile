@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown, Download } from "lucide-react";
+import { ShieldCheck, Users, LogIn, LogOut, OctagonX, Search, CalendarIcon, ChevronDown, Download, MapPin } from "lucide-react";
 import { mockTimbrature, getPresentiOra } from "@/data/mock-badges";
 import { mockCantieri, mockLavoratori } from "@/data/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { format } from "date-fns";
 import { it } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,16 @@ const esitoColors: Record<string, string> = {
   warning: "border-l-amber-500",
   bloccato: "border-l-red-500",
 };
+
+// Haversine distance in meters
+function calcolaDistanza(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000;
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 interface DaySummary {
   lavoratoreId: string;
@@ -30,6 +41,13 @@ interface DaySummary {
   inCorso: boolean;
   esito: string;
   motivoBlocco?: string;
+  latEntrata: number | null;
+  lonEntrata: number | null;
+  latUscita: number | null;
+  lonUscita: number | null;
+  distanzaEntrata: number | null;
+  distanzaUscita: number | null;
+  fuoriZona: boolean;
 }
 
 type DateMode = "giorno" | "intervallo" | "tutte";
@@ -54,6 +72,10 @@ function buildSummaries(timbrature: typeof mockTimbrature): DaySummary[] {
         inCorso: false,
         esito: t.esito,
         motivoBlocco: t.motivo_blocco,
+        latEntrata: null, lonEntrata: null,
+        latUscita: null, lonUscita: null,
+        distanzaEntrata: null, distanzaUscita: null,
+        fuoriZona: false,
       });
     }
     const s = map.get(key)!;
@@ -65,9 +87,13 @@ function buildSummaries(timbrature: typeof mockTimbrature): DaySummary[] {
     }
     if (t.tipo === "entrata" && (!s.entrata || t.timestamp < s.entrata)) {
       s.entrata = t.timestamp;
+      s.latEntrata = t.latitudine;
+      s.lonEntrata = t.longitudine;
     }
     if (t.tipo === "uscita" && (!s.uscita || t.timestamp > s.uscita)) {
       s.uscita = t.timestamp;
+      s.latUscita = t.latitudine;
+      s.lonUscita = t.longitudine;
     }
   }
 
@@ -76,6 +102,18 @@ function buildSummaries(timbrature: typeof mockTimbrature): DaySummary[] {
       s.minutiLavorati = Math.round((new Date(s.uscita).getTime() - new Date(s.entrata).getTime()) / 60000);
     } else if (s.entrata && !s.uscita && s.esito !== "bloccato") {
       s.inCorso = true;
+    }
+    // Calculate distances
+    const cantiere = mockCantieri.find((c) => c.id === s.cantiereId);
+    if (cantiere) {
+      if (s.latEntrata != null && s.lonEntrata != null) {
+        s.distanzaEntrata = calcolaDistanza(s.latEntrata, s.lonEntrata, cantiere.latitudine, cantiere.longitudine);
+        if (s.distanzaEntrata > cantiere.raggio_geofence) s.fuoriZona = true;
+      }
+      if (s.latUscita != null && s.lonUscita != null) {
+        s.distanzaUscita = calcolaDistanza(s.latUscita, s.lonUscita, cantiere.latitudine, cantiere.longitudine);
+        if (s.distanzaUscita > cantiere.raggio_geofence) s.fuoriZona = true;
+      }
     }
   }
 
@@ -168,8 +206,13 @@ export default function Accessi() {
 
   const showDataColumn = dateMode !== "giorno";
 
+  const formatDistanza = (m: number | null) => {
+    if (m == null) return "—";
+    return m < 1000 ? `${Math.round(m)}m` : `${(m / 1000).toFixed(1)}km`;
+  };
+
   const exportCSV = useCallback(() => {
-    const headers = ["Lavoratore", "Mansione", "Cantiere", "Data", "Entrata", "Uscita", "Ore Lavorate", "Esito"];
+    const headers = ["Lavoratore", "Mansione", "Cantiere", "Data", "Entrata", "Uscita", "Ore Lavorate", "Esito", "Lat Entrata", "Lon Entrata", "Distanza Entrata (m)", "Lat Uscita", "Lon Uscita", "Distanza Uscita (m)", "Fuori Zona"];
     const rows = filtered.map((s) => {
       const lav = getLav(s.lavoratoreId);
       return [
@@ -181,6 +224,13 @@ export default function Accessi() {
         s.inCorso ? "In corso" : formatTime(s.uscita),
         s.inCorso ? "—" : (formatDurata(s.minutiLavorati, false) ?? "—"),
         s.esito,
+        s.latEntrata?.toFixed(6) ?? "",
+        s.lonEntrata?.toFixed(6) ?? "",
+        s.distanzaEntrata != null ? Math.round(s.distanzaEntrata).toString() : "",
+        s.latUscita?.toFixed(6) ?? "",
+        s.lonUscita?.toFixed(6) ?? "",
+        s.distanzaUscita != null ? Math.round(s.distanzaUscita).toString() : "",
+        s.fuoriZona ? "Sì" : "No",
       ].map((v) => `"${v}"`).join(",");
     });
     const csv = [headers.join(","), ...rows].join("\n");
@@ -336,6 +386,7 @@ export default function Accessi() {
       </div>
 
       {/* Summary Table */}
+      <TooltipProvider>
       <div className="border border-border rounded-lg overflow-hidden">
         <Table>
           <TableHeader>
@@ -347,19 +398,24 @@ export default function Accessi() {
               <TableHead className="text-center">Entrata</TableHead>
               <TableHead className="text-center">Uscita</TableHead>
               <TableHead className="text-center">Ore</TableHead>
+              <TableHead className="text-center w-16">GPS</TableHead>
               <TableHead className="text-center w-16">Esito</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={showDataColumn ? 8 : 7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={showDataColumn ? 9 : 8} className="text-center py-8 text-muted-foreground">
                   Nessun accesso trovato
                 </TableCell>
               </TableRow>
             ) : (
               filtered.map((s) => {
                 const lav = getLav(s.lavoratoreId);
+                const cantiere = mockCantieri.find((c) => c.id === s.cantiereId);
+                const hasGps = s.latEntrata != null;
+                const gpsColor = !hasGps ? "text-muted-foreground" : s.fuoriZona ? "text-amber-500" : "text-emerald-600";
+                const googleMapsUrl = s.latEntrata != null ? `https://www.google.com/maps?q=${s.latEntrata},${s.lonEntrata}` : null;
                 return (
                   <TableRow key={`${s.lavoratoreId}_${s.cantiereId}_${s.data}`}>
                     <TableCell className="font-medium text-foreground">
@@ -387,6 +443,34 @@ export default function Accessi() {
                       {s.inCorso ? "—" : formatDurata(s.minutiLavorati, false)}
                     </TableCell>
                     <TableCell className="text-center">
+                      {hasGps ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="inline-flex cursor-help">
+                              <MapPin className={cn("h-4 w-4", gpsColor)} />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="left" className="text-xs space-y-1 max-w-[220px]">
+                            <p className="font-semibold">{s.fuoriZona ? "⚠️ Fuori zona" : "✅ In zona"}</p>
+                            {s.distanzaEntrata != null && (
+                              <p>Entrata: {formatDistanza(s.distanzaEntrata)} dal cantiere</p>
+                            )}
+                            {s.distanzaUscita != null && (
+                              <p>Uscita: {formatDistanza(s.distanzaUscita)} dal cantiere</p>
+                            )}
+                            {cantiere && <p className="text-muted-foreground">Raggio: {cantiere.raggio_geofence}m</p>}
+                            {googleMapsUrl && (
+                              <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline block">
+                                Apri in Google Maps ↗
+                              </a>
+                            )}
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <MapPin className="h-4 w-4 text-muted-foreground mx-auto opacity-30" />
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
                       {s.esito === "autorizzato" ? "🟢" : s.esito === "warning" ? "🟡" : "🔴"}
                       {s.motivoBlocco && <p className="text-[10px] text-destructive">{s.motivoBlocco}</p>}
                     </TableCell>
@@ -398,7 +482,7 @@ export default function Accessi() {
           {filtered.length > 0 && (
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={showDataColumn ? 6 : 5} className="text-right font-semibold text-foreground">Totale ore</TableCell>
+                <TableCell colSpan={showDataColumn ? 7 : 6} className="text-right font-semibold text-foreground">Totale ore</TableCell>
                 <TableCell className="text-center font-mono font-semibold text-foreground">{totalOre}h {totalMin}m</TableCell>
                 <TableCell />
               </TableRow>
@@ -406,6 +490,7 @@ export default function Accessi() {
           )}
         </Table>
       </div>
+      </TooltipProvider>
 
       {/* Collapsible raw log */}
       <Collapsible open={logOpen} onOpenChange={setLogOpen}>
@@ -419,6 +504,9 @@ export default function Accessi() {
           <div className="border border-border rounded-lg divide-y divide-border mt-2">
             {filteredRaw.slice(0, 50).map((t) => {
               const lav = getLav(t.lavoratore_id);
+              const cantiere = mockCantieri.find((c) => c.id === t.cantiere_id);
+              const dist = (t.latitudine != null && cantiere) ? calcolaDistanza(t.latitudine, t.longitudine!, cantiere.latitudine, cantiere.longitudine) : null;
+              const fuori = dist != null && cantiere ? dist > cantiere.raggio_geofence : false;
               return (
                 <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
                   <div className="min-w-0">
@@ -429,6 +517,11 @@ export default function Accessi() {
                     <p className="text-xs text-muted-foreground">
                       {t.tipo === "entrata" ? "↗ Entrata" : "↙ Uscita"} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
                       {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
+                      {dist != null && (
+                        <span className={cn("ml-1.5", fuori ? "text-amber-500 font-medium" : "text-emerald-600")}>
+                          · {fuori ? "⚠️ Fuori zona" : "📍 In zona"} ({formatDistanza(dist)})
+                        </span>
+                      )}
                     </p>
                     {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
                   </div>

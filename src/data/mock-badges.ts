@@ -119,7 +119,6 @@ function generateTimbrature(): Timbratura[] {
 
       let esito: TimbrataEsito = "autorizzato";
       let motivo: string | null = null;
-      // Add some warnings and one block
       if (day === 5 && w.lid === "l2") {
         esito = "warning";
         motivo = "Idoneità sanitaria in scadenza";
@@ -129,6 +128,14 @@ function generateTimbrature(): Timbratura[] {
         motivo = "Attestato sicurezza scaduto";
       }
 
+      // GPS: coordinate coerenti col cantiere, con qualche "fuori zona"
+      const baseLat = w.cid === "c1" ? 45.4642 : 45.6983;
+      const baseLon = w.cid === "c1" ? 9.19 : 9.6773;
+      const isFuoriZona = (day === 3 && w.lid === "l2") || (day === 8 && w.lid === "l4");
+      const offset = isFuoriZona ? 0.005 : 0.0008; // ~550m vs ~90m
+      const lat = baseLat + (Math.random() - 0.5) * offset;
+      const lon = baseLon + (Math.random() - 0.5) * offset;
+
       const ts = (h: number, m: number) =>
         `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`;
 
@@ -136,20 +143,22 @@ function generateTimbrature(): Timbratura[] {
         id: `tim${id++}`, tenant_id: "t1", badge_id: w.bid,
         lavoratore_id: w.lid, cantiere_id: w.cid, tipo: "entrata",
         timestamp: ts(entryHour, entryMin),
-        latitudine: 45.4642 + Math.random() * 0.001,
-        longitudine: 9.19 + Math.random() * 0.001,
+        latitudine: lat,
+        longitudine: lon,
         metodo: Math.random() > 0.3 ? "qr_scan" : "manuale",
         preposto_id: "l1", esito, motivo_blocco: motivo,
         created_at: ts(entryHour, entryMin),
       });
 
       if (esito !== "bloccato") {
+        const exitLat = baseLat + (Math.random() - 0.5) * 0.0008;
+        const exitLon = baseLon + (Math.random() - 0.5) * 0.0008;
         result.push({
           id: `tim${id++}`, tenant_id: "t1", badge_id: w.bid,
           lavoratore_id: w.lid, cantiere_id: w.cid, tipo: "uscita",
           timestamp: ts(exitHour, exitMin),
-          latitudine: 45.4642 + Math.random() * 0.001,
-          longitudine: 9.19 + Math.random() * 0.001,
+          latitudine: exitLat,
+          longitudine: exitLon,
           metodo: Math.random() > 0.3 ? "qr_scan" : "manuale",
           preposto_id: "l1", esito: "autorizzato", motivo_blocco: null,
           created_at: ts(exitHour, exitMin),
