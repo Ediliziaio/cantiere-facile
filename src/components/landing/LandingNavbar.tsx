@@ -13,16 +13,15 @@ const navLinks = [
 export default function LandingNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
-  const bgOpacity = useTransform(scrollY, [0, 80], [0, 1]);
-  const shadow = useTransform(scrollY, [0, 80], ["0px 0px 0px rgba(0,0,0,0)", "0px 1px 12px rgba(0,0,0,0.08)"]);
+  const bgOpacity = useTransform(scrollY, [0, 400], [0, 1]);
+  const shadow = useTransform(scrollY, [0, 400], ["0px 0px 0px rgba(0,0,0,0)", "0px 1px 12px rgba(0,0,0,0.08)"]);
 
   // Color transitions: white (on dark hero) → dark (on scrolled white bg)
-  const logoColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
-  const linkColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,0.7)", "hsl(25,5%,45%)"]);
+  const logoColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
+  const linkColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,0.7)", "hsl(25,5%,45%)"]);
   const linkHoverColor = "hsl(25,95%,53%)";
-  const menuIconColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
-  const btnTextColor = useTransform(scrollY, [0, 80], ["rgba(255,255,255,0.9)", "hsl(20,14%,8%)"]);
-
+  const menuIconColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
+  const btnTextColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,0.9)", "hsl(20,14%,8%)"]);
   return (
     <>
       <motion.nav
