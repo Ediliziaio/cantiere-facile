@@ -55,6 +55,9 @@ import FunzionalitaAccessi from "./pages/funzionalita/Accessi";
 import FunzionalitaFirma from "./pages/funzionalita/Firma";
 import FunzionalitaComunicazioni from "./pages/funzionalita/Comunicazioni";
 import FunzionalitaVeicoli from "./pages/funzionalita/Veicoli";
+import ChiSiamo from "./pages/ChiSiamo";
+import Tariffe from "./pages/Tariffe";
+import FunzionalitaOverview from "./pages/FunzionalitaOverview";
 
 const queryClient = new QueryClient();
 
