@@ -68,6 +68,8 @@ const App = () => (
             <Route path="/firma/:token" element={<FirmaPublica />} />
             <Route path="/firma/:token/completa" element={<FirmaCompletata />} />
             <Route path="/firma/:token/rifiuta" element={<FirmaRifiuta />} />
+            <Route path="/verifica/:hash" element={<VerificaDocumento />} />
+            <Route path="/verifica" element={<VerificaDocumento />} />
 
             {/* SuperAdmin routes */}
             <Route path="/superadmin/login" element={<SuperAdminLogin />} />
