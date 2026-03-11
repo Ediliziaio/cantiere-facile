@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
+import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { mockMezzi, mockCantieri, mockDocumenti, mockManutenzioni, getScadenzaStatus, type MezzoStatoOperativo } from "@/data/mock-data";
 
 const statoChip: Record<MezzoStatoOperativo, { label: string; className: string }> = {
