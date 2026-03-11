@@ -389,155 +389,185 @@ export default function Accessi() {
         </Select>
       </div>
 
-      {/* Summary Table */}
-      <TooltipProvider>
-      <div className="border border-border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Lavoratore</TableHead>
-              <TableHead className="hidden md:table-cell">Mansione</TableHead>
-              <TableHead>Cantiere</TableHead>
-              {showDataColumn && <TableHead className="text-center">Data</TableHead>}
-              <TableHead className="text-center">Entrata</TableHead>
-              <TableHead className="text-center">Uscita</TableHead>
-              <TableHead className="text-center">Ore</TableHead>
-              <TableHead className="text-center w-16">GPS</TableHead>
-              <TableHead className="text-center w-16">Esito</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={showDataColumn ? 9 : 8} className="text-center py-8 text-muted-foreground">
-                  Nessun accesso trovato
-                </TableCell>
-              </TableRow>
-            ) : (
-              filtered.map((s) => {
-                const lav = getLav(s.lavoratoreId);
-                const cantiere = mockCantieri.find((c) => c.id === s.cantiereId);
-                const hasGps = s.latEntrata != null;
-                const gpsColor = !hasGps ? "text-muted-foreground" : s.fuoriZona ? "text-amber-500" : "text-emerald-600";
-                const googleMapsUrl = s.latEntrata != null ? `https://www.google.com/maps?q=${s.latEntrata},${s.lonEntrata}` : null;
-                return (
-                  <TableRow key={`${s.lavoratoreId}_${s.cantiereId}_${s.data}`}>
-                    <TableCell className="font-medium text-foreground">
-                      {lav ? `${lav.nome} ${lav.cognome}` : "—"}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-muted-foreground text-xs">
-                      {lav?.mansione ?? "—"}
-                    </TableCell>
-                    <TableCell className="text-sm">{getCantName(s.cantiereId)}</TableCell>
-                    {showDataColumn && (
-                      <TableCell className="text-center text-xs text-muted-foreground">
-                        {formatDateLabel(s.data)}
-                      </TableCell>
-                    )}
-                    <TableCell className="text-center font-mono text-sm">{formatTime(s.entrata)}</TableCell>
-                    <TableCell className="text-center font-mono text-sm">
-                      {s.inCorso ? (
-                        <span className="inline-flex items-center gap-1.5 text-emerald-600 font-sans font-medium text-xs">
-                          <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" /></span>
-                          In corso
-                        </span>
-                      ) : formatTime(s.uscita)}
-                    </TableCell>
-                    <TableCell className="text-center font-mono text-sm">
-                      {s.inCorso ? "—" : formatDurata(s.minutiLavorati, false)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {hasGps ? (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="inline-flex cursor-help">
-                              <MapPin className={cn("h-4 w-4", gpsColor)} />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent side="left" className="text-xs space-y-1 max-w-[220px]">
-                            <p className="font-semibold">{s.fuoriZona ? "⚠️ Fuori zona" : "✅ In zona"}</p>
-                            {s.distanzaEntrata != null && (
-                              <p>Entrata: {formatDistanza(s.distanzaEntrata)} dal cantiere</p>
-                            )}
-                            {s.distanzaUscita != null && (
-                              <p>Uscita: {formatDistanza(s.distanzaUscita)} dal cantiere</p>
-                            )}
-                            {cantiere && <p className="text-muted-foreground">Raggio: {cantiere.raggio_geofence}m</p>}
-                            {googleMapsUrl && (
-                              <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline block">
-                                Apri in Google Maps ↗
-                              </a>
-                            )}
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : (
-                        <MapPin className="h-4 w-4 text-muted-foreground mx-auto opacity-30" />
-                      )}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {s.esito === "autorizzato" ? "🟢" : s.esito === "warning" ? "🟡" : "🔴"}
-                      {s.motivoBlocco && <p className="text-[10px] text-destructive">{s.motivoBlocco}</p>}
+      {/* Tabs: Tabella / Mappa / Grafici */}
+      <Tabs defaultValue="tabella" className="space-y-4">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsTrigger value="tabella" className="gap-1.5 text-xs">
+            <TableIcon className="h-3.5 w-3.5" />
+            Tabella
+          </TabsTrigger>
+          <TabsTrigger value="mappa" className="gap-1.5 text-xs">
+            <Map className="h-3.5 w-3.5" />
+            Mappa
+          </TabsTrigger>
+          <TabsTrigger value="grafici" className="gap-1.5 text-xs">
+            <BarChart3 className="h-3.5 w-3.5" />
+            Grafici
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="tabella" className="space-y-4">
+          {/* Summary Table */}
+          <TooltipProvider>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Lavoratore</TableHead>
+                  <TableHead className="hidden md:table-cell">Mansione</TableHead>
+                  <TableHead>Cantiere</TableHead>
+                  {showDataColumn && <TableHead className="text-center">Data</TableHead>}
+                  <TableHead className="text-center">Entrata</TableHead>
+                  <TableHead className="text-center">Uscita</TableHead>
+                  <TableHead className="text-center">Ore</TableHead>
+                  <TableHead className="text-center w-16">GPS</TableHead>
+                  <TableHead className="text-center w-16">Esito</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filtered.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={showDataColumn ? 9 : 8} className="text-center py-8 text-muted-foreground">
+                      Nessun accesso trovato
                     </TableCell>
                   </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-          {filtered.length > 0 && (
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={showDataColumn ? 7 : 6} className="text-right font-semibold text-foreground">Totale ore</TableCell>
-                <TableCell className="text-center font-mono font-semibold text-foreground">{totalOre}h {totalMin}m</TableCell>
-                <TableCell />
-              </TableRow>
-            </TableFooter>
-          )}
-        </Table>
-      </div>
-      </TooltipProvider>
-
-      {/* Collapsible raw log */}
-      <Collapsible open={logOpen} onOpenChange={setLogOpen}>
-        <CollapsibleTrigger asChild>
-          <Button variant="ghost" className="w-full justify-between text-muted-foreground">
-            <span className="text-sm">Log dettagliato timbrature ({filteredRaw.length})</span>
-            <ChevronDown className={cn("h-4 w-4 transition-transform", logOpen && "rotate-180")} />
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="border border-border rounded-lg divide-y divide-border mt-2">
-            {filteredRaw.slice(0, 50).map((t) => {
-              const lav = getLav(t.lavoratore_id);
-              const cantiere = mockCantieri.find((c) => c.id === t.cantiere_id);
-              const dist = (t.latitudine != null && cantiere) ? calcolaDistanza(t.latitudine, t.longitudine!, cantiere.latitudine, cantiere.longitudine) : null;
-              const fuori = dist != null && cantiere ? dist > cantiere.raggio_geofence : false;
-              return (
-                <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground">
-                      {lav ? `${lav.nome} ${lav.cognome}` : "—"}
-                      <span className="font-normal text-muted-foreground ml-1.5 text-xs">{lav?.mansione}</span>
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {t.tipo === "entrata" ? "↗ Entrata" : "↙ Uscita"} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
-                      {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
-                      {dist != null && (
-                        <span className={cn("ml-1.5", fuori ? "text-amber-500 font-medium" : "text-emerald-600")}>
-                          · {fuori ? "⚠️ Fuori zona" : "📍 In zona"} ({formatDistanza(dist)})
-                        </span>
-                      )}
-                    </p>
-                    {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
-                  </div>
-                  <span className="text-xs shrink-0">
-                    {t.esito === "autorizzato" ? "🟢" : t.esito === "warning" ? "🟡" : "🔴"}
-                  </span>
-                </div>
-              );
-            })}
+                ) : (
+                  filtered.map((s) => {
+                    const lav = getLav(s.lavoratoreId);
+                    const cantiere = mockCantieri.find((c) => c.id === s.cantiereId);
+                    const hasGps = s.latEntrata != null;
+                    const gpsColor = !hasGps ? "text-muted-foreground" : s.fuoriZona ? "text-amber-500" : "text-emerald-600";
+                    const googleMapsUrl = s.latEntrata != null ? `https://www.google.com/maps?q=${s.latEntrata},${s.lonEntrata}` : null;
+                    return (
+                      <TableRow key={`${s.lavoratoreId}_${s.cantiereId}_${s.data}`}>
+                        <TableCell className="font-medium text-foreground">
+                          {lav ? `${lav.nome} ${lav.cognome}` : "—"}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-muted-foreground text-xs">
+                          {lav?.mansione ?? "—"}
+                        </TableCell>
+                        <TableCell className="text-sm">{getCantName(s.cantiereId)}</TableCell>
+                        {showDataColumn && (
+                          <TableCell className="text-center text-xs text-muted-foreground">
+                            {formatDateLabel(s.data)}
+                          </TableCell>
+                        )}
+                        <TableCell className="text-center font-mono text-sm">{formatTime(s.entrata)}</TableCell>
+                        <TableCell className="text-center font-mono text-sm">
+                          {s.inCorso ? (
+                            <span className="inline-flex items-center gap-1.5 text-emerald-600 font-sans font-medium text-xs">
+                              <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" /><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" /></span>
+                              In corso
+                            </span>
+                          ) : formatTime(s.uscita)}
+                        </TableCell>
+                        <TableCell className="text-center font-mono text-sm">
+                          {s.inCorso ? "—" : formatDurata(s.minutiLavorati, false)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {hasGps ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="inline-flex cursor-help">
+                                  <MapPin className={cn("h-4 w-4", gpsColor)} />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="left" className="text-xs space-y-1 max-w-[220px]">
+                                <p className="font-semibold">{s.fuoriZona ? "⚠️ Fuori zona" : "✅ In zona"}</p>
+                                {s.distanzaEntrata != null && (
+                                  <p>Entrata: {formatDistanza(s.distanzaEntrata)} dal cantiere</p>
+                                )}
+                                {s.distanzaUscita != null && (
+                                  <p>Uscita: {formatDistanza(s.distanzaUscita)} dal cantiere</p>
+                                )}
+                                {cantiere && <p className="text-muted-foreground">Raggio: {cantiere.raggio_geofence}m</p>}
+                                {googleMapsUrl && (
+                                  <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline block">
+                                    Apri in Google Maps ↗
+                                  </a>
+                                )}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <MapPin className="h-4 w-4 text-muted-foreground mx-auto opacity-30" />
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {s.esito === "autorizzato" ? "🟢" : s.esito === "warning" ? "🟡" : "🔴"}
+                          {s.motivoBlocco && <p className="text-[10px] text-destructive">{s.motivoBlocco}</p>}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+              {filtered.length > 0 && (
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={showDataColumn ? 7 : 6} className="text-right font-semibold text-foreground">Totale ore</TableCell>
+                    <TableCell className="text-center font-mono font-semibold text-foreground">{totalOre}h {totalMin}m</TableCell>
+                    <TableCell />
+                  </TableRow>
+                </TableFooter>
+              )}
+            </Table>
           </div>
-        </CollapsibleContent>
-      </Collapsible>
+          </TooltipProvider>
+
+          {/* Collapsible raw log */}
+          <Collapsible open={logOpen} onOpenChange={setLogOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between text-muted-foreground">
+                <span className="text-sm">Log dettagliato timbrature ({filteredRaw.length})</span>
+                <ChevronDown className={cn("h-4 w-4 transition-transform", logOpen && "rotate-180")} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="border border-border rounded-lg divide-y divide-border mt-2">
+                {filteredRaw.slice(0, 50).map((t) => {
+                  const lav = getLav(t.lavoratore_id);
+                  const cantiere = mockCantieri.find((c) => c.id === t.cantiere_id);
+                  const dist = (t.latitudine != null && cantiere) ? calcolaDistanza(t.latitudine, t.longitudine!, cantiere.latitudine, cantiere.longitudine) : null;
+                  const fuori = dist != null && cantiere ? dist > cantiere.raggio_geofence : false;
+                  return (
+                    <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">
+                          {lav ? `${lav.nome} ${lav.cognome}` : "—"}
+                          <span className="font-normal text-muted-foreground ml-1.5 text-xs">{lav?.mansione}</span>
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t.tipo === "entrata" ? "↗ Entrata" : "↙ Uscita"} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                          {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
+                          {dist != null && (
+                            <span className={cn("ml-1.5", fuori ? "text-amber-500 font-medium" : "text-emerald-600")}>
+                              · {fuori ? "⚠️ Fuori zona" : "📍 In zona"} ({formatDistanza(dist)})
+                            </span>
+                          )}
+                        </p>
+                        {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
+                      </div>
+                      <span className="text-xs shrink-0">
+                        {t.esito === "autorizzato" ? "🟢" : t.esito === "warning" ? "🟡" : "🔴"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </TabsContent>
+
+        <TabsContent value="mappa">
+          <Suspense fallback={<div className="border border-border rounded-lg h-[350px] flex items-center justify-center text-muted-foreground">Caricamento mappa…</div>}>
+            <MappaAccessi timbrature={dateFilteredTs} filtroCantiere={filtroCantiere} />
+          </Suspense>
+        </TabsContent>
+
+        <TabsContent value="grafici">
+          <GraficiAccessi filtered={filtered} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
