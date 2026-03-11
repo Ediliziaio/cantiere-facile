@@ -41,19 +41,19 @@ export default function FirmaDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <PenTool className="h-6 w-6 text-primary" />
+          <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <PenTool className="h-5 sm:h-6 w-5 sm:w-6 text-primary" />
             Firma Digitale
           </h1>
           <p className="text-muted-foreground text-sm mt-1">Gestisci i documenti da firmare digitalmente</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button variant="outline" className="w-full sm:w-auto" asChild>
             <Link to="/app/firma/templates"><LayoutTemplate className="h-4 w-4 mr-1" /> Template</Link>
           </Button>
-          <Button asChild>
+          <Button className="w-full sm:w-auto" asChild>
             <Link to="/app/firma/nuovo"><Plus className="h-4 w-4 mr-1" /> Nuovo documento</Link>
           </Button>
         </div>
@@ -80,9 +80,9 @@ export default function FirmaDashboard() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Select value={filtroStato} onValueChange={setFiltroStato}>
-          <SelectTrigger className="w-[180px]"><SelectValue placeholder="Stato" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Stato" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="tutti">Tutti gli stati</SelectItem>
             <SelectItem value="bozza">Bozza</SelectItem>
@@ -94,7 +94,7 @@ export default function FirmaDashboard() {
           </SelectContent>
         </Select>
         <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-          <SelectTrigger className="w-[180px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[180px]"><SelectValue placeholder="Tipo" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="tutti">Tutti i tipi</SelectItem>
             <SelectItem value="collaudo">Collaudo</SelectItem>
@@ -106,18 +106,46 @@ export default function FirmaDashboard() {
         </Select>
       </div>
 
-      {/* Table */}
-      <Card>
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {filtered.map(doc => {
+          const signers = mockFirmatari.filter(f => f.documento_id === doc.id);
+          const signed = signers.filter(f => f.stato === "firmato").length;
+          const stato = getStatoLabel(doc.stato);
+          return (
+            <Link key={doc.id} to={`/app/firma/${doc.id}`} className="block border border-border rounded-lg p-4 hover:border-primary/30 active:scale-[0.99] transition-all">
+              <div className="flex items-start justify-between mb-2">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-foreground text-sm truncate">{doc.nome}</p>
+                  <p className="text-xs text-muted-foreground">{getTipoLabel(doc.tipo_documento)}</p>
+                </div>
+                <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full border shrink-0 ml-2 ${statoColors[doc.stato]}`}>
+                  {stato.label}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                <div><span className="text-muted-foreground">Cantiere: </span><span className="text-foreground">{doc.cantiere_nome}</span></div>
+                <div><span className="text-muted-foreground">Firmatari: </span><span className="text-foreground">{signed}/{signers.length}</span></div>
+                <div><span className="text-muted-foreground">Scadenza: </span><span className="text-foreground">{format(new Date(doc.data_scadenza_firma), "dd MMM yyyy", { locale: it })}</span></div>
+              </div>
+            </Link>
+          );
+        })}
+        {filtered.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">Nessun documento trovato</p>}
+      </div>
+
+      {/* Desktop table view */}
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Documento</TableHead>
-                <TableHead className="hidden md:table-cell">Tipo</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead className="hidden lg:table-cell">Cantiere</TableHead>
                 <TableHead>Firmatari</TableHead>
                 <TableHead>Stato</TableHead>
-                <TableHead className="hidden md:table-cell">Scadenza</TableHead>
+                <TableHead>Scadenza</TableHead>
                 <TableHead className="w-10"></TableHead>
               </TableRow>
             </TableHeader>
@@ -128,11 +156,8 @@ export default function FirmaDashboard() {
                 const stato = getStatoLabel(doc.stato);
                 return (
                   <TableRow key={doc.id}>
-                    <TableCell>
-                      <div className="font-medium text-sm">{doc.nome}</div>
-                      <div className="text-xs text-muted-foreground md:hidden">{getTipoLabel(doc.tipo_documento)}</div>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm">{getTipoLabel(doc.tipo_documento)}</TableCell>
+                    <TableCell><div className="font-medium text-sm">{doc.nome}</div></TableCell>
+                    <TableCell className="text-sm">{getTipoLabel(doc.tipo_documento)}</TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{doc.cantiere_nome}</TableCell>
                     <TableCell className="text-sm">{signed}/{signers.length}</TableCell>
                     <TableCell>
@@ -140,7 +165,7 @@ export default function FirmaDashboard() {
                         {stato.label}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                    <TableCell className="text-sm text-muted-foreground">
                       {format(new Date(doc.data_scadenza_firma), "dd MMM yyyy", { locale: it })}
                     </TableCell>
                     <TableCell>

@@ -54,7 +54,7 @@ export function MobileBottomNav() {
   const isManager = role === "manager";
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card safe-area-bottom">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card safe-area-bottom touch-manipulation">
       <div className="flex items-center justify-around h-14">
         {tabs.map((tab) => (
           <NavLink

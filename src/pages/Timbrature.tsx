@@ -112,15 +112,15 @@ export default function Timbrature() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[180px]">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Cerca lavoratore…" value={searchLav} onChange={(e) => setSearchLav(e.target.value)} className="pl-9" />
         </div>
-        <div className="space-y-1">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className={cn("w-44 justify-start text-left font-normal", !filtroData && "text-muted-foreground")}>
+              <Button variant="outline" className={cn("w-full sm:w-44 justify-start text-left font-normal", !filtroData && "text-muted-foreground")}>
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {filtroData ? format(filtroData, "dd/MM/yyyy") : "Filtra data"}
               </Button>
@@ -129,26 +129,26 @@ export default function Timbrature() {
               <Calendar mode="single" selected={filtroData} onSelect={setFiltroData} className={cn("p-3 pointer-events-auto")} />
             </PopoverContent>
           </Popover>
+          <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
+            <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+              {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={filtroEsito} onValueChange={setFiltroEsito}>
+            <SelectTrigger className="w-full sm:w-40"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti</SelectItem>
+              <SelectItem value="autorizzato">🟢 Autorizzato</SelectItem>
+              <SelectItem value="warning">🟡 Warning</SelectItem>
+              <SelectItem value="bloccato">🔴 Bloccato</SelectItem>
+            </SelectContent>
+          </Select>
+          {filtroData && (
+            <Button variant="ghost" size="sm" onClick={() => setFiltroData(undefined)}>Cancella data</Button>
+          )}
         </div>
-        <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
-            {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={filtroEsito} onValueChange={setFiltroEsito}>
-          <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti</SelectItem>
-            <SelectItem value="autorizzato">🟢 Autorizzato</SelectItem>
-            <SelectItem value="warning">🟡 Warning</SelectItem>
-            <SelectItem value="bloccato">🔴 Bloccato</SelectItem>
-          </SelectContent>
-        </Select>
-        {filtroData && (
-          <Button variant="ghost" size="sm" onClick={() => setFiltroData(undefined)}>Cancella data</Button>
-        )}
       </div>
 
       {/* Log */}

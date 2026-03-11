@@ -36,12 +36,14 @@ export default function Scadenze() {
         <h1 className="font-heading font-bold text-2xl text-foreground">Scadenze</h1>
       </div>
 
-      <div className="flex gap-1">
-        {ranges.map((r) => (
-          <Button key={r.key} variant={range === r.key ? "default" : "outline"} size="sm" onClick={() => setRange(r.key)} className="text-xs">
-            {r.label}
-          </Button>
-        ))}
+      <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+        <div className="flex gap-1 w-max">
+          {ranges.map((r) => (
+            <Button key={r.key} variant={range === r.key ? "default" : "outline"} size="sm" onClick={() => setRange(r.key)} className="text-xs whitespace-nowrap">
+              {r.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
       <div className="border border-border rounded-lg divide-y divide-border">

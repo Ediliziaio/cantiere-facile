@@ -28,7 +28,7 @@ export default function Lavoratori() {
         {filtered.map((l) => {
           const sub = l.subappaltatore_id ? mockSubappaltatori.find((s) => s.id === l.subappaltatore_id) : null;
           return (
-            <Link key={l.id} to={`/app/lavoratori/${l.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
+            <Link key={l.id} to={`/app/lavoratori/${l.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent active:bg-accent transition-colors active:scale-[0.99]">
               <div>
                 <p className="text-sm font-medium text-foreground">{l.nome} {l.cognome}</p>
                 <p className="text-xs text-muted-foreground">

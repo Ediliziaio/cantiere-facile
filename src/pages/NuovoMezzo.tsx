@@ -238,9 +238,9 @@ export default function NuovoMezzo() {
             </FormItem>
           )} />
 
-          <div className="flex gap-3">
-            <Button type="submit">Crea mezzo</Button>
-            <Button type="button" variant="outline" onClick={() => navigate("/app/mezzi")}>Annulla</Button>
+          <div className="sticky bottom-16 sm:bottom-0 bg-background pt-3 pb-3 -mb-3 flex flex-col sm:flex-row gap-3">
+            <Button type="submit" className="w-full sm:w-auto">Crea mezzo</Button>
+            <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => navigate("/app/mezzi")}>Annulla</Button>
           </div>
         </form>
       </Form>

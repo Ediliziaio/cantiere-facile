@@ -80,38 +80,65 @@ export default function BadgeList() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Cerca lavoratore…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
-        <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
-            {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={filtroStato} onValueChange={setFiltroStato}>
-          <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti</SelectItem>
-            <SelectItem value="attivo">Attivo</SelectItem>
-            <SelectItem value="sospeso">Sospeso</SelectItem>
-            <SelectItem value="revocato">Revocato</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
+            <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+              {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={filtroStato} onValueChange={setFiltroStato}>
+            <SelectTrigger className="w-full sm:w-36"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti</SelectItem>
+              <SelectItem value="attivo">Attivo</SelectItem>
+              <SelectItem value="sospeso">Sospeso</SelectItem>
+              <SelectItem value="revocato">Revocato</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden">
+      {/* Mobile card view */}
+      <div className="md:hidden space-y-3">
+        {filtered.map((b) => {
+          const lav = getBadgeLavoratore(b);
+          const cant = getBadgeCantiere(b);
+          return (
+            <Link key={b.id} to={`/app/badge/${b.id}`} className="block border border-border rounded-lg p-4 hover:border-primary/30 active:scale-[0.99] transition-all">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <p className="font-medium text-foreground">{lav ? `${lav.nome} ${lav.cognome}` : "—"}</p>
+                  <p className="text-xs text-muted-foreground">{lav?.mansione}</p>
+                </div>
+                <BadgeStatusChip stato={b.stato} />
+              </div>
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                <div><span className="text-muted-foreground">Cantiere: </span><span className="text-foreground">{cant?.nome ?? "—"}</span></div>
+                <div><span className="text-muted-foreground">Scadenza: </span><span className="text-foreground">{new Date(b.data_scadenza).toLocaleDateString("it-IT")}</span></div>
+              </div>
+            </Link>
+          );
+        })}
+        {filtered.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">Nessun badge trovato</p>}
+      </div>
+
+      {/* Desktop table view */}
+      <div className="hidden md:block border border-border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/30">
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Lavoratore</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Cantiere</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Cantiere</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Codice</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Stato</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Scadenza</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Scadenza</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Ultimo accesso</th>
               <th className="px-4 py-3"></th>
             </tr>
@@ -126,18 +153,14 @@ export default function BadgeList() {
                     <p className="font-medium text-foreground">{lav ? `${lav.nome} ${lav.cognome}` : "—"}</p>
                     <p className="text-xs text-muted-foreground">{lav?.mansione}</p>
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">{cant?.nome ?? "—"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{cant?.nome ?? "—"}</td>
                   <td className="px-4 py-3 hidden lg:table-cell font-mono text-xs text-muted-foreground">{b.codice_univoco}</td>
                   <td className="px-4 py-3"><BadgeStatusChip stato={b.stato} /></td>
-                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground">
-                    {new Date(b.data_scadenza).toLocaleDateString("it-IT")}
-                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{new Date(b.data_scadenza).toLocaleDateString("it-IT")}</td>
                   <td className="px-4 py-3 hidden lg:table-cell text-xs text-muted-foreground">{getUltimoAccesso(b.id)}</td>
                   <td className="px-4 py-3 text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/app/badge/${b.id}`}>
-                        <IdCard className="h-3.5 w-3.5 mr-1" /> Dettaglio
-                      </Link>
+                      <Link to={`/app/badge/${b.id}`}><IdCard className="h-3.5 w-3.5 mr-1" /> Dettaglio</Link>
                     </Button>
                   </td>
                 </tr>

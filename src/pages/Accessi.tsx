@@ -249,12 +249,12 @@ export default function Accessi() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-primary" />
-          <h1 className="font-heading font-bold text-2xl text-foreground">Registro Accessi</h1>
+          <h1 className="font-heading font-bold text-xl sm:text-2xl text-foreground">Registro Accessi</h1>
         </div>
-        <Button variant="outline" size="sm" onClick={exportCSV}>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto" onClick={exportCSV}>
           <Download className="h-4 w-4 mr-1.5" />
           Esporta CSV
         </Button>
@@ -300,8 +300,79 @@ export default function Accessi() {
         </div>
       </div>
 
-      {/* Date mode toggle */}
-      <div className="flex flex-wrap items-center gap-3">
+      {/* Date mode + filters — collapsible on mobile */}
+      <Collapsible defaultOpen={false} className="md:hidden border border-border rounded-lg p-3">
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" className="w-full justify-between text-muted-foreground">
+            <span className="text-sm font-medium">Filtri e periodo</span>
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="space-y-3 pt-3">
+          <ToggleGroup type="single" value={dateMode} onValueChange={(v) => v && setDateMode(v as DateMode)} className="border border-border rounded-lg p-1 w-full">
+            <ToggleGroupItem value="giorno" className="text-xs px-3 h-8 flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Giorno</ToggleGroupItem>
+            <ToggleGroupItem value="intervallo" className="text-xs px-3 h-8 flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Intervallo</ToggleGroupItem>
+            <ToggleGroupItem value="tutte" className="text-xs px-3 h-8 flex-1 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Tutte</ToggleGroupItem>
+          </ToggleGroup>
+
+          {dateMode === "giorno" && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-start text-left font-normal">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(filtroData, "dd/MM/yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={filtroData} onSelect={(d) => d && setFiltroData(d)} className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+          )}
+
+          {dateMode === "intervallo" && (
+            <div className="flex gap-2 items-center">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="flex-1 justify-start text-left font-normal text-sm">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {format(dataInizio, "dd/MM/yyyy")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar mode="single" selected={dataInizio} onSelect={(d) => d && setDataInizio(d)} className={cn("p-3 pointer-events-auto")} />
+                </PopoverContent>
+              </Popover>
+              <span className="text-muted-foreground text-sm">→</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="flex-1 justify-start text-left font-normal text-sm">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {format(dataFine, "dd/MM/yyyy")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar mode="single" selected={dataFine} onSelect={(d) => d && setDataFine(d)} className={cn("p-3 pointer-events-auto")} />
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
+
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Cerca lavoratore…" value={searchLav} onChange={(e) => setSearchLav(e.target.value)} className="pl-9" />
+          </div>
+          <Select value={filtroCantiere} onValueChange={setFiltroCantiere}>
+            <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+              {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </CollapsibleContent>
+      </Collapsible>
+
+      {/* Desktop filters */}
+      <div className="hidden md:flex flex-wrap items-center gap-3">
         <ToggleGroup type="single" value={dateMode} onValueChange={(v) => v && setDateMode(v as DateMode)} className="border border-border rounded-lg p-1">
           <ToggleGroupItem value="giorno" className="text-xs px-3 h-8 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Giorno</ToggleGroupItem>
           <ToggleGroupItem value="intervallo" className="text-xs px-3 h-8 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground">Intervallo</ToggleGroupItem>
@@ -359,23 +430,25 @@ export default function Accessi() {
 
       {/* Quick date chips for "tutte" mode */}
       {dateMode === "tutte" && (
-        <div className="flex flex-wrap gap-1.5">
-          {allDates.map((d) => (
-            <Button
-              key={d}
-              variant="outline"
-              size="sm"
-              className="text-xs h-7 px-2"
-              onClick={() => { setDateMode("giorno"); setFiltroData(new Date(d + "T00:00:00")); }}
-            >
-              {formatDateLabel(d)}
-            </Button>
-          ))}
+        <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+          <div className="flex gap-1.5 w-max">
+            {allDates.map((d) => (
+              <Button
+                key={d}
+                variant="outline"
+                size="sm"
+                className="text-xs h-7 px-2 whitespace-nowrap"
+                onClick={() => { setDateMode("giorno"); setFiltroData(new Date(d + "T00:00:00")); }}
+              >
+                {formatDateLabel(d)}
+              </Button>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      {/* Desktop search/cantiere filters */}
+      <div className="hidden md:flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Cerca lavoratore…" value={searchLav} onChange={(e) => setSearchLav(e.target.value)} className="pl-9" />

@@ -44,7 +44,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading font-bold text-2xl text-foreground">Dashboard</h1>
+        <h1 className="font-heading font-bold text-xl sm:text-2xl text-foreground">Dashboard</h1>
       </div>
 
       <ScadenzaAlert count={dashboardStats.documentiInScadenza} scadutiCount={dashboardStats.documentiScaduti} />
@@ -59,20 +59,20 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-2">
               <s.icon className={`h-4 w-4 ${s.accent ? "text-warning" : "text-muted-foreground"}`} />
             </div>
-            <p className="font-heading font-bold text-2xl text-foreground">{s.value}</p>
+            <p className="font-heading font-bold text-xl sm:text-2xl text-foreground">{s.value}</p>
             <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
           </Link>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" asChild>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button size="sm" className="w-full sm:w-auto" asChild>
           <Link to="/app/cantieri/nuovo"><Plus className="h-3.5 w-3.5 mr-1" /> Nuovo cantiere</Link>
         </Button>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto" asChild>
           <Link to="/app/documenti"><Upload className="h-3.5 w-3.5 mr-1" /> Carica documento</Link>
         </Button>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto" asChild>
           <Link to="/app/subappaltatori"><UserPlus className="h-3.5 w-3.5 mr-1" /> Aggiungi subappaltatore</Link>
         </Button>
       </div>
