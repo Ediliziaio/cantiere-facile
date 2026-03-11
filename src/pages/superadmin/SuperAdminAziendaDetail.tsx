@@ -1,7 +1,9 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, LogIn } from "lucide-react";
+import { ArrowLeft, LogIn, Users, ShieldCheck, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { mockTenantsAll } from "@/data/mock-superadmin";
+import { mockUtentiAzienda } from "@/data/mock-data";
 import { TenantStatusBadge } from "@/components/layout/TenantStatusBadge";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -55,6 +57,30 @@ export default function SuperAdminAziendaDetail() {
             <span className="font-medium text-foreground">{r.value}</span>
           </div>
         ))}
+      </div>
+
+      {/* Utenti dell'azienda */}
+      <div className="border border-border rounded-lg p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4 text-muted-foreground" />
+          <h2 className="font-heading font-semibold text-foreground text-sm">Utenti</h2>
+        </div>
+        <div className="space-y-1.5">
+          {mockUtentiAzienda.filter(u => u.tenant_id === tenant.id).map(u => (
+            <div key={u.id} className="flex items-center justify-between py-1.5 border-b border-border last:border-0 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-foreground">{u.nome} {u.cognome}</span>
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                  {u.ruolo === "admin" ? <><ShieldCheck className="h-3 w-3 mr-0.5" />Admin</> : <><Shield className="h-3 w-3 mr-0.5" />Manager</>}
+                </Badge>
+              </div>
+              <span className="text-muted-foreground text-xs">{u.email}</span>
+            </div>
+          ))}
+          {mockUtentiAzienda.filter(u => u.tenant_id === tenant.id).length === 0 && (
+            <p className="text-xs text-muted-foreground">Nessun utente registrato</p>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-2">

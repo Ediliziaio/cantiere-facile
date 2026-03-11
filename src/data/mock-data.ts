@@ -288,3 +288,46 @@ export function getScadenzaStatus(dateStr: string): "valido" | "in_scadenza" | "
   if (diffDays <= 30) return "in_scadenza";
   return "valido";
 }
+
+export type UtenteRuolo = "admin" | "manager";
+export type UtenteStato = "attivo" | "invitato" | "disabilitato";
+
+export interface UtenteAzienda {
+  id: string;
+  tenant_id: string;
+  nome: string;
+  cognome: string;
+  email: string;
+  ruolo: UtenteRuolo;
+  stato: UtenteStato;
+  ultimo_accesso: string | null;
+  cantieri_assegnati: string[];
+}
+
+export const mockUtentiAzienda: UtenteAzienda[] = [
+  {
+    id: "ua1", tenant_id: "t1", nome: "Andrea", cognome: "Rossi",
+    email: "admin@rossicostruzioni.it", ruolo: "admin", stato: "attivo",
+    ultimo_accesso: "2026-03-11T08:30:00", cantieri_assegnati: [],
+  },
+  {
+    id: "ua2", tenant_id: "t1", nome: "Sara", cognome: "Colombo",
+    email: "s.colombo@rossicostruzioni.it", ruolo: "manager", stato: "attivo",
+    ultimo_accesso: "2026-03-10T17:15:00", cantieri_assegnati: ["c1"],
+  },
+  {
+    id: "ua3", tenant_id: "t1", nome: "Fabio", cognome: "Galli",
+    email: "f.galli@rossicostruzioni.it", ruolo: "manager", stato: "attivo",
+    ultimo_accesso: "2026-03-09T14:00:00", cantieri_assegnati: ["c1", "c2"],
+  },
+  {
+    id: "ua4", tenant_id: "t1", nome: "Elena", cognome: "Martini",
+    email: "e.martini@rossicostruzioni.it", ruolo: "manager", stato: "invitato",
+    ultimo_accesso: null, cantieri_assegnati: ["c2"],
+  },
+  {
+    id: "ua5", tenant_id: "t1", nome: "Roberto", cognome: "Conti",
+    email: "r.conti@rossicostruzioni.it", ruolo: "admin", stato: "disabilitato",
+    ultimo_accesso: "2026-01-20T09:45:00", cantieri_assegnati: [],
+  },
+];
