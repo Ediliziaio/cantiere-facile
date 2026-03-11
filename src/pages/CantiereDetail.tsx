@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockCantieri, mockDocumenti, mockSubappaltatori, mockLavoratori, mockMezzi, mockAccessi } from "@/data/mock-data";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
+import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { ChecklistProgress } from "@/components/cantiere/ChecklistProgress";
 import type { DocumentoStato } from "@/data/mock-data";
 
