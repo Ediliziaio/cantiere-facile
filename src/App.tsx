@@ -41,6 +41,8 @@ import FirmaPublica from "./pages/firma/FirmaPublica";
 import FirmaCompletata from "./pages/firma/FirmaCompletata";
 import FirmaRifiuta from "./pages/firma/FirmaRifiuta";
 import VerificaDocumento from "./pages/firma/VerificaDocumento";
+import FirmaTemplates from "./pages/firma/FirmaTemplates";
+import CertificatoFirma from "./pages/firma/CertificatoFirma";
 import SuperAdminLogin from "./pages/superadmin/SuperAdminLogin";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
 import SuperAdminAziende from "./pages/superadmin/SuperAdminAziende";
