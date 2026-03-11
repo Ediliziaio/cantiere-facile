@@ -23,6 +23,9 @@ export const mockCantieri = [
     documenti_ok: 42,
     documenti_totali: 48,
     subappaltatori_count: 3,
+    latitudine: 45.4642,
+    longitudine: 9.1900,
+    raggio_geofence: 200,
   },
   {
     id: "c2",
@@ -38,6 +41,9 @@ export const mockCantieri = [
     documenti_ok: 28,
     documenti_totali: 36,
     subappaltatori_count: 2,
+    latitudine: 45.6983,
+    longitudine: 9.6773,
+    raggio_geofence: 200,
   },
 ];
 
