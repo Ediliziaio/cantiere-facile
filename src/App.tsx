@@ -100,6 +100,9 @@ const App = () => (
               <Route path="firma" element={<FirmaDashboard />} />
               <Route path="firma/nuovo" element={<FirmaNuovo />} />
               <Route path="firma/:id" element={<FirmaDetail />} />
+              <Route path="firma/:id/configura" element={<FirmaConfigura />} />
+              <Route path="firma/:id/firmatari" element={<FirmaFirmatari />} />
+              <Route path="firma/:id/anteprima" element={<FirmaAnteprima />} />
               <Route path="impostazioni" element={<Impostazioni />} />
             </Route>
 
