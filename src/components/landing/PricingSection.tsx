@@ -204,10 +204,15 @@ export default function PricingSection() {
                   initial={{ opacity: 0, y: 30 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: mobileIdx * 0.1 }}
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
                   className="md:order-2 order-first"
                 >
-                  <div className="rounded-2xl bg-gradient-to-b from-[hsl(25,95%,53%)] to-[hsl(38,92%,55%)] p-[2px] shadow-xl shadow-[hsl(25,95%,53%)]/20">
-                    <div className="rounded-[14px] bg-white p-6 flex flex-col">
+                  <div className="relative rounded-2xl bg-gradient-to-b from-[hsl(25,95%,53%)] to-[hsl(38,92%,55%)] p-[2px] shadow-xl shadow-[hsl(25,95%,53%)]/20 hover:shadow-2xl hover:shadow-[hsl(25,95%,53%)]/30 transition-shadow overflow-hidden">
+                    {/* Shine animation */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+                      <div className="animate-shine absolute top-0 -left-full h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    </div>
+                    <div className="rounded-[14px] bg-white p-6 flex flex-col relative">
                       {cardContent}
                     </div>
                   </div>
@@ -221,7 +226,8 @@ export default function PricingSection() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: mobileIdx * 0.1 }}
-                className={`rounded-xl border border-[hsl(30,6%,90%)] bg-white p-6 flex flex-col ${
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                className={`rounded-xl border border-[hsl(30,6%,90%)] bg-white p-6 flex flex-col hover:shadow-lg transition-shadow ${
                   plan.name === "Starter" ? "md:order-1" : "md:order-3"
                 }`}
               >
