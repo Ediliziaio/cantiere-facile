@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { mockCantieri, mockLavoratori } from "@/data/mock-data";
+import { mockCantieri, mockLavoratori, mockTenant } from "@/data/mock-data";
 import { mockBadges } from "@/data/mock-badges";
 import { BadgeCard } from "@/components/badge/BadgeCard";
 import { toast } from "sonner";
@@ -24,18 +24,30 @@ export default function BadgeNuovo() {
     (l) => !mockBadges.some((b) => b.lavoratore_id === l.id && b.cantiere_id === cantiereId)
   );
 
+  const selectedLav = mockLavoratori.find((l) => l.id === lavoratoreId);
+  const nextNum = String(mockBadges.length + 1).padStart(3, "0") + "/2026";
+  const fakeHash = Array.from(`preview-${lavoratoreId}-${cantiereId}`).reduce(
+    (h, c) => (((h << 5) - h + c.charCodeAt(0)) | 0).toString(16), "a3f8"
+  ).padEnd(64, "0").slice(0, 64);
+
   const previewBadge: Badge | null =
-    cantiereId && lavoratoreId
+    cantiereId && lavoratoreId && selectedLav
       ? {
           id: "preview", tenant_id: "t1", lavoratore_id: lavoratoreId, cantiere_id: cantiereId,
           codice_univoco: `CIC-2026-ANTEPR`, qr_payload: "preview", stato: "attivo",
-          data_emissione: new Date().toISOString(), data_scadenza: scadenza,
+          data_emissione: new Date().toISOString().split("T")[0], data_scadenza: scadenza,
           note: null, created_at: new Date().toISOString(),
+          codice_fiscale_lavoratore: selectedLav.codice_fiscale,
+          numero_progressivo: nextNum,
+          ente_emittente: `${mockTenant.nome_azienda} — P.IVA ${mockTenant.p_iva}`,
+          firma_digitale_hash: fakeHash,
+          riferimento_normativo: "D.L. 159/2025 — Art. 4",
+          data_verifica_documenti: new Date().toISOString(),
         }
       : null;
 
   const handleSubmit = () => {
-    toast.success("Badge emesso con successo");
+    toast.success("Badge emesso con successo (conforme D.L. 159/2025)");
     navigate("/app/badge");
   };
 

@@ -62,6 +62,11 @@ export interface VerificaAccesso {
 // Generate badge codes
 const genCode = (i: number) => `CIC-2026-${String(i).padStart(6, "0")}`;
 
+const ENTE = "Edilizia Moderna S.r.l. — P.IVA 01234567890";
+const NORMA = "D.L. 159/2025 — Art. 4";
+const fakeHash = (seed: string) =>
+  Array.from(seed + "sha256salt").reduce((h, c) => (((h << 5) - h + c.charCodeAt(0)) | 0).toString(16), "a3f8").padEnd(64, "0").slice(0, 64);
+
 export const mockBadges: Badge[] = [
   {
     id: "b1", tenant_id: "t1", lavoratore_id: "l1", cantiere_id: "c1",
@@ -69,6 +74,9 @@ export const mockBadges: Badge[] = [
     qr_payload: JSON.stringify({ code: genCode(1), worker: "l1", site: "c1" }),
     stato: "attivo", data_emissione: "2026-01-15", data_scadenza: "2027-01-15",
     note: null, created_at: "2026-01-15T08:00:00",
+    codice_fiscale_lavoratore: "RSSMRC85M01F205Z", numero_progressivo: "001/2026",
+    ente_emittente: ENTE, firma_digitale_hash: fakeHash("b1l1c1"),
+    riferimento_normativo: NORMA, data_verifica_documenti: "2026-01-15T07:45:00",
   },
   {
     id: "b2", tenant_id: "t1", lavoratore_id: "l2", cantiere_id: "c1",
@@ -76,6 +84,9 @@ export const mockBadges: Badge[] = [
     qr_payload: JSON.stringify({ code: genCode(2), worker: "l2", site: "c1" }),
     stato: "attivo", data_emissione: "2026-01-15", data_scadenza: "2027-01-15",
     note: null, created_at: "2026-01-15T08:00:00",
+    codice_fiscale_lavoratore: "BNCGPP90A15L219X", numero_progressivo: "002/2026",
+    ente_emittente: ENTE, firma_digitale_hash: fakeHash("b2l2c1"),
+    riferimento_normativo: NORMA, data_verifica_documenti: "2026-01-15T07:50:00",
   },
   {
     id: "b3", tenant_id: "t1", lavoratore_id: "l3", cantiere_id: "c1",
@@ -83,6 +94,9 @@ export const mockBadges: Badge[] = [
     qr_payload: JSON.stringify({ code: genCode(3), worker: "l3", site: "c1" }),
     stato: "sospeso", data_emissione: "2026-01-15", data_scadenza: "2027-01-15",
     note: "Documento sicurezza scaduto", created_at: "2026-01-15T08:00:00",
+    codice_fiscale_lavoratore: "VRDNTN88D22F205Y", numero_progressivo: "003/2026",
+    ente_emittente: ENTE, firma_digitale_hash: fakeHash("b3l3c1"),
+    riferimento_normativo: NORMA, data_verifica_documenti: "2026-01-10T09:00:00",
   },
   {
     id: "b4", tenant_id: "t1", lavoratore_id: "l4", cantiere_id: "c2",
@@ -90,6 +104,9 @@ export const mockBadges: Badge[] = [
     qr_payload: JSON.stringify({ code: genCode(4), worker: "l4", site: "c2" }),
     stato: "attivo", data_emissione: "2026-02-01", data_scadenza: "2027-02-01",
     note: null, created_at: "2026-02-01T08:00:00",
+    codice_fiscale_lavoratore: "NREPLP92H05A794W", numero_progressivo: "004/2026",
+    ente_emittente: ENTE, firma_digitale_hash: fakeHash("b4l4c2"),
+    riferimento_normativo: NORMA, data_verifica_documenti: "2026-02-01T07:30:00",
   },
   {
     id: "b5", tenant_id: "t1", lavoratore_id: "l5", cantiere_id: "c1",
@@ -97,6 +114,9 @@ export const mockBadges: Badge[] = [
     qr_payload: JSON.stringify({ code: genCode(5), worker: "l5", site: "c1" }),
     stato: "attivo", data_emissione: "2026-01-20", data_scadenza: "2027-01-20",
     note: null, created_at: "2026-01-20T08:00:00",
+    codice_fiscale_lavoratore: "FRRLCU87S30F205V", numero_progressivo: "005/2026",
+    ente_emittente: ENTE, firma_digitale_hash: fakeHash("b5l5c1"),
+    riferimento_normativo: NORMA, data_verifica_documenti: "2026-01-20T08:15:00",
   },
 ];
 
