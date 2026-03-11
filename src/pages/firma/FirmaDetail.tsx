@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, Send, Ban, CheckCircle2, Clock, XCircle, PenTool, Mail, Copy } from "lucide-react";
+import { ArrowLeft, Send, Ban, CheckCircle2, Clock, XCircle, PenTool, Mail, Copy, Settings, Users, Eye } from "lucide-react";
 import {
   mockDocumentiFirma, mockFirmatari, mockFirmaAuditLog,
   getStatoLabel, getTipoLabel, type StatoDocumentoFirma, type StatoFirmatario, type AzioneAudit
