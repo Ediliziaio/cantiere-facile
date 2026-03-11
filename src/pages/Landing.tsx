@@ -6,6 +6,7 @@ import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import AlternatingFeatures from "@/components/landing/AlternatingFeatures";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import PricingSection from "@/components/landing/PricingSection";
+import FaqSection from "@/components/landing/FaqSection";
 import ManifestoSection from "@/components/landing/ManifestoSection";
 import FinalCtaSection from "@/components/landing/FinalCtaSection";
 import LandingFooter from "@/components/landing/LandingFooter";
@@ -22,6 +23,7 @@ export default function Landing() {
       <AlternatingFeatures />
       <TestimonialsSection />
       <PricingSection />
+      <FaqSection />
       <ManifestoSection />
       <FinalCtaSection />
       <LandingFooter />

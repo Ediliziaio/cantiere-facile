@@ -58,7 +58,7 @@ export default function HeroSection() {
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.5 }}
-            className="mt-6 font-landing-heading font-extrabold text-4xl sm:text-5xl md:text-[4.25rem] text-white leading-[1.1] tracking-tight"
+            className="mt-6 font-landing-heading font-bold text-3xl sm:text-4xl md:text-[3.5rem] text-white leading-[1.1] tracking-tight"
           >
             Il cantiere sotto controllo.
             <br />
@@ -133,7 +133,7 @@ export default function HeroSection() {
               ].map((s) => (
                 <div key={s.label} className="bg-white/5 rounded-lg p-3">
                   <s.icon className={`h-4 w-4 ${s.color} mb-1`} />
-                  <div className="text-white font-landing-heading font-bold text-xl">{s.val}</div>
+                  <div className="text-white font-landing-heading font-semibold text-xl">{s.val}</div>
                   <div className="text-white/40 text-xs font-landing-body">{s.label}</div>
                 </div>
               ))}

@@ -46,8 +46,8 @@ export default function HowItWorksSection() {
           {steps.map((s, i) => (
             <motion.div
               key={s.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: i * 0.2 }}
               className="text-center relative z-10"
             >

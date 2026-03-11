@@ -38,8 +38,8 @@ export default function PainSection() {
           {pains.map((p, i) => (
             <motion.div
               key={p.title}
-              initial={{ opacity: 0, y: 30, rotate: 2 }}
-              animate={inView ? { opacity: 1, y: 0, rotate: 0 } : {}}
+              initial={{ opacity: 0, y: 30, rotate: 2, scale: 0.97 }}
+              animate={inView ? { opacity: 1, y: 0, rotate: 0, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: i * 0.15 }}
               className="bg-[#1A1918] border-l-4 border-[hsl(25,95%,53%)] rounded-lg p-6"
             >

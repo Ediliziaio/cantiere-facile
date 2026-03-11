@@ -8,25 +8,25 @@ import { Button } from "@/components/ui/button";
 const plans = [
   {
     name: "Starter",
-    monthly: 49,
-    annual: 39,
-    audience: "Imprese con 1-3 cantieri",
+    monthly: 0,
+    annual: 0,
+    audience: "Per iniziare — fino a 1 cantiere",
     features: [
-      "3 cantieri attivi",
-      "20 lavoratori",
-      "Gestione documenti + scadenze",
+      "1 cantiere attivo",
+      "5 lavoratori",
+      "Gestione documenti base",
       "Tesserini digitali QR",
       "Accessi geolocalizzati",
       "Supporto email",
     ],
-    cta: "Inizia gratis 14 giorni",
+    cta: "Inizia gratis",
     highlighted: false,
   },
   {
-    name: "Pro",
-    monthly: 129,
-    annual: 99,
-    audience: "Imprese con fino a 10 cantieri",
+    name: "Professional",
+    monthly: 42,
+    annual: 32,
+    audience: "Imprese con più cantieri",
     badge: "Più popolare",
     features: [
       "Cantieri illimitati",
@@ -42,12 +42,12 @@ const plans = [
     highlighted: true,
   },
   {
-    name: "Enterprise",
-    monthly: null,
-    annual: null,
+    name: "Business",
+    monthly: 52,
+    annual: 42,
     audience: "General contractor, grandi imprese",
     features: [
-      "Tutto in Pro, più:",
+      "Tutto in Professional, più:",
       "SuperAdmin multi-sede",
       "API e integrazioni custom",
       "SLA garantito",
@@ -55,7 +55,7 @@ const plans = [
       "Account manager dedicato",
       "Fatturazione centralizzata",
     ],
-    cta: "Parla con noi",
+    cta: "Inizia gratis 14 giorni",
     highlighted: false,
   },
 ];
@@ -103,7 +103,6 @@ export default function PricingSection() {
 
         {/* Cards — on mobile Pro comes first */}
         <div className="grid md:grid-cols-3 gap-5">
-          {/* Mobile order: Pro first */}
           {[plans[1], plans[0], plans[2]].map((plan, mobileIdx) => (
             <motion.div
               key={plan.name}
@@ -114,7 +113,7 @@ export default function PricingSection() {
                 plan.highlighted
                   ? "border-[hsl(25,95%,53%)] bg-white shadow-xl shadow-[hsl(25,95%,53%)]/10 md:order-2 order-first"
                   : "border-[hsl(30,6%,90%)] bg-white md:order-none"
-              } ${plan.name === "Starter" ? "md:order-1" : ""} ${plan.name === "Enterprise" ? "md:order-3" : ""}`}
+              } ${plan.name === "Starter" ? "md:order-1" : ""} ${plan.name === "Business" ? "md:order-3" : ""}`}
             >
               {plan.badge && (
                 <span className="self-start bg-[hsl(25,95%,53%)] text-white text-xs font-landing-body font-semibold px-3 py-1 rounded-full mb-4">
@@ -124,25 +123,44 @@ export default function PricingSection() {
               <h3 className="font-landing-heading font-bold text-xl text-[hsl(20,14%,8%)]">{plan.name}</h3>
               <p className="font-landing-body text-sm text-[hsl(25,5%,45%)] mt-1">{plan.audience}</p>
 
-              <div className="mt-5 mb-6">
-                {plan.monthly !== null ? (
-                  <div className="flex items-baseline gap-1">
-                    <AnimatePresence mode="wait">
-                      <motion.span
-                        key={annual ? "annual" : "monthly"}
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="font-landing-heading font-extrabold text-4xl text-[hsl(20,14%,8%)]"
-                      >
-                        €{annual ? plan.annual : plan.monthly}
-                      </motion.span>
-                    </AnimatePresence>
-                    <span className="font-landing-body text-sm text-[hsl(25,5%,45%)]">/mese</span>
+              <div className="mt-5 mb-6 min-h-[60px]">
+                {plan.monthly === 0 ? (
+                  <div className="font-landing-heading font-bold text-4xl text-[hsl(25,95%,53%)]">
+                    Gratis
                   </div>
                 ) : (
-                  <div className="font-landing-heading font-extrabold text-4xl text-[hsl(20,14%,8%)]">
-                    Su misura
+                  <div>
+                    <div className="flex items-baseline gap-1">
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={annual ? "annual" : "monthly"}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="font-landing-heading font-bold text-4xl text-[hsl(20,14%,8%)]"
+                        >
+                          €{annual ? plan.annual : plan.monthly}
+                        </motion.span>
+                      </AnimatePresence>
+                      <span className="font-landing-body text-sm text-[hsl(25,5%,45%)]">/mese</span>
+                    </div>
+                    <AnimatePresence>
+                      {annual && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <span className="text-sm font-landing-body text-[hsl(25,5%,45%)] line-through decoration-red-400">
+                            €{plan.monthly}/mese
+                          </span>
+                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full bg-[hsl(142,71%,45%)]/10 text-[hsl(142,71%,45%)] text-xs font-semibold">
+                            Risparmi €{(plan.monthly - plan.annual!) * 12}/anno
+                          </span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 )}
               </div>
