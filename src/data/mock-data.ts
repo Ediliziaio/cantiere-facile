@@ -242,6 +242,21 @@ export const mockDocumenti = [
   { id: "d8", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m2", nome_file: "Certificato_Collaudo_Gru.pdf", data_caricamento: "2025-06-01", data_scadenza: "2026-06-01", stato: "in_scadenza" as DocumentoStato, categoria: "Collaudo" },
   { id: "d9", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m3", nome_file: "Assicurazione_Autocarro.pdf", data_caricamento: "2025-05-15", data_scadenza: "2026-05-15", stato: "in_scadenza" as DocumentoStato, categoria: "Assicurazione" },
   { id: "d10", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "mezzo" as const, riferimento_id: "m4", nome_file: "Libretto_Piattaforma.pdf", data_caricamento: "2025-02-28", data_scadenza: "2027-02-28", stato: "valido" as DocumentoStato, categoria: "Libretto" },
+  // Formazione lavoratori
+  { id: "d11", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l1", nome_file: "Attestato_Sicurezza_Rossi.pdf", data_caricamento: "2025-10-01", data_scadenza: "2027-10-01", stato: "valido" as DocumentoStato, categoria: "Attestato Sicurezza" },
+  { id: "d12", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l3", nome_file: "Attestato_Sicurezza_Verdi.pdf", data_caricamento: "2025-08-15", data_scadenza: "2026-08-15", stato: "valido" as DocumentoStato, categoria: "Attestato Sicurezza" },
+  { id: "d13", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "lavoratore" as const, riferimento_id: "l4", nome_file: "Attestato_Sicurezza_Neri.pdf", data_caricamento: "2025-06-01", data_scadenza: "2026-06-01", stato: "in_scadenza" as DocumentoStato, categoria: "Attestato Sicurezza" },
+  { id: "d14", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l5", nome_file: "Attestato_Sicurezza_Ferrari.pdf", data_caricamento: "2025-11-10", data_scadenza: "2027-11-10", stato: "valido" as DocumentoStato, categoria: "Attestato Sicurezza" },
+  // Idoneità sanitaria
+  { id: "d15", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l3", nome_file: "Idoneita_Sanitaria_Verdi.pdf", data_caricamento: "2025-09-20", data_scadenza: "2026-03-20", stato: "in_scadenza" as DocumentoStato, categoria: "Idoneità Sanitaria" },
+  { id: "d16", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l2", nome_file: "Idoneita_Sanitaria_Bianchi.pdf", data_caricamento: "2025-07-01", data_scadenza: "2026-07-01", stato: "valido" as DocumentoStato, categoria: "Idoneità Sanitaria" },
+  { id: "d17", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "lavoratore" as const, riferimento_id: "l4", nome_file: "Idoneita_Sanitaria_Neri.pdf", data_caricamento: "2025-12-01", data_scadenza: "2026-12-01", stato: "valido" as DocumentoStato, categoria: "Idoneità Sanitaria" },
+  { id: "d18", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l5", nome_file: "Idoneita_Sanitaria_Ferrari.pdf", data_caricamento: "2025-10-15", data_scadenza: "2026-10-15", stato: "valido" as DocumentoStato, categoria: "Idoneità Sanitaria" },
+  // DURC subappaltatori
+  { id: "d19", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s2", nome_file: "DURC_Verdi_2026.pdf", data_caricamento: "2025-12-15", data_scadenza: "2026-06-15", stato: "in_scadenza" as DocumentoStato, categoria: "DURC" },
+  { id: "d20", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s3", nome_file: "DURC_Neri_2026.pdf", data_caricamento: "2025-11-01", data_scadenza: "2026-02-28", stato: "scaduto" as DocumentoStato, categoria: "DURC" },
+  // DURC tenant (interno)
+  { id: "d21", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore" as const, riferimento_id: "t1", nome_file: "DURC_RossiCostruzioni_2026.pdf", data_caricamento: "2026-01-05", data_scadenza: "2026-07-05", stato: "valido" as DocumentoStato, categoria: "DURC" },
 ];
 
 export const mockAccessi = [

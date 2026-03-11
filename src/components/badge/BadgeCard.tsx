@@ -1,10 +1,9 @@
 import { QRCodeSVG } from "qrcode.react";
 import { HardHat, User, Shield } from "lucide-react";
 import type { Badge } from "@/data/mock-badges";
-import { getBadgeLavoratore, getBadgeCantiere } from "@/data/mock-badges";
+import { getBadgeLavoratore, getBadgeCantiere, calcolaStatoConformita } from "@/data/mock-badges";
 import { mockTenant, mockSubappaltatori } from "@/data/mock-data";
 import { BadgeStatusChip } from "./BadgeStatusChip";
-
 interface BadgeCardProps {
   badge: Badge;
   compact?: boolean;
@@ -18,14 +17,18 @@ export function BadgeCard({ badge, compact }: BadgeCardProps) {
     : null;
   const impresa = sub ? sub.ragione_sociale : mockTenant.nome_azienda;
   const piva = sub ? sub.p_iva : mockTenant.p_iva;
+  const conformita = calcolaStatoConformita(badge);
+  const conformitaColor = conformita.esito_finale === "verde" ? "bg-emerald-500" : conformita.esito_finale === "giallo" ? "bg-amber-500" : "bg-red-500";
   const verifyUrl = `https://app.cantiereincloud.it/verifica/${badge.codice_univoco}`;
 
   return (
     <div
-      className={`bg-[hsl(var(--badge-bg,20_14%_11%))] text-white rounded-xl overflow-hidden ${
+      className={`bg-[hsl(var(--badge-bg,20_14%_11%))] text-white rounded-xl overflow-hidden relative ${
         compact ? "max-w-sm" : "max-w-lg"
       }`}
     >
+      {/* Conformità indicator */}
+      <div className={`absolute top-3 right-3 h-2.5 w-2.5 rounded-full ${conformitaColor} ring-2 ring-white/20`} title={`Conformità: ${conformita.esito_finale}`} />
       <div className="p-4 h-full flex flex-col justify-between gap-2">
         {/* Header */}
         <div className="flex items-center justify-between">

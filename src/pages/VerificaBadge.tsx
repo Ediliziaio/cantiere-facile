@@ -1,16 +1,27 @@
+import { useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { HardHat, CheckCircle2, XCircle, AlertTriangle, Shield, FileCheck } from "lucide-react";
-import { mockBadges, getBadgeLavoratore, getBadgeCantiere, mockTimbrature } from "@/data/mock-badges";
-import { mockTenant, mockSubappaltatori, mockDocumenti } from "@/data/mock-data";
+import { HardHat, CheckCircle2, XCircle, AlertTriangle, Shield, FileCheck, FileDown } from "lucide-react";
+import { mockBadges, getBadgeLavoratore, getBadgeCantiere, calcolaStatoConformita, mockTimbrature } from "@/data/mock-badges";
+import { mockTenant, mockSubappaltatori } from "@/data/mock-data";
 import { BadgeStatusChip } from "@/components/badge/BadgeStatusChip";
+import { CertificatoConformita } from "@/components/badge/CertificatoConformita";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
-function CheckRow({ label, ok }: { label: string; ok: boolean | "warning" }) {
+function CheckRow({ label, ok, scadenza }: { label: string; ok: boolean | "warning"; scadenza?: string | null }) {
   return (
-    <div className="flex items-center gap-3 py-2">
-      {ok === true && <CheckCircle2 className="h-5 w-5 text-emerald-600" />}
-      {ok === "warning" && <AlertTriangle className="h-5 w-5 text-amber-500" />}
-      {ok === false && <XCircle className="h-5 w-5 text-red-500" />}
-      <span className="text-sm text-foreground">{label}</span>
+    <div className="flex items-center justify-between py-2">
+      <div className="flex items-center gap-3">
+        {ok === true && <CheckCircle2 className="h-5 w-5 text-emerald-600" />}
+        {ok === "warning" && <AlertTriangle className="h-5 w-5 text-amber-500" />}
+        {ok === false && <XCircle className="h-5 w-5 text-red-500" />}
+        <span className="text-sm text-foreground">{label}</span>
+      </div>
+      {scadenza && (
+        <span className="text-[10px] text-muted-foreground">
+          scad. {new Date(scadenza).toLocaleDateString("it-IT")}
+        </span>
+      )}
     </div>
   );
 }
@@ -18,6 +29,23 @@ function CheckRow({ label, ok }: { label: string; ok: boolean | "warning" }) {
 export default function VerificaBadge() {
   const { codice } = useParams<{ codice: string }>();
   const badge = mockBadges.find((b) => b.codice_univoco === codice);
+  const certRef = useRef<HTMLDivElement>(null);
+
+  const exportCertificato = useCallback(async () => {
+    if (!certRef.current) return;
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(certRef.current, { scale: 3, backgroundColor: "#ffffff", useCORS: true });
+      const link = document.createElement("a");
+      link.download = `certificato-${badge?.codice_univoco ?? "export"}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("Certificato di conformità scaricato");
+    } catch (err) {
+      console.error("Export error:", err);
+      toast.error("Errore durante l'esportazione");
+    }
+  }, [badge]);
 
   if (!badge) {
     return (
@@ -39,19 +67,20 @@ export default function VerificaBadge() {
     ? mockSubappaltatori.find((s) => s.id === lav.subappaltatore_id)
     : null;
   const impresa = sub ? sub.ragione_sociale : mockTenant.nome_azienda;
-
-  const lavDocs = mockDocumenti.filter((d) => d.riferimento_id === badge.lavoratore_id);
-  const hasScaduto = lavDocs.some((d) => d.stato === "scaduto");
-  const docsWarning = lavDocs.some((d) => d.stato === "in_scadenza");
+  const conformita = calcolaStatoConformita(badge);
 
   const lastAccess = mockTimbrature
     .filter((t) => t.badge_id === badge.id)
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp))[0];
 
-  // Banner status
-  const isValid = badge.stato === "attivo" && !hasScaduto;
-  const isWarning = badge.stato === "attivo" && docsWarning && !hasScaduto;
-  const isInvalid = badge.stato !== "attivo" || hasScaduto;
+  const statoToOk = (stato: string): boolean | "warning" => {
+    if (stato === "ok") return true;
+    if (stato === "warning") return "warning";
+    return false;
+  };
+
+  const isInvalid = badge.stato !== "attivo" || conformita.esito_finale === "rosso";
+  const isWarning = !isInvalid && conformita.esito_finale === "giallo";
 
   const bannerConfig = isInvalid
     ? { bg: "bg-red-50 border-red-200", text: "text-red-800", icon: <XCircle className="h-5 w-5 text-red-600" />, label: "Badge non valido" }
@@ -61,6 +90,9 @@ export default function VerificaBadge() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Hidden certificate for export */}
+      <CertificatoConformita ref={certRef} badge={badge} />
+
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md space-y-5">
           {/* Header */}
@@ -116,13 +148,18 @@ export default function VerificaBadge() {
             )}
           </div>
 
-          {/* Checks */}
+          {/* Checks — dynamic */}
           <div className="border border-border rounded-lg p-5">
             <p className="font-heading font-semibold text-sm text-foreground mb-2">Stato conformità</p>
-            <CheckRow label="Documenti in regola" ok={hasScaduto ? false : docsWarning ? "warning" : true} />
-            <CheckRow label="Formazione in regola" ok={true} />
-            <CheckRow label="Idoneità sanitaria" ok={badge.lavoratore_id === "l3" ? "warning" : true} />
+            {conformita.checks.map((c) => (
+              <CheckRow key={c.label} label={c.label} ok={statoToOk(c.stato)} scadenza={c.scadenza} />
+            ))}
           </div>
+
+          {/* Download certificate */}
+          <Button variant="outline" size="sm" className="w-full" onClick={exportCertificato}>
+            <FileDown className="h-3.5 w-3.5 mr-1" /> Scarica Certificato di Conformità
+          </Button>
 
           {/* Legal validity */}
           <div className="border border-border rounded-lg p-5 space-y-3">
