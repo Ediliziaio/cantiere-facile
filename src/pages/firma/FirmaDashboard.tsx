@@ -49,9 +49,14 @@ export default function FirmaDashboard() {
           </h1>
           <p className="text-muted-foreground text-sm mt-1">Gestisci i documenti da firmare digitalmente</p>
         </div>
-        <Button asChild>
-          <Link to="/app/firma/nuovo"><Plus className="h-4 w-4 mr-1" /> Nuovo documento</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link to="/app/firma/templates"><LayoutTemplate className="h-4 w-4 mr-1" /> Template</Link>
+          </Button>
+          <Button asChild>
+            <Link to="/app/firma/nuovo"><Plus className="h-4 w-4 mr-1" /> Nuovo documento</Link>
+          </Button>
+        </div>
       </div>
 
       {/* KPI */}
