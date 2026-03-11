@@ -186,7 +186,7 @@ export default function HeroSection() {
             {[...logos, ...logos].map((logo, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 mx-12 select-none shrink-0"
+                className="flex items-center gap-3 mx-16 md:mx-12 select-none shrink-0"
               >
                 <img src={logo.src} alt={logo.name} className="h-14 w-auto grayscale opacity-50 hover:opacity-70 transition-opacity" />
               </div>

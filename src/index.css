@@ -161,6 +161,11 @@
   display: flex;
   animation: marquee 30s linear infinite;
 }
+@media (max-width: 768px) {
+  .marquee-track {
+    animation-duration: 15s;
+  }
+}
 .marquee-track:hover {
   animation-play-state: paused;
 }
