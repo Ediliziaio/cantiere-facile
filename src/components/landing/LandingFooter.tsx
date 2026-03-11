@@ -5,16 +5,16 @@ const cols = [
   {
     title: "Prodotto",
     links: [
+      { label: "Funzionalità", href: "/funzionalita" },
+      { label: "Tariffe", href: "/tariffe" },
       { label: "Documenti", href: "/funzionalita/documenti" },
-      { label: "Tesserini", href: "/funzionalita/tesserini" },
-      { label: "Accessi Geo", href: "/funzionalita/accessi" },
       { label: "Firma Digitale", href: "/funzionalita/firma" },
     ],
   },
   {
     title: "Azienda",
     links: [
-      { label: "Chi siamo", href: "#manifesto" },
+      { label: "Chi siamo", href: "/chi-siamo" },
       { label: "Blog", href: "#" },
       { label: "Contatti", href: "#" },
       { label: "Partnership", href: "#" },
