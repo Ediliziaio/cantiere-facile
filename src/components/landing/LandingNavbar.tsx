@@ -1,0 +1,109 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { HardHat, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const navLinks = [
+  { label: "Funzionalità", href: "#funzionalita" },
+  { label: "Prezzi", href: "#prezzi" },
+  { label: "Chi siamo", href: "#manifesto" },
+];
+
+export default function LandingNavbar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { scrollY } = useScroll();
+  const bgOpacity = useTransform(scrollY, [0, 80], [0, 1]);
+  const shadow = useTransform(scrollY, [0, 80], ["0px 0px 0px rgba(0,0,0,0)", "0px 1px 12px rgba(0,0,0,0.08)"]);
+
+  return (
+    <>
+      <motion.nav
+        className="fixed top-0 left-0 right-0 z-50 border-b border-transparent"
+        style={{
+          backgroundColor: useTransform(bgOpacity, (v) => `rgba(255,255,255,${v})`),
+          boxShadow: shadow,
+          borderColor: useTransform(bgOpacity, (v) => `rgba(0,0,0,${v * 0.06})`),
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <HardHat className="h-7 w-7 text-[hsl(25,95%,53%)]" />
+            <span className="font-landing-heading font-bold text-lg text-[hsl(20,14%,8%)]">
+              Cantiere in Cloud
+            </span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="font-landing-body text-sm font-medium text-[hsl(25,5%,45%)] hover:text-[hsl(20,14%,8%)] transition-colors"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
+
+          <div className="hidden md:flex items-center gap-3">
+            <Button variant="ghost" size="sm" asChild className="font-landing-body">
+              <Link to="/login">Accedi</Link>
+            </Button>
+            <Button size="sm" asChild className="font-landing-body rounded-full bg-[hsl(25,95%,53%)] hover:bg-[hsl(25,95%,48%)]">
+              <Link to="/register">Prova gratis</Link>
+            </Button>
+          </div>
+
+          <button
+            className="md:hidden p-2"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Menu"
+          >
+            <Menu className="h-6 w-6 text-[hsl(20,14%,8%)]" />
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <motion.div
+          className="fixed inset-0 z-[60] bg-white flex flex-col"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="flex items-center justify-between px-4 h-16">
+            <Link to="/" className="flex items-center gap-2">
+              <HardHat className="h-7 w-7 text-[hsl(25,95%,53%)]" />
+              <span className="font-landing-heading font-bold text-lg">Cantiere in Cloud</span>
+            </Link>
+            <button onClick={() => setMobileOpen(false)} aria-label="Chiudi">
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          <div className="flex flex-col items-center gap-6 pt-12">
+            {navLinks.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => setMobileOpen(false)}
+                className="font-landing-body text-xl font-medium text-[hsl(20,14%,8%)]"
+              >
+                {l.label}
+              </a>
+            ))}
+            <div className="flex flex-col gap-3 w-full px-8 pt-6">
+              <Button variant="outline" asChild className="font-landing-body w-full">
+                <Link to="/login">Accedi</Link>
+              </Button>
+              <Button asChild className="font-landing-body w-full rounded-full bg-[hsl(25,95%,53%)] hover:bg-[hsl(25,95%,48%)]">
+                <Link to="/register">Prova gratis</Link>
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </>
+  );
+}

@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         heading: ['Inter', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
+        'landing-heading': ['Syne', 'sans-serif'],
+        'landing-body': ['DM Sans', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -88,10 +90,25 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "marquee": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "50%": { transform: "translateY(-20px) rotate(5deg)" },
+        },
+        "float-slow-reverse": {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "50%": { transform: "translateY(20px) rotate(-5deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "marquee": "marquee 30s linear infinite",
+        "float-slow": "float-slow 8s ease-in-out infinite",
+        "float-slow-reverse": "float-slow-reverse 10s ease-in-out infinite",
       },
     },
   },
