@@ -65,7 +65,7 @@ export default function Billing() {
                 <p className="font-semibold text-foreground text-lg">{plan.nome}</p>
                 <p className="text-sm text-muted-foreground">
                   €{billing_cycle === "monthly" ? plan.prezzo_mensile : plan.prezzo_annuale}/mese
-                  {billing_cycle === "annual" && " (annuale)"}
+                  {billing_cycle !== "monthly" && " (annuale)"}
                 </p>
               </div>
             </div>
