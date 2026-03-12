@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -20,6 +20,7 @@ const navGroups = [
       { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard, adminOnly: false },
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
+      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },
     ],
   },
   {

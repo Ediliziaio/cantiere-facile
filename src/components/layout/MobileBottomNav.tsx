@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
-  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine, PenTool, ShieldAlert
+  HardHat, Building, Truck, CalendarClock, MessageSquare, Settings, FileText, Clock, ScanLine, PenTool, ShieldAlert, BarChart3
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -21,6 +21,7 @@ const menuGroups = [
     items: [
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
+      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },
     ],
   },
   {
