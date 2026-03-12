@@ -29,6 +29,7 @@ import BadgeNuovo from "./pages/BadgeNuovo";
 import BadgeDetail from "./pages/BadgeDetail";
 import Timbrature from "./pages/Timbrature";
 import Scan from "./pages/Scan";
+import CheckIn from "./pages/CheckIn";
 import VerificaBadge from "./pages/VerificaBadge";
 import PortaleSubappaltatore from "./pages/PortaleSubappaltatore";
 import FirmaDashboard from "./pages/firma/FirmaDashboard";
@@ -119,6 +120,7 @@ const App = () => (
               <Route path="badge/:id" element={<BadgeDetail />} />
               <Route path="timbrature" element={<Timbrature />} />
               <Route path="comunicazioni" element={<Comunicazioni />} />
+              <Route path="checkin" element={<CheckIn />} />
               <Route path="firma" element={<FirmaDashboard />} />
               <Route path="firma/nuovo" element={<FirmaNuovo />} />
               <Route path="firma/templates" element={<FirmaTemplates />} />
