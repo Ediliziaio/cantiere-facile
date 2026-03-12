@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -52,6 +52,7 @@ const navGroups = [
   {
     label: "Sistema",
     items: [
+      { title: "Supporto", url: "/app/supporto", icon: LifeBuoy, adminOnly: false },
       { title: "Abbonamento", url: "/app/billing", icon: Receipt, adminOnly: false },
       { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: false },
     ],
