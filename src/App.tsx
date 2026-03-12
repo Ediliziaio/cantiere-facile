@@ -29,6 +29,7 @@ import BadgeNuovo from "./pages/BadgeNuovo";
 import BadgeDetail from "./pages/BadgeDetail";
 import Timbrature from "./pages/Timbrature";
 import Scan from "./pages/Scan";
+import CheckIn from "./pages/CheckIn";
 import VerificaBadge from "./pages/VerificaBadge";
 import PortaleSubappaltatore from "./pages/PortaleSubappaltatore";
 import FirmaDashboard from "./pages/firma/FirmaDashboard";
