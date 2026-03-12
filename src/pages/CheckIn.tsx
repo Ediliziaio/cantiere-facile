@@ -5,6 +5,7 @@ import { useOfflineQueue } from "@/hooks/useOfflineQueue";
 import { useBadgeVerification } from "@/hooks/useBadgeVerification";
 import { useWorkerCompliance } from "@/hooks/useWorkerCompliance";
 import { GpsSignalIndicator } from "@/components/gps/GpsSignalIndicator";
+import { vibrateCheckIn, vibrateCheckOut, vibrateError } from "@/lib/haptics";
 import { GeofenceMap } from "@/components/gps/GeofenceMap";
 import { WorkerComplianceCard } from "@/components/badge/WorkerComplianceCard";
 import { mockCantieri } from "@/data/mock-data";
