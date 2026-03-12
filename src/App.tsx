@@ -60,6 +60,7 @@ import FunzionalitaVeicoli from "./pages/funzionalita/Veicoli";
 import ChiSiamo from "./pages/ChiSiamo";
 import Tariffe from "./pages/Tariffe";
 import FunzionalitaOverview from "./pages/FunzionalitaOverview";
+import Sicurezza from "./pages/Sicurezza";
 
 const queryClient = new QueryClient();
 
@@ -131,6 +132,7 @@ const App = () => (
               <Route path="firma/:id/firmatari" element={<FirmaFirmatari />} />
               <Route path="firma/:id/anteprima" element={<FirmaAnteprima />} />
               <Route path="firma/:id/certificato" element={<CertificatoFirma />} />
+              <Route path="sicurezza" element={<Sicurezza />} />
               <Route path="impostazioni" element={<Impostazioni />} />
             </Route>
 
