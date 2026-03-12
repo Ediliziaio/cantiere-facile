@@ -34,6 +34,12 @@ const menuGroups = [
     ],
   },
   {
+    label: "Sicurezza",
+    items: [
+      { title: "Sicurezza 81/08", url: "/app/sicurezza", icon: ShieldAlert, adminOnly: false },
+    ],
+  },
+  {
     label: "Presenze",
     items: [
       { title: "Timbrature", url: "/app/timbrature", icon: Clock, adminOnly: false },

@@ -34,6 +34,12 @@ const navGroups = [
     ],
   },
   {
+    label: "Sicurezza",
+    items: [
+      { title: "Sicurezza 81/08", url: "/app/sicurezza", icon: ShieldAlert, adminOnly: false },
+    ],
+  },
+  {
     label: "Presenze",
     items: [
       { title: "Check-in GPS", url: "/app/checkin", icon: MapPin, adminOnly: false },
