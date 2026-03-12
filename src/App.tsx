@@ -18,6 +18,7 @@ import Documenti from "./pages/Documenti";
 import Scadenze from "./pages/Scadenze";
 import Subappaltatori from "./pages/Subappaltatori";
 import Lavoratori from "./pages/Lavoratori";
+import LavoratoreDetail from "./pages/LavoratoreDetail";
 import Mezzi from "./pages/Mezzi";
 import MezzoDetail from "./pages/MezzoDetail";
 import NuovoMezzo from "./pages/NuovoMezzo";
