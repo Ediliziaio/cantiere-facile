@@ -67,7 +67,7 @@ export default function SuperAdminAziendaDetail() {
           <TenantStatusBadge stato={tenant.stato} />
         </div>
         <div className="flex gap-2 flex-wrap">
-          <Button size="sm" className="bg-superadmin hover:bg-superadmin/90" onClick={handleImpersonate}>
+          <Button size="sm" onClick={handleImpersonate}>
             <LogIn className="h-3.5 w-3.5 mr-1.5" /> Impersona
           </Button>
           <Button size="sm" variant="outline" onClick={handleExport}>

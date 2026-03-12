@@ -209,7 +209,7 @@ export const mockRevenueTrend: RevenueTrendPoint[] = [
 export const mockPlanDistribution: PlanDistribution[] = [
   { piano: "Starter", count: 3, fill: "hsl(var(--muted-foreground))" },
   { piano: "Professional", count: 3, fill: "hsl(var(--primary))" },
-  { piano: "Business", count: 2, fill: "hsl(var(--superadmin))" },
+  { piano: "Business", count: 2, fill: "hsl(var(--accent))" },
 ];
 
 // Current tenant billing info (for tenant t1)
