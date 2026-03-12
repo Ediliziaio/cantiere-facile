@@ -131,6 +131,7 @@ const App = () => (
                 <Route path="aziende/:id" element={<SuperAdminAziendaDetail />} />
                 <Route path="audit-log" element={<SuperAdminAuditLog />} />
                 <Route path="impostazioni" element={<SuperAdminImpostazioni />} />
+                <Route path="billing" element={<SuperAdminBilling />} />
               </Route>
 
               {/* Tenant app routes with sidebar layout */}
