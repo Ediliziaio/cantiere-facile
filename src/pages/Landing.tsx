@@ -9,6 +9,10 @@ import ScenarioSection from "@/components/landing/ScenarioSection";
 import RetoricalQuestionsSection from "@/components/landing/RetoricalQuestionsSection";
 import StatsSection from "@/components/landing/StatsSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import ComparisonTable from "@/components/landing/ComparisonTable";
+import IntegrationsSection from "@/components/landing/IntegrationsSection";
+import MobileAppSection from "@/components/landing/MobileAppSection";
+import TrustBadges from "@/components/landing/TrustBadges";
 import PricingSection from "@/components/landing/PricingSection";
 import FaqSection from "@/components/landing/FaqSection";
 import ManifestoSection from "@/components/landing/ManifestoSection";
@@ -30,6 +34,10 @@ export default function Landing() {
       <RetoricalQuestionsSection />
       <StatsSection />
       <TestimonialsSection />
+      <ComparisonTable />
+      <IntegrationsSection />
+      <MobileAppSection />
+      <TrustBadges />
       <PricingSection />
       <FaqSection />
       <ManifestoSection />
