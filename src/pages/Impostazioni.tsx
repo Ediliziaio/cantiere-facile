@@ -2,7 +2,8 @@ import { useState, useMemo } from "react";
 import {
   Settings, Plus, UserCog, Trash2, Shield, ShieldCheck, Building2,
   MoreHorizontal, Activity, LogIn, Upload, PenLine, UserPlus, PlusCircle, XCircle,
-  Mail, Send, Eye, CheckCircle2, Clock, AlertTriangle, X,
+  Mail, Send, Eye, CheckCircle2, Clock, AlertTriangle, X, BellRing,
+  Smartphone, MessageSquare, CloudRain, ShieldAlert, FileText, UserCheck, Siren,
 } from "lucide-react";
 import { mockTenant, mockCantieri, mockUtentiAzienda, mockLogAttivita, mockNotificheEmail, mockImpostazioniNotifiche, type UtenteAzienda, type UtenteRuolo, type LogTipoAzione, type NotificaEmailTipo, type NotificaEmailStato } from "@/data/mock-data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
