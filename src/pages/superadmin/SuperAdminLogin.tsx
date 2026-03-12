@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Shield, Lock, Eye, EyeOff, AlertTriangle } from "lucide-react";
+import { HardHat, Lock, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -93,8 +93,8 @@ export default function SuperAdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="flex items-center gap-2 mb-8">
-          <Shield className="h-7 w-7 text-superadmin" />
-          <span className="font-heading font-bold text-xl text-foreground">SuperAdmin</span>
+          <HardHat className="h-7 w-7 text-primary" />
+          <span className="font-heading font-bold text-xl text-foreground">Cantiere in Cloud</span>
         </div>
 
         <h1 className="font-heading font-bold text-2xl text-foreground mb-1">Accesso Piattaforma</h1>
@@ -149,7 +149,7 @@ export default function SuperAdminLogin() {
               <p className="text-[11px] text-muted-foreground">Min. 16 caratteri, maiuscole, minuscole, numeri, simboli</p>
             </div>
 
-            <Button type="submit" className="w-full bg-superadmin hover:bg-superadmin/90" disabled={locked || loading}>
+            <Button type="submit" className="w-full" disabled={locked || loading}>
               {loading ? "Verifica..." : "Continua"}
             </Button>
 
@@ -161,7 +161,7 @@ export default function SuperAdminLogin() {
         ) : (
           <div className="space-y-6">
             <div className="flex items-center gap-2 p-3 rounded-md bg-muted border border-border text-sm text-muted-foreground">
-              <Lock className="h-4 w-4 shrink-0 text-superadmin" />
+              <Lock className="h-4 w-4 shrink-0 text-primary" />
               <span>Inserisci il codice a 6 cifre dal tuo autenticatore. Per demo usa: <code className="font-mono text-foreground font-bold">123456</code></span>
             </div>
 
@@ -177,7 +177,7 @@ export default function SuperAdminLogin() {
                 </InputOTPGroup>
               </InputOTP>
 
-              <Button onClick={handleTotpVerify} className="w-full bg-superadmin hover:bg-superadmin/90" disabled={totpCode.length !== 6 || locked || loading}>
+              <Button onClick={handleTotpVerify} className="w-full" disabled={totpCode.length !== 6 || locked || loading}>
                 {loading ? "Verifica..." : "Verifica Codice"}
               </Button>
             </div>

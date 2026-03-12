@@ -41,12 +41,12 @@ export default function SuperAdminImpostazioni() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Settings className="h-5 w-5 text-superadmin" />
+        <Settings className="h-5 w-5 text-muted-foreground" />
         <h1 className="font-heading font-bold text-2xl text-foreground">Impostazioni Piattaforma</h1>
       </div>
 
       <Tabs defaultValue="profile">
-        <TabsList className="grid w-full grid-cols-4 max-w-xl">
+        <TabsList className="w-full max-w-xl overflow-x-auto scrollbar-hide">
           <TabsTrigger value="profile">Profilo</TabsTrigger>
           <TabsTrigger value="security">Sicurezza</TabsTrigger>
           <TabsTrigger value="users" disabled={!hasPermission("superadmin_users.view")}>Utenti SA</TabsTrigger>
@@ -77,11 +77,10 @@ export default function SuperAdminImpostazioni() {
 
         {/* SECURITY TAB */}
         <TabsContent value="security" className="space-y-4 max-w-lg">
-          {/* 2FA Status */}
           <div className="border border-border rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-superadmin" />
+                <ShieldCheck className="h-4 w-4 text-primary" />
                 <h2 className="font-heading font-semibold text-foreground">Autenticazione a Due Fattori</h2>
               </div>
               <Badge variant={currentSaUser.totp_enabled ? "default" : "destructive"} className="text-[10px]">
@@ -95,7 +94,6 @@ export default function SuperAdminImpostazioni() {
             </p>
           </div>
 
-          {/* Backup Codes */}
           <div className="border border-border rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="font-heading font-semibold text-foreground">Codici di Backup</h2>
@@ -115,7 +113,6 @@ export default function SuperAdminImpostazioni() {
             </Button>
           </div>
 
-          {/* Active Sessions */}
           <div className="border border-border rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -142,7 +139,8 @@ export default function SuperAdminImpostazioni() {
 
         {/* USERS TAB */}
         <TabsContent value="users" className="space-y-4">
-          <div className="border border-border rounded-lg overflow-hidden">
+          {/* Desktop table */}
+          <div className="border border-border rounded-lg overflow-hidden hidden md:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/30">
@@ -207,6 +205,34 @@ export default function SuperAdminImpostazioni() {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {saUsers.map((u) => (
+              <div key={u.id} className="border border-border rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-foreground">{u.full_name}</span>
+                  <Badge variant={u.is_active ? "default" : "secondary"} className="text-[10px]">
+                    {u.is_active ? "Attivo" : "Disattivo"}
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>{u.email}</p>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-[10px]">{roleLabels[u.role]}</Badge>
+                    <Badge variant={u.totp_enabled ? "default" : "destructive"} className="text-[10px]">
+                      2FA: {u.totp_enabled ? "Sì" : "No"}
+                    </Badge>
+                  </div>
+                </div>
+                {canManage && u.id !== user?.id && (
+                  <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => toggleUserActive(u.id)}>
+                    {u.is_active ? "Disattiva" : "Attiva"}
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
         </TabsContent>
 
         {/* ALERTS TAB */}
@@ -218,7 +244,7 @@ export default function SuperAdminImpostazioni() {
                   <div className="flex items-start gap-2">
                     <AlertTriangle className={`h-4 w-4 mt-0.5 shrink-0 ${a.severity === "critical" ? "text-destructive" : "text-amber-500"}`} />
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <Badge variant={a.severity === "critical" ? "destructive" : "secondary"} className="text-[10px]">
                           {a.severity.toUpperCase()}
                         </Badge>
