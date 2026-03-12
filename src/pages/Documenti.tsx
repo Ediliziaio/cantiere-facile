@@ -1,81 +1,118 @@
-import { useState } from "react";
-import { Search, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useState, useMemo } from "react";
+import { Plus, FileText, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { DocumentUploader } from "@/components/cantiere/DocumentUploader";
+import { DocumentGrid } from "@/components/cantiere/DocumentGrid";
+import { DocumentFilters, defaultFilters } from "@/components/cantiere/DocumentFilters";
+import { DocumentViewer } from "@/components/cantiere/DocumentViewer";
 import { mockDocumenti, mockCantieri } from "@/data/mock-data";
-import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
-import { DocumentUploadZone } from "@/components/cantiere/DocumentUploadZone";
-import { DocumentActions } from "@/components/cantiere/DocumentActions";
+import type { DocumentFilterState } from "@/components/cantiere/DocumentFilters";
 import { toast } from "sonner";
-import type { DocumentoStato } from "@/data/mock-data";
 
 export default function Documenti() {
   const [showUpload, setShowUpload] = useState(false);
-  const [search, setSearch] = useState("");
-  const [statoFilter, setStatoFilter] = useState<string>("tutti");
+  const [filters, setFilters] = useState(defaultFilters);
+  const [viewDoc, setViewDoc] = useState<typeof mockDocumenti[0] | null>(null);
+  const [viewOpen, setViewOpen] = useState(false);
 
-  const filtered = mockDocumenti.filter((d) => {
-    const matchSearch = d.nome_file.toLowerCase().includes(search.toLowerCase()) || d.categoria.toLowerCase().includes(search.toLowerCase());
-    const matchStato = statoFilter === "tutti" || d.stato === statoFilter;
-    return matchSearch && matchStato;
-  });
+  // Stats
+  const stats = useMemo(() => ({
+    totali: mockDocumenti.length,
+    validi: mockDocumenti.filter(d => d.stato === "valido").length,
+    inScadenza: mockDocumenti.filter(d => d.stato === "in_scadenza").length,
+    scaduti: mockDocumenti.filter(d => d.stato === "scaduto").length,
+    daVerificare: mockDocumenti.filter(d => d.stato === "da_verificare").length,
+  }), []);
 
-  const stati = ["tutti", "valido", "in_scadenza", "scaduto", "da_verificare"];
+  // Filter documents
+  const filtered = useMemo(() => {
+    return mockDocumenti.filter(d => {
+      if (filters.search) {
+        const q = filters.search.toLowerCase();
+        const matchName = d.nome_file.toLowerCase().includes(q);
+        const matchCat = d.categoria.toLowerCase().includes(q);
+        const matchFields = d.extracted_fields && Object.values(d.extracted_fields).some(v => v.toLowerCase().includes(q));
+        if (!matchName && !matchCat && !matchFields) return false;
+      }
+      if (filters.stato !== "tutti" && d.stato !== filters.stato) return false;
+      if (filters.cantiere !== "tutti" && d.cantiere_id !== filters.cantiere) return false;
+      if (filters.categoria !== "tutti" && d.categoria !== filters.categoria) return false;
+      if (filters.processingStatus !== "tutti" && d.processing_status !== filters.processingStatus) return false;
+      if (filters.riferimentoTipo !== "tutti" && d.riferimento_tipo !== filters.riferimentoTipo) return false;
+      return true;
+    });
+  }, [filters]);
+
+  const handleViewDocument = (doc: typeof mockDocumenti[0]) => {
+    setViewDoc(doc);
+    setViewOpen(true);
+  };
+
+  const handleApprove = (id: string) => {
+    toast.success("Documento approvato");
+    setViewOpen(false);
+  };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="font-heading font-bold text-2xl text-foreground">Documenti</h1>
         <Button size="sm" onClick={() => setShowUpload(!showUpload)}>
-          <Plus className="h-3.5 w-3.5 mr-1" /> Carica documento
+          <Plus className="h-3.5 w-3.5 mr-1" /> Carica documenti
         </Button>
       </div>
 
+      {/* Stats cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Totali", value: stats.totali, icon: FileText, color: "text-foreground" },
+          { label: "In scadenza", value: stats.inScadenza, icon: Clock, color: "text-warning" },
+          { label: "Scaduti", value: stats.scaduti, icon: AlertTriangle, color: "text-destructive" },
+          { label: "Da verificare", value: stats.daVerificare, icon: AlertTriangle, color: "text-muted-foreground" },
+        ].map(({ label, value, icon: Icon, color }) => (
+          <Card key={label}>
+            <CardContent className="p-3 flex items-center gap-3">
+              <Icon className={`h-5 w-5 ${color} shrink-0`} />
+              <div>
+                <p className="text-xl font-bold text-foreground">{value}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Upload zone */}
       {showUpload && (
-        <DocumentUploadZone
-          onUpload={(file, categoria, dataScadenza) => {
-            toast.success(`"${file.name}" caricato come ${categoria}`);
-            setShowUpload(false);
-          }}
+        <DocumentUploader
+          onComplete={() => setShowUpload(false)}
+          onClose={() => setShowUpload(false)}
         />
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Cerca documento..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
-        </div>
-        <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
-          <div className="flex gap-1 w-max">
-            {stati.map((s) => (
-              <Button key={s} variant={statoFilter === s ? "default" : "outline"} size="sm" onClick={() => setStatoFilter(s)} className="text-xs capitalize whitespace-nowrap">
-                {s === "tutti" ? "Tutti" : s.replace("_", " ")}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Filters */}
+      <DocumentFilters
+        filters={filters}
+        onChange={setFilters}
+        resultCount={filtered.length}
+      />
 
-      <div className="border border-border rounded-lg divide-y divide-border">
-        {filtered.length === 0 && <p className="p-6 text-sm text-muted-foreground text-center">Nessun documento trovato.</p>}
-        {filtered.map((d) => {
-          const cantiere = mockCantieri.find((c) => c.id === d.cantiere_id);
-          return (
-            <div key={d.id} className="flex items-center justify-between px-4 py-3">
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground truncate">{d.nome_file}</p>
-                <p className="text-xs text-muted-foreground">
-                  {d.categoria} · {cantiere?.nome} · {d.data_scadenza ? new Date(d.data_scadenza).toLocaleDateString("it-IT") : "—"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <DocumentActions nomeFile={d.nome_file} categoria={d.categoria} dataCaricamento={d.data_caricamento} />
-                <DocumentStatusBadge stato={d.stato as DocumentoStato} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* Document grid/list */}
+      <DocumentGrid
+        documents={filtered}
+        onViewDocument={handleViewDocument}
+        onApproveSelected={(ids) => toast.success(`${ids.length} documenti approvati`)}
+      />
+
+      {/* Document viewer modal */}
+      <DocumentViewer
+        document={viewDoc}
+        open={viewOpen}
+        onOpenChange={setViewOpen}
+        onApprove={handleApprove}
+      />
     </div>
   );
 }
