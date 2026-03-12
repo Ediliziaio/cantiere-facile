@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useGeofencing } from "@/hooks/useGeofencing";
 import { useOfflineQueue } from "@/hooks/useOfflineQueue";
+import { useBadgeVerification } from "@/hooks/useBadgeVerification";
+import { useWorkerCompliance } from "@/hooks/useWorkerCompliance";
 import { GpsSignalIndicator } from "@/components/gps/GpsSignalIndicator";
 import { GeofenceMap } from "@/components/gps/GeofenceMap";
+import { WorkerComplianceCard } from "@/components/badge/WorkerComplianceCard";
 import { mockCantieri } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +17,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { toast } from "sonner";
 import {
   MapPin, CheckCircle2, XCircle, LogIn, LogOut, ChevronDown,
-  WifiOff, AlertTriangle, Clock, Map, Loader2,
+  WifiOff, AlertTriangle, Clock, Map, Loader2, QrCode, ShieldX, ShieldCheck,
 } from "lucide-react";
 
 type CheckMode = "auto_gps" | "qr_scan" | "manual";
