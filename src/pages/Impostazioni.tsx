@@ -231,6 +231,7 @@ export default function Impostazioni() {
           {isAdmin && (
             <TabsTrigger value="notifiche-email" className="gap-1.5"><Mail className="h-4 w-4" /> Notifiche Email</TabsTrigger>
           )}
+          <TabsTrigger value="preferenze-notifiche" className="gap-1.5"><BellRing className="h-4 w-4" /> Preferenze</TabsTrigger>
         </TabsList>
 
         {/* Tab Profilo */}
