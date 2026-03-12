@@ -116,4 +116,3 @@ export default function FeatureComparisonTable() {
   );
 }
 
-import React from "react";
