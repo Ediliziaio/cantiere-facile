@@ -46,9 +46,9 @@ export default function SuperAdminAuditLog() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <ScrollText className="h-5 w-5 text-superadmin" />
+          <ScrollText className="h-5 w-5 text-muted-foreground" />
           <h1 className="font-heading font-bold text-2xl text-foreground">Security Audit Log</h1>
         </div>
         <div className="flex items-center gap-2">
@@ -78,7 +78,8 @@ export default function SuperAdminAuditLog() {
         </Select>
       </div>
 
-      <div className="border border-border rounded-lg overflow-hidden">
+      {/* Desktop table */}
+      <div className="border border-border rounded-lg overflow-hidden hidden md:block">
         <TooltipProvider>
           <table className="w-full text-sm">
             <thead>
@@ -87,7 +88,7 @@ export default function SuperAdminAuditLog() {
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">Severity</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">Attore</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">Azione</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden md:table-cell">Risorsa</th>
+                <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Risorsa</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">IP</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden xl:table-cell">Hash</th>
               </tr>
@@ -112,7 +113,7 @@ export default function SuperAdminAuditLog() {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-muted-foreground text-xs">
+                  <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground text-xs">
                     {log.tenant_name ?? log.resource_type}
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground font-mono text-xs">{log.ip_address}</td>
@@ -136,6 +137,31 @@ export default function SuperAdminAuditLog() {
             </tbody>
           </table>
         </TooltipProvider>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {filtered.map((log) => (
+          <div key={log.id} className="border border-border rounded-lg p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <Badge variant="outline" className={`text-[10px] ${severityColors[log.severity]}`}>
+                {log.severity.toUpperCase()}
+              </Badge>
+              <span className="text-[10px] text-muted-foreground">
+                {new Date(log.timestamp).toLocaleString("it-IT")}
+              </span>
+            </div>
+            <p className="text-sm font-medium text-foreground">{log.actor_name}</p>
+            <p className="font-mono text-xs text-muted-foreground">{log.action}</p>
+            {log.changes && (
+              <p className="text-[10px] text-muted-foreground">{log.changes.old_val} → {log.changes.new_val}</p>
+            )}
+            <p className="text-[10px] text-muted-foreground font-mono">{log.ip_address}</p>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <p className="text-center text-muted-foreground py-8">Nessun log trovato</p>
+        )}
       </div>
 
       <p className="text-xs text-muted-foreground">
