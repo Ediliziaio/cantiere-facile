@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
