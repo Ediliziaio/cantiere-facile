@@ -66,6 +66,24 @@ export default function CheckIn() {
     geofence.updatePosition(geo.position);
   }, [geo.position]);
 
+  // Screen Wake Lock during check-in page
+  useEffect(() => {
+    let wakeLock: any = null;
+    const requestWakeLock = async () => {
+      try {
+        if ("wakeLock" in navigator) {
+          wakeLock = await (navigator as any).wakeLock.request("screen");
+        }
+      } catch {
+        // Wake Lock not supported or denied
+      }
+    };
+    requestWakeLock();
+    return () => {
+      if (wakeLock) wakeLock.release().catch(() => {});
+    };
+  }, []);
+
   // Start GPS tracking on mount
   useEffect(() => {
     geo.startTracking();
