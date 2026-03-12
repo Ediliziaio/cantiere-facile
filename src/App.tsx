@@ -70,6 +70,8 @@ const Tariffe = lazy(() => import("./pages/Tariffe"));
 const FunzionalitaOverview = lazy(() => import("./pages/FunzionalitaOverview"));
 const Sicurezza = lazy(() => import("./pages/Sicurezza"));
 const Analytics = lazy(() => import("./pages/Analytics"));
+const Billing = lazy(() => import("./pages/Billing"));
+const SuperAdminBilling = lazy(() => import("./pages/superadmin/SuperAdminBilling"));
 
 const queryClient = new QueryClient();
 
