@@ -60,6 +60,7 @@ import FunzionalitaVeicoli from "./pages/funzionalita/Veicoli";
 import ChiSiamo from "./pages/ChiSiamo";
 import Tariffe from "./pages/Tariffe";
 import FunzionalitaOverview from "./pages/FunzionalitaOverview";
+import Sicurezza from "./pages/Sicurezza";
 
 const queryClient = new QueryClient();
 
