@@ -145,7 +145,7 @@ export default function CheckIn() {
       setLastAction("out");
       setManualNote("");
 
-      if ("vibrate" in navigator) navigator.vibrate([200]);
+      vibrateCheckOut();
 
       toast.success("Uscita registrata", {
         description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`,
