@@ -9,6 +9,7 @@ const navItems = [
   { title: "Dashboard", url: "/superadmin/dashboard", icon: LayoutDashboard },
   { title: "Aziende", url: "/superadmin/aziende", icon: Building2 },
   { title: "Log Audit", url: "/superadmin/audit-log", icon: ScrollText },
+  { title: "Billing", url: "/superadmin/billing", icon: Receipt },
   { title: "Impostazioni", url: "/superadmin/impostazioni", icon: Settings },
 ];
 

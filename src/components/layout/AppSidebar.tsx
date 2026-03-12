@@ -52,6 +52,7 @@ const navGroups = [
   {
     label: "Sistema",
     items: [
+      { title: "Abbonamento", url: "/app/billing", icon: Receipt, adminOnly: false },
       { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: false },
     ],
   },
