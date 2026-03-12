@@ -125,6 +125,9 @@ export default function Tariffe() {
         </div>
       </section>
 
+      <TrustBar />
+      <SocialProofBar />
+
       {/* Pricing cards */}
       <section className="py-20 md:py-28 bg-[#FAFAF9]" ref={cardsRef}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
