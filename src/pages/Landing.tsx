@@ -9,6 +9,7 @@ import ScenarioSection from "@/components/landing/ScenarioSection";
 import RetoricalQuestionsSection from "@/components/landing/RetoricalQuestionsSection";
 import StatsSection from "@/components/landing/StatsSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import CaseStudySection from "@/components/landing/CaseStudySection";
 import ComparisonTable from "@/components/landing/ComparisonTable";
 import IntegrationsSection from "@/components/landing/IntegrationsSection";
 import MobileAppSection from "@/components/landing/MobileAppSection";
@@ -34,6 +35,7 @@ export default function Landing() {
       <RetoricalQuestionsSection />
       <StatsSection />
       <TestimonialsSection />
+      <CaseStudySection />
       <ComparisonTable />
       <IntegrationsSection />
       <MobileAppSection />
