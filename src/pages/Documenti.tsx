@@ -7,7 +7,7 @@ import { DocumentGrid } from "@/components/cantiere/DocumentGrid";
 import { DocumentFilters, defaultFilters } from "@/components/cantiere/DocumentFilters";
 import { DocumentViewer } from "@/components/cantiere/DocumentViewer";
 import { mockDocumenti, mockCantieri } from "@/data/mock-data";
-import type { Documento, DocumentFilterState } from "@/components/cantiere/DocumentFilters";
+import type { DocumentFilterState } from "@/components/cantiere/DocumentFilters";
 import { toast } from "sonner";
 
 export default function Documenti() {
