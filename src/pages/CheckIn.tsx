@@ -25,6 +25,7 @@ type CheckMode = "auto_gps" | "qr_scan" | "manual";
 export default function CheckIn() {
   const geo = useGeolocation();
   const { addOperation, pendingCount, isOnline, getHistory } = useOfflineQueue();
+  const { verify, remainingAttempts } = useBadgeVerification();
 
   const [selectedCantiere, setSelectedCantiere] = useState(mockCantieri[0]?.id || "");
   const [mode, setMode] = useState<CheckMode>("auto_gps");
@@ -33,6 +34,12 @@ export default function CheckIn() {
   const [showMap, setShowMap] = useState(false);
   const [manualNote, setManualNote] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // QR scan state
+  const [qrScanning, setQrScanning] = useState(false);
+  const [qrResult, setQrResult] = useState<ReturnType<typeof verify> | null>(null);
+  const scannerRef = useRef<any>(null);
+  const qrContainerRef = useRef<HTMLDivElement>(null);
 
   const cantiere = mockCantieri.find((c) => c.id === selectedCantiere);
 
