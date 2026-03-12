@@ -120,6 +120,7 @@ const App = () => (
               <Route path="badge/:id" element={<BadgeDetail />} />
               <Route path="timbrature" element={<Timbrature />} />
               <Route path="comunicazioni" element={<Comunicazioni />} />
+              <Route path="checkin" element={<CheckIn />} />
               <Route path="firma" element={<FirmaDashboard />} />
               <Route path="firma/nuovo" element={<FirmaNuovo />} />
               <Route path="firma/templates" element={<FirmaTemplates />} />

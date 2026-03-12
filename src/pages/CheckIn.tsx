@@ -67,8 +67,8 @@ export default function CheckIn() {
 
       setIsProcessing(true);
 
-      const accuracyOk = method === "manual" || (geo.position && geo.position.accuracy <= 50);
-      if (!accuracyOk && method !== "manual") {
+      const accuracyOk = (method as string) === "manual" || (geo.position && geo.position.accuracy <= 50);
+      if (!accuracyOk && (method as string) !== "manual") {
         toast.error("Precisione GPS insufficiente", {
           description: "Spostati all'aperto per migliorare il segnale.",
         });

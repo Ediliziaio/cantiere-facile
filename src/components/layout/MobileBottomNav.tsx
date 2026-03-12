@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const tabs = [
   { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard },
   { title: "Cantieri", url: "/app/cantieri", icon: Building2 },
-  { title: "Accessi", url: "/app/accessi", icon: ShieldCheck },
+  { title: "Check-in", url: "/app/checkin", icon: MapPin },
   { title: "Badge", url: "/app/badge", icon: IdCard },
 ];
 

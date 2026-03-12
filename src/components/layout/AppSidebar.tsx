@@ -36,6 +36,7 @@ const navGroups = [
   {
     label: "Presenze",
     items: [
+      { title: "Check-in GPS", url: "/app/checkin", icon: MapPin, adminOnly: false },
       { title: "Accessi", url: "/app/accessi", icon: ShieldCheck, adminOnly: false },
       { title: "Badge Digitali", url: "/app/badge", icon: IdCard, adminOnly: false },
       { title: "Timbrature", url: "/app/timbrature", icon: Clock, adminOnly: false },
