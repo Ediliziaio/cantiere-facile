@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, Settings, Shield } from "lucide-react";
+import { LayoutDashboard, Building2, Settings, Shield, ScrollText } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -8,6 +8,7 @@ import {
 const navItems = [
   { title: "Dashboard", url: "/superadmin/dashboard", icon: LayoutDashboard },
   { title: "Aziende", url: "/superadmin/aziende", icon: Building2 },
+  { title: "Log Audit", url: "/superadmin/audit-log", icon: ScrollText },
   { title: "Impostazioni", url: "/superadmin/impostazioni", icon: Settings },
 ];
 
