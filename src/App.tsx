@@ -55,6 +55,8 @@ const SuperAdminLogin = lazy(() => import("./pages/superadmin/SuperAdminLogin"))
 const SuperAdminDashboard = lazy(() => import("./pages/superadmin/SuperAdminDashboard"));
 const SuperAdminAziende = lazy(() => import("./pages/superadmin/SuperAdminAziende"));
 const SuperAdminAziendaDetail = lazy(() => import("./pages/superadmin/SuperAdminAziendaDetail"));
+const SuperAdminNuovaAzienda = lazy(() => import("./pages/superadmin/SuperAdminNuovaAzienda"));
+const SuperAdminAuditLog = lazy(() => import("./pages/superadmin/SuperAdminAuditLog"));
 const SuperAdminImpostazioni = lazy(() => import("./pages/superadmin/SuperAdminImpostazioni"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const FunzionalitaDocumenti = lazy(() => import("./pages/funzionalita/Documenti"));
