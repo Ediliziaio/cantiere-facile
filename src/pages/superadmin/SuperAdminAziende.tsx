@@ -25,7 +25,12 @@ export default function SuperAdminAziende() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-heading font-bold text-2xl text-foreground">Aziende</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-heading font-bold text-2xl text-foreground">Aziende</h1>
+        <Button className="bg-superadmin hover:bg-superadmin/90" asChild>
+          <Link to="/superadmin/aziende/nuova"><Plus className="h-4 w-4 mr-1.5" /> Nuova Azienda</Link>
+        </Button>
+      </div>
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

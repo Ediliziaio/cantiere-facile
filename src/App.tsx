@@ -125,7 +125,9 @@ const App = () => (
               <Route path="/superadmin" element={<SuperAdminLayout />}>
                 <Route path="dashboard" element={<SuperAdminDashboard />} />
                 <Route path="aziende" element={<SuperAdminAziende />} />
+                <Route path="aziende/nuova" element={<SuperAdminNuovaAzienda />} />
                 <Route path="aziende/:id" element={<SuperAdminAziendaDetail />} />
+                <Route path="audit-log" element={<SuperAdminAuditLog />} />
                 <Route path="impostazioni" element={<SuperAdminImpostazioni />} />
               </Route>
 
