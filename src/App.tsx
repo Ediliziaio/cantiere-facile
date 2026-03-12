@@ -61,6 +61,7 @@ import ChiSiamo from "./pages/ChiSiamo";
 import Tariffe from "./pages/Tariffe";
 import FunzionalitaOverview from "./pages/FunzionalitaOverview";
 import Sicurezza from "./pages/Sicurezza";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
