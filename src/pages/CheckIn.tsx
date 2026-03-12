@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useGeofencing } from "@/hooks/useGeofencing";
 import { useOfflineQueue } from "@/hooks/useOfflineQueue";
+import { useBadgeVerification } from "@/hooks/useBadgeVerification";
+import { useWorkerCompliance } from "@/hooks/useWorkerCompliance";
 import { GpsSignalIndicator } from "@/components/gps/GpsSignalIndicator";
 import { GeofenceMap } from "@/components/gps/GeofenceMap";
+import { WorkerComplianceCard } from "@/components/badge/WorkerComplianceCard";
 import { mockCantieri } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +17,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { toast } from "sonner";
 import {
   MapPin, CheckCircle2, XCircle, LogIn, LogOut, ChevronDown,
-  WifiOff, AlertTriangle, Clock, Map, Loader2,
+  WifiOff, AlertTriangle, Clock, Map, Loader2, QrCode, ShieldX, ShieldCheck,
 } from "lucide-react";
 
 type CheckMode = "auto_gps" | "qr_scan" | "manual";
@@ -22,6 +25,7 @@ type CheckMode = "auto_gps" | "qr_scan" | "manual";
 export default function CheckIn() {
   const geo = useGeolocation();
   const { addOperation, pendingCount, isOnline, getHistory } = useOfflineQueue();
+  const { verify, remainingAttempts } = useBadgeVerification();
 
   const [selectedCantiere, setSelectedCantiere] = useState(mockCantieri[0]?.id || "");
   const [mode, setMode] = useState<CheckMode>("auto_gps");
@@ -30,6 +34,12 @@ export default function CheckIn() {
   const [showMap, setShowMap] = useState(false);
   const [manualNote, setManualNote] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // QR scan state
+  const [qrScanning, setQrScanning] = useState(false);
+  const [qrResult, setQrResult] = useState<ReturnType<typeof verify> | null>(null);
+  const scannerRef = useRef<any>(null);
+  const qrContainerRef = useRef<HTMLDivElement>(null);
 
   const cantiere = mockCantieri.find((c) => c.id === selectedCantiere);
 
@@ -274,6 +284,102 @@ export default function CheckIn() {
           )}
         </CardContent>
       </Card>
+
+      {/* QR Scan mode */}
+      {mode === "qr_scan" && (
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            {!qrResult ? (
+              <>
+                <div ref={qrContainerRef} id="qr-reader-checkin" className="w-full rounded-lg overflow-hidden" />
+                {!qrScanning ? (
+                  <Button className="w-full gap-2" onClick={async () => {
+                    setQrScanning(true);
+                    setQrResult(null);
+                    try {
+                      const { Html5Qrcode } = await import("html5-qrcode");
+                      const scanner = new Html5Qrcode("qr-reader-checkin");
+                      scannerRef.current = scanner;
+                      await scanner.start(
+                        { facingMode: "environment" },
+                        { fps: 10, qrbox: { width: 250, height: 250 } },
+                        (decodedText) => {
+                          const result = verify(decodedText, selectedCantiere);
+                          setQrResult(result);
+                          scanner.stop().catch(() => {});
+                          setQrScanning(false);
+                          if (result.canCheckIn) {
+                            if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
+                            toast.success("Badge verificato", { description: `${result.worker?.nome} ${result.worker?.cognome}` });
+                          } else {
+                            if ("vibrate" in navigator) navigator.vibrate([300, 100, 300]);
+                            toast.error("Verifica fallita", { description: result.blocks[0] || "Badge non valido" });
+                          }
+                        },
+                        () => {}
+                      );
+                    } catch {
+                      toast.error("Errore avvio scanner");
+                      setQrScanning(false);
+                    }
+                  }}>
+                    <QrCode className="h-4 w-4" />
+                    Avvia Scanner
+                  </Button>
+                ) : (
+                  <Button variant="outline" className="w-full" onClick={() => {
+                    scannerRef.current?.stop().catch(() => {});
+                    setQrScanning(false);
+                  }}>
+                    Ferma Scanner
+                  </Button>
+                )}
+                <p className="text-xs text-muted-foreground text-center">
+                  Tentativi rimasti: {remainingAttempts()}
+                </p>
+              </>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  {qrResult.canCheckIn ? (
+                    <ShieldCheck className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <ShieldX className="h-5 w-5 text-destructive" />
+                  )}
+                  <span className="font-semibold text-foreground">
+                    {qrResult.canCheckIn ? "Verificato — Pronto al check-in" : "Check-in bloccato"}
+                  </span>
+                </div>
+                {qrResult.worker && (
+                  <p className="text-sm text-muted-foreground">
+                    {qrResult.worker.nome} {qrResult.worker.cognome} — {qrResult.worker.mansione}
+                  </p>
+                )}
+                {qrResult.blocks.map((b, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-destructive">
+                    <XCircle className="h-4 w-4 shrink-0" />{b}
+                  </div>
+                ))}
+                {qrResult.warnings.map((w, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-yellow-600">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />{w}
+                  </div>
+                ))}
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1" onClick={() => setQrResult(null)}>
+                    Nuova scansione
+                  </Button>
+                  {qrResult.canCheckIn && (
+                    <Button className="flex-1" onClick={() => handleCheckIn("qr_scan")}>
+                      Conferma Ingresso
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Manual note */}
       {mode === "manual" && (

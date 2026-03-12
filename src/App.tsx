@@ -18,6 +18,7 @@ import Documenti from "./pages/Documenti";
 import Scadenze from "./pages/Scadenze";
 import Subappaltatori from "./pages/Subappaltatori";
 import Lavoratori from "./pages/Lavoratori";
+import LavoratoreDetail from "./pages/LavoratoreDetail";
 import Mezzi from "./pages/Mezzi";
 import MezzoDetail from "./pages/MezzoDetail";
 import NuovoMezzo from "./pages/NuovoMezzo";
@@ -111,6 +112,7 @@ const App = () => (
               <Route path="scadenze" element={<Scadenze />} />
               <Route path="subappaltatori" element={<Subappaltatori />} />
               <Route path="lavoratori" element={<Lavoratori />} />
+              <Route path="lavoratori/:id" element={<LavoratoreDetail />} />
               <Route path="mezzi" element={<Mezzi />} />
               <Route path="mezzi/nuovo" element={<NuovoMezzo />} />
               <Route path="mezzi/:id" element={<MezzoDetail />} />

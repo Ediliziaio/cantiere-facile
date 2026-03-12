@@ -89,12 +89,118 @@ export const mockSubappaltatori = [
   },
 ];
 
-export const mockLavoratori = [
-  { id: "l1", tenant_id: "t1", nome: "Marco", cognome: "Rossi", codice_fiscale: "RSSMRC85M01F205Z", tipo: "interno" as const, subappaltatore_id: null, mansione: "Capocantiere" },
-  { id: "l2", tenant_id: "t1", nome: "Giuseppe", cognome: "Bianchi", codice_fiscale: "BNCGPP90A15L219X", tipo: "esterno" as const, subappaltatore_id: "s1", mansione: "Elettricista" },
-  { id: "l3", tenant_id: "t1", nome: "Antonio", cognome: "Verdi", codice_fiscale: "VRDNTN88D22F205Y", tipo: "esterno" as const, subappaltatore_id: "s2", mansione: "Idraulico" },
-  { id: "l4", tenant_id: "t1", nome: "Paolo", cognome: "Neri", codice_fiscale: "NREPLP92H05A794W", tipo: "esterno" as const, subappaltatore_id: "s3", mansione: "Saldatore" },
-  { id: "l5", tenant_id: "t1", nome: "Luca", cognome: "Ferrari", codice_fiscale: "FRRLCU87S30F205V", tipo: "interno" as const, subappaltatore_id: null, mansione: "Muratore" },
+export type HealthStatus = "idoneo" | "idoneo_limitato" | "non_idoneo";
+
+export interface WorkerQualification {
+  type: string;
+  expiry: string;
+  doc_url: string | null;
+}
+
+export interface SafetyTraining {
+  course: string;
+  date: string;
+  expiry: string;
+  hours: number;
+}
+
+export interface Lavoratore {
+  id: string;
+  tenant_id: string;
+  nome: string;
+  cognome: string;
+  codice_fiscale: string;
+  tipo: "interno" | "esterno";
+  subappaltatore_id: string | null;
+  mansione: string;
+  qualifications: WorkerQualification[];
+  safety_training: SafetyTraining[];
+  durc_valid: boolean;
+  durc_expiry: string | null;
+  health_status: HealthStatus;
+  last_medical_visit: string;
+}
+
+export const mockLavoratori: Lavoratore[] = [
+  {
+    id: "l1", tenant_id: "t1", nome: "Marco", cognome: "Rossi",
+    codice_fiscale: "RSSMRC85M01F205Z", tipo: "interno", subappaltatore_id: null, mansione: "Capocantiere",
+    qualifications: [
+      { type: "patente_gru", expiry: "2027-06-15", doc_url: null },
+      { type: "patente_escavatore", expiry: "2027-03-01", doc_url: null },
+    ],
+    safety_training: [
+      { course: "corso_preposto", date: "2025-10-01", expiry: "2027-10-01", hours: 16 },
+      { course: "primo_soccorso", date: "2025-06-15", expiry: "2027-06-15", hours: 12 },
+    ],
+    durc_valid: true, durc_expiry: "2026-07-05",
+    health_status: "idoneo", last_medical_visit: "2025-11-20",
+  },
+  {
+    id: "l2", tenant_id: "t1", nome: "Giuseppe", cognome: "Bianchi",
+    codice_fiscale: "BNCGPP90A15L219X", tipo: "esterno", subappaltatore_id: "s1", mansione: "Elettricista",
+    qualifications: [
+      { type: "patente_elettrica_PES", expiry: "2027-01-15", doc_url: null },
+    ],
+    safety_training: [
+      { course: "corso_base_sicurezza", date: "2025-06-15", expiry: "2026-02-15", hours: 8 }, // SCADUTO
+    ],
+    durc_valid: true, durc_expiry: "2026-07-10",
+    health_status: "idoneo", last_medical_visit: "2025-07-01",
+  },
+  {
+    id: "l3", tenant_id: "t1", nome: "Antonio", cognome: "Verdi",
+    codice_fiscale: "VRDNTN88D22F205Y", tipo: "esterno", subappaltatore_id: "s2", mansione: "Idraulico",
+    qualifications: [
+      { type: "patente_saldatura", expiry: "2026-08-15", doc_url: null },
+    ],
+    safety_training: [
+      { course: "corso_base_sicurezza", date: "2025-08-15", expiry: "2026-08-15", hours: 8 },
+    ],
+    durc_valid: true, durc_expiry: "2026-06-15",
+    health_status: "idoneo_limitato", last_medical_visit: "2025-09-20",
+  },
+  {
+    id: "l4", tenant_id: "t1", nome: "Paolo", cognome: "Neri",
+    codice_fiscale: "NREPLP92H05A794W", tipo: "esterno", subappaltatore_id: "s3", mansione: "Saldatore",
+    qualifications: [
+      { type: "patente_saldatura", expiry: "2026-06-01", doc_url: null },
+    ],
+    safety_training: [
+      { course: "corso_base_sicurezza", date: "2025-06-01", expiry: "2026-06-01", hours: 8 }, // In scadenza
+    ],
+    durc_valid: false, durc_expiry: "2026-02-28", // SCADUTO
+    health_status: "idoneo", last_medical_visit: "2025-12-01",
+  },
+  {
+    id: "l5", tenant_id: "t1", nome: "Luca", cognome: "Ferrari",
+    codice_fiscale: "FRRLCU87S30F205V", tipo: "interno", subappaltatore_id: null, mansione: "Muratore",
+    qualifications: [],
+    safety_training: [
+      { course: "corso_base_sicurezza", date: "2025-11-10", expiry: "2027-11-10", hours: 8 },
+    ],
+    durc_valid: true, durc_expiry: "2026-07-05",
+    health_status: "idoneo", last_medical_visit: "2025-10-15",
+  },
+];
+
+// Site assignments: which workers are assigned to which sites
+export interface SiteAssignment {
+  id: string;
+  lavoratore_id: string;
+  cantiere_id: string;
+  data_inizio: string;
+  data_fine: string | null;
+  attivo: boolean;
+}
+
+export const mockSiteAssignments: SiteAssignment[] = [
+  { id: "sa1", lavoratore_id: "l1", cantiere_id: "c1", data_inizio: "2025-09-01", data_fine: null, attivo: true },
+  { id: "sa2", lavoratore_id: "l2", cantiere_id: "c1", data_inizio: "2025-09-15", data_fine: null, attivo: true },
+  { id: "sa3", lavoratore_id: "l3", cantiere_id: "c1", data_inizio: "2025-10-01", data_fine: null, attivo: true },
+  { id: "sa4", lavoratore_id: "l4", cantiere_id: "c2", data_inizio: "2026-01-15", data_fine: null, attivo: true },
+  { id: "sa5", lavoratore_id: "l5", cantiere_id: "c1", data_inizio: "2025-09-01", data_fine: null, attivo: true },
+  { id: "sa6", lavoratore_id: "l1", cantiere_id: "c2", data_inizio: "2026-01-15", data_fine: null, attivo: true },
 ];
 
 export type MezzoStatoOperativo = "operativo" | "in_manutenzione" | "fermo";
