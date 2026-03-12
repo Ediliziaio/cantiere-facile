@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import TrustBar from "@/components/tariffe/TrustBar";
+import SocialProofBar from "@/components/tariffe/SocialProofBar";
+import FeatureComparisonTable from "@/components/tariffe/FeatureComparisonTable";
+import RoiCalculator from "@/components/tariffe/RoiCalculator";
 
 const plans = [
   {
