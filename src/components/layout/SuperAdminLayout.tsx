@@ -3,16 +3,29 @@ import { SuperAdminSidebar } from "./SuperAdminSidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { LogOut } from "lucide-react";
+import { roleLabels } from "@/data/mock-security";
+import { useSessionTimeout } from "@/hooks/useSessionTimeout";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function SuperAdminLayout() {
-  const { user, logout } = useAuth();
+  const { user, superadminRole, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate("/superadmin/login");
   };
+
+  const { showWarning, extendSession } = useSessionTimeout({
+    timeoutMs: 15 * 60 * 1000,
+    warningMs: 2 * 60 * 1000,
+    onTimeout: handleLogout,
+  });
 
   return (
     <SidebarProvider>
@@ -25,7 +38,12 @@ export function SuperAdminLayout() {
               <span className="text-xs font-medium text-superadmin uppercase tracking-wider">Piattaforma Admin</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">{user?.email}</span>
+              {superadminRole && (
+                <Badge variant="outline" className="text-[10px] border-superadmin/30 text-superadmin">
+                  {roleLabels[superadminRole]}
+                </Badge>
+              )}
+              <span className="text-sm text-muted-foreground hidden sm:inline">{user?.email}</span>
               <Button variant="ghost" size="icon" onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -36,6 +54,22 @@ export function SuperAdminLayout() {
           </main>
         </div>
       </div>
+
+      <AlertDialog open={showWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sessione in scadenza</AlertDialogTitle>
+            <AlertDialogDescription>
+              La tua sessione scadrà tra 2 minuti per inattività. Clicca per continuare a lavorare.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={extendSession} className="bg-superadmin hover:bg-superadmin/90">
+              Continua sessione
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   );
 }
