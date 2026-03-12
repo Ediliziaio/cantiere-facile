@@ -70,6 +70,8 @@ const Tariffe = lazy(() => import("./pages/Tariffe"));
 const FunzionalitaOverview = lazy(() => import("./pages/FunzionalitaOverview"));
 const Sicurezza = lazy(() => import("./pages/Sicurezza"));
 const Analytics = lazy(() => import("./pages/Analytics"));
+const Billing = lazy(() => import("./pages/Billing"));
+const SuperAdminBilling = lazy(() => import("./pages/superadmin/SuperAdminBilling"));
 
 const queryClient = new QueryClient();
 
@@ -129,6 +131,7 @@ const App = () => (
                 <Route path="aziende/:id" element={<SuperAdminAziendaDetail />} />
                 <Route path="audit-log" element={<SuperAdminAuditLog />} />
                 <Route path="impostazioni" element={<SuperAdminImpostazioni />} />
+                <Route path="billing" element={<SuperAdminBilling />} />
               </Route>
 
               {/* Tenant app routes with sidebar layout */}
@@ -162,6 +165,7 @@ const App = () => (
                 <Route path="firma/:id/certificato" element={<CertificatoFirma />} />
                 <Route path="sicurezza" element={<Sicurezza />} />
                 <Route path="analytics" element={<Analytics />} />
+                <Route path="billing" element={<Billing />} />
                 <Route path="impostazioni" element={<Impostazioni />} />
               </Route>
 
