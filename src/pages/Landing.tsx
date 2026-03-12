@@ -35,6 +35,7 @@ export default function Landing() {
       <RetoricalQuestionsSection />
       <StatsSection />
       <TestimonialsSection />
+      <CaseStudySection />
       <ComparisonTable />
       <IntegrationsSection />
       <MobileAppSection />
