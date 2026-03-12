@@ -4,20 +4,24 @@ import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/contexts/AuthContext";
 
-const navItems = [
-  { title: "Dashboard", url: "/superadmin/dashboard", icon: LayoutDashboard },
-  { title: "Aziende", url: "/superadmin/aziende", icon: Building2 },
-  { title: "Log Audit", url: "/superadmin/audit-log", icon: ScrollText },
-  { title: "Billing", url: "/superadmin/billing", icon: Receipt },
-  { title: "Analytics", url: "/superadmin/analytics", icon: BarChart3 },
-  { title: "Supporto", url: "/superadmin/supporto", icon: Headphones },
-  { title: "Impostazioni", url: "/superadmin/impostazioni", icon: Settings },
+const allNavItems = [
+  { title: "Dashboard", url: "/superadmin/dashboard", icon: LayoutDashboard, permission: "tenants.view" },
+  { title: "Aziende", url: "/superadmin/aziende", icon: Building2, permission: "tenants.view" },
+  { title: "Log Audit", url: "/superadmin/audit-log", icon: ScrollText, permission: "audit.view" },
+  { title: "Billing", url: "/superadmin/billing", icon: Receipt, permission: "billing.view" },
+  { title: "Analytics", url: "/superadmin/analytics", icon: BarChart3, permission: "analytics.view" },
+  { title: "Supporto", url: "/superadmin/supporto", icon: Headphones, permission: "tickets.view" },
+  { title: "Impostazioni", url: "/superadmin/impostazioni", icon: Settings, permission: "settings.view" },
 ];
 
 export function SuperAdminSidebar() {
   const { state } = useSidebar();
+  const { hasPermission } = useAuth();
   const collapsed = state === "collapsed";
+
+  const navItems = allNavItems.filter((item) => hasPermission(item.permission));
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
