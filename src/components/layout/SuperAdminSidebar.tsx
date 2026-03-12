@@ -11,6 +11,7 @@ const navItems = [
   { title: "Log Audit", url: "/superadmin/audit-log", icon: ScrollText },
   { title: "Billing", url: "/superadmin/billing", icon: Receipt },
   { title: "Analytics", url: "/superadmin/analytics", icon: BarChart3 },
+  { title: "Supporto", url: "/superadmin/supporto", icon: Headphones },
   { title: "Impostazioni", url: "/superadmin/impostazioni", icon: Settings },
 ];
 
