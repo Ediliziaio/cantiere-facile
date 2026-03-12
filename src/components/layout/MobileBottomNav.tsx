@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, ShieldCheck, IdCard, Menu } from "lucide-react";
+import { LayoutDashboard, Building2, MapPin, IdCard, Menu } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useState } from "react";
 import { Link } from "react-router-dom";
