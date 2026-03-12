@@ -169,3 +169,13 @@
 .marquee-track:hover {
   animation-play-state: paused;
 }
+
+/* Touch target utility for glove-friendly buttons */
+.touch-target {
+  min-width: 48px;
+  min-height: 48px;
+}
+.touch-target-lg {
+  min-width: 64px;
+  min-height: 64px;
+}

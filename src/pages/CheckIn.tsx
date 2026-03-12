@@ -5,6 +5,7 @@ import { useOfflineQueue } from "@/hooks/useOfflineQueue";
 import { useBadgeVerification } from "@/hooks/useBadgeVerification";
 import { useWorkerCompliance } from "@/hooks/useWorkerCompliance";
 import { GpsSignalIndicator } from "@/components/gps/GpsSignalIndicator";
+import { vibrateCheckIn, vibrateCheckOut, vibrateError } from "@/lib/haptics";
 import { GeofenceMap } from "@/components/gps/GeofenceMap";
 import { WorkerComplianceCard } from "@/components/badge/WorkerComplianceCard";
 import { mockCantieri } from "@/data/mock-data";
@@ -65,6 +66,24 @@ export default function CheckIn() {
     geofence.updatePosition(geo.position);
   }, [geo.position]);
 
+  // Screen Wake Lock during check-in page
+  useEffect(() => {
+    let wakeLock: any = null;
+    const requestWakeLock = async () => {
+      try {
+        if ("wakeLock" in navigator) {
+          wakeLock = await (navigator as any).wakeLock.request("screen");
+        }
+      } catch {
+        // Wake Lock not supported or denied
+      }
+    };
+    requestWakeLock();
+    return () => {
+      if (wakeLock) wakeLock.release().catch(() => {});
+    };
+  }, []);
+
   // Start GPS tracking on mount
   useEffect(() => {
     geo.startTracking();
@@ -105,7 +124,7 @@ export default function CheckIn() {
       setLastAction("in");
       setManualNote("");
 
-      if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
+      vibrateCheckIn();
 
       toast.success("Ingresso registrato", {
         description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`,
@@ -144,7 +163,7 @@ export default function CheckIn() {
       setLastAction("out");
       setManualNote("");
 
-      if ("vibrate" in navigator) navigator.vibrate([200]);
+      vibrateCheckOut();
 
       toast.success("Uscita registrata", {
         description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`,
