@@ -10,6 +10,7 @@ const navItems = [
   { title: "Aziende", url: "/superadmin/aziende", icon: Building2 },
   { title: "Log Audit", url: "/superadmin/audit-log", icon: ScrollText },
   { title: "Billing", url: "/superadmin/billing", icon: Receipt },
+  { title: "Analytics", url: "/superadmin/analytics", icon: BarChart3 },
   { title: "Impostazioni", url: "/superadmin/impostazioni", icon: Settings },
 ];
 
