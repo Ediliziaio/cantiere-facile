@@ -73,6 +73,9 @@ const Analytics = lazy(() => import("./pages/Analytics"));
 const Billing = lazy(() => import("./pages/Billing"));
 const SuperAdminBilling = lazy(() => import("./pages/superadmin/SuperAdminBilling"));
 const SuperAdminAnalytics = lazy(() => import("./pages/superadmin/SuperAdminAnalytics"));
+const SuperAdminSupporto = lazy(() => import("./pages/superadmin/SuperAdminSupporto"));
+const Supporto = lazy(() => import("./pages/Supporto"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 
 const queryClient = new QueryClient();
 
