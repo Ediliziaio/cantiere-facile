@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import TrustBar from "@/components/tariffe/TrustBar";
+import SocialProofBar from "@/components/tariffe/SocialProofBar";
+import FeatureComparisonTable from "@/components/tariffe/FeatureComparisonTable";
+import RoiCalculator from "@/components/tariffe/RoiCalculator";
 
 const plans = [
   {
@@ -120,6 +124,9 @@ export default function Tariffe() {
           </motion.div>
         </div>
       </section>
+
+      <TrustBar />
+      <SocialProofBar />
 
       {/* Pricing cards */}
       <section className="py-20 md:py-28 bg-[#FAFAF9]" ref={cardsRef}>
@@ -257,6 +264,9 @@ export default function Tariffe() {
           </p>
         </div>
       </section>
+
+      <FeatureComparisonTable />
+      <RoiCalculator />
 
       {/* Perché costa così poco */}
       <section className="py-20 md:py-24 bg-[#0F0E0D]" ref={cheapRef}>
