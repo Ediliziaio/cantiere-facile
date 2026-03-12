@@ -336,33 +336,73 @@ export const mockManutenzioni: ManutenzioneEntry[] = [
 ];
 
 export type DocumentoStato = "valido" | "in_scadenza" | "scaduto" | "da_verificare";
+export type ProcessingStatus = "uploaded" | "processing" | "validated" | "approved" | "archived";
 
-export const mockDocumenti = [
-  { id: "d1", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s1", nome_file: "DURC_Bianchi_2026.pdf", data_caricamento: "2026-01-10", data_scadenza: "2026-07-10", stato: "valido" as DocumentoStato, categoria: "DURC" },
-  { id: "d2", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s2", nome_file: "Visura_Camerale_Verdi.pdf", data_caricamento: "2025-12-01", data_scadenza: "2026-03-25", stato: "in_scadenza" as DocumentoStato, categoria: "Visura Camerale" },
-  { id: "d3", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l2", nome_file: "Attestato_Sicurezza_Bianchi.pdf", data_caricamento: "2025-06-15", data_scadenza: "2026-02-15", stato: "scaduto" as DocumentoStato, categoria: "Attestato Sicurezza" },
-  { id: "d4", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s3", nome_file: "POS_Neri.pdf", data_caricamento: "2026-02-01", data_scadenza: null, stato: "da_verificare" as DocumentoStato, categoria: "POS" },
-  { id: "d5", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m1", nome_file: "Libretto_Escavatore.pdf", data_caricamento: "2026-01-05", data_scadenza: "2027-01-05", stato: "valido" as DocumentoStato, categoria: "Libretto" },
-  { id: "d6", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l1", nome_file: "Idoneita_Sanitaria_Rossi.pdf", data_caricamento: "2025-11-20", data_scadenza: "2026-04-20", stato: "in_scadenza" as DocumentoStato, categoria: "Idoneità Sanitaria" },
-  { id: "d7", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s3", nome_file: "Polizza_RC_Neri.pdf", data_caricamento: "2026-01-20", data_scadenza: "2026-03-12", stato: "in_scadenza" as DocumentoStato, categoria: "Polizza RC" },
-  { id: "d8", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m2", nome_file: "Certificato_Collaudo_Gru.pdf", data_caricamento: "2025-06-01", data_scadenza: "2026-06-01", stato: "in_scadenza" as DocumentoStato, categoria: "Collaudo" },
-  { id: "d9", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo" as const, riferimento_id: "m3", nome_file: "Assicurazione_Autocarro.pdf", data_caricamento: "2025-05-15", data_scadenza: "2026-05-15", stato: "in_scadenza" as DocumentoStato, categoria: "Assicurazione" },
-  { id: "d10", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "mezzo" as const, riferimento_id: "m4", nome_file: "Libretto_Piattaforma.pdf", data_caricamento: "2025-02-28", data_scadenza: "2027-02-28", stato: "valido" as DocumentoStato, categoria: "Libretto" },
-  // Formazione lavoratori
-  { id: "d11", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l1", nome_file: "Attestato_Sicurezza_Rossi.pdf", data_caricamento: "2025-10-01", data_scadenza: "2027-10-01", stato: "valido" as DocumentoStato, categoria: "Attestato Sicurezza" },
-  { id: "d12", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l3", nome_file: "Attestato_Sicurezza_Verdi.pdf", data_caricamento: "2025-08-15", data_scadenza: "2026-08-15", stato: "valido" as DocumentoStato, categoria: "Attestato Sicurezza" },
-  { id: "d13", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "lavoratore" as const, riferimento_id: "l4", nome_file: "Attestato_Sicurezza_Neri.pdf", data_caricamento: "2025-06-01", data_scadenza: "2026-06-01", stato: "in_scadenza" as DocumentoStato, categoria: "Attestato Sicurezza" },
-  { id: "d14", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l5", nome_file: "Attestato_Sicurezza_Ferrari.pdf", data_caricamento: "2025-11-10", data_scadenza: "2027-11-10", stato: "valido" as DocumentoStato, categoria: "Attestato Sicurezza" },
-  // Idoneità sanitaria
-  { id: "d15", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l3", nome_file: "Idoneita_Sanitaria_Verdi.pdf", data_caricamento: "2025-09-20", data_scadenza: "2026-03-20", stato: "in_scadenza" as DocumentoStato, categoria: "Idoneità Sanitaria" },
-  { id: "d16", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l2", nome_file: "Idoneita_Sanitaria_Bianchi.pdf", data_caricamento: "2025-07-01", data_scadenza: "2026-07-01", stato: "valido" as DocumentoStato, categoria: "Idoneità Sanitaria" },
-  { id: "d17", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "lavoratore" as const, riferimento_id: "l4", nome_file: "Idoneita_Sanitaria_Neri.pdf", data_caricamento: "2025-12-01", data_scadenza: "2026-12-01", stato: "valido" as DocumentoStato, categoria: "Idoneità Sanitaria" },
-  { id: "d18", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore" as const, riferimento_id: "l5", nome_file: "Idoneita_Sanitaria_Ferrari.pdf", data_caricamento: "2025-10-15", data_scadenza: "2026-10-15", stato: "valido" as DocumentoStato, categoria: "Idoneità Sanitaria" },
-  // DURC subappaltatori
-  { id: "d19", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s2", nome_file: "DURC_Verdi_2026.pdf", data_caricamento: "2025-12-15", data_scadenza: "2026-06-15", stato: "in_scadenza" as DocumentoStato, categoria: "DURC" },
-  { id: "d20", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore" as const, riferimento_id: "s3", nome_file: "DURC_Neri_2026.pdf", data_caricamento: "2025-11-01", data_scadenza: "2026-02-28", stato: "scaduto" as DocumentoStato, categoria: "DURC" },
-  // DURC tenant (interno)
-  { id: "d21", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore" as const, riferimento_id: "t1", nome_file: "DURC_RossiCostruzioni_2026.pdf", data_caricamento: "2026-01-05", data_scadenza: "2026-07-05", stato: "valido" as DocumentoStato, categoria: "DURC" },
+export interface Documento {
+  id: string;
+  tenant_id: string;
+  cantiere_id: string;
+  riferimento_tipo: "subappaltatore" | "lavoratore" | "mezzo";
+  riferimento_id: string;
+  nome_file: string;
+  data_caricamento: string;
+  data_scadenza: string | null;
+  stato: DocumentoStato;
+  categoria: string;
+  processing_status: ProcessingStatus;
+  file_size_kb: number;
+  mime_type: string;
+  sha256_hash: string;
+  extracted_fields: Record<string, string> | null;
+  uploaded_by: string;
+}
+
+export const mockDocumenti: Documento[] = [
+  { id: "d1", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore", riferimento_id: "s1", nome_file: "DURC_Bianchi_2026.pdf", data_caricamento: "2026-01-10", data_scadenza: "2026-07-10", stato: "valido", categoria: "DURC", processing_status: "approved", file_size_kb: 245, mime_type: "application/pdf", sha256_hash: "a1b2c3d4e5f6", extracted_fields: { ragione_sociale: "Impianti Elettrici Bianchi S.n.c.", p_iva: "IT09876543210", data_emissione: "2026-01-10", data_scadenza: "2026-07-10" }, uploaded_by: "Andrea Rossi" },
+  { id: "d2", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore", riferimento_id: "s2", nome_file: "Visura_Camerale_Verdi.pdf", data_caricamento: "2025-12-01", data_scadenza: "2026-03-25", stato: "in_scadenza", categoria: "Visura Camerale", processing_status: "approved", file_size_kb: 380, mime_type: "application/pdf", sha256_hash: "b2c3d4e5f6g7", extracted_fields: { ragione_sociale: "Idraulica Verdi & Figli", p_iva: "IT05678901234" }, uploaded_by: "Andrea Rossi" },
+  { id: "d3", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l2", nome_file: "Attestato_Sicurezza_Bianchi.pdf", data_caricamento: "2025-06-15", data_scadenza: "2026-02-15", stato: "scaduto", categoria: "Attestato Sicurezza", processing_status: "approved", file_size_kb: 520, mime_type: "application/pdf", sha256_hash: "c3d4e5f6g7h8", extracted_fields: { corso: "Corso Base Sicurezza", ore: "8", ente: "RLST Lombardia" }, uploaded_by: "Sara Colombo" },
+  { id: "d4", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore", riferimento_id: "s3", nome_file: "POS_Neri.pdf", data_caricamento: "2026-02-01", data_scadenza: null, stato: "da_verificare", categoria: "POS", processing_status: "validated", file_size_kb: 1800, mime_type: "application/pdf", sha256_hash: "d4e5f6g7h8i9", extracted_fields: { revisione: "Rev. 03", coordinatore: "Ing. Franco Motta" }, uploaded_by: "Fabio Galli" },
+  { id: "d5", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo", riferimento_id: "m1", nome_file: "Libretto_Escavatore.pdf", data_caricamento: "2026-01-05", data_scadenza: "2027-01-05", stato: "valido", categoria: "Libretto", processing_status: "approved", file_size_kb: 310, mime_type: "application/pdf", sha256_hash: "e5f6g7h8i9j0", extracted_fields: null, uploaded_by: "Andrea Rossi" },
+  { id: "d6", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l1", nome_file: "Idoneita_Sanitaria_Rossi.pdf", data_caricamento: "2025-11-20", data_scadenza: "2026-04-20", stato: "in_scadenza", categoria: "Idoneità Sanitaria", processing_status: "approved", file_size_kb: 180, mime_type: "application/pdf", sha256_hash: "f6g7h8i9j0k1", extracted_fields: { esito: "Idoneo", medico: "Dr. Bianchi" }, uploaded_by: "Sara Colombo" },
+  { id: "d7", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore", riferimento_id: "s3", nome_file: "Polizza_RC_Neri.pdf", data_caricamento: "2026-01-20", data_scadenza: "2026-03-12", stato: "in_scadenza", categoria: "Polizza RC", processing_status: "approved", file_size_kb: 290, mime_type: "application/pdf", sha256_hash: "g7h8i9j0k1l2", extracted_fields: { compagnia: "Generali", massimale: "€5.000.000" }, uploaded_by: "Andrea Rossi" },
+  { id: "d8", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo", riferimento_id: "m2", nome_file: "Certificato_Collaudo_Gru.pdf", data_caricamento: "2025-06-01", data_scadenza: "2026-06-01", stato: "in_scadenza", categoria: "Collaudo", processing_status: "approved", file_size_kb: 420, mime_type: "application/pdf", sha256_hash: "h8i9j0k1l2m3", extracted_fields: null, uploaded_by: "Andrea Rossi" },
+  { id: "d9", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "mezzo", riferimento_id: "m3", nome_file: "Assicurazione_Autocarro.pdf", data_caricamento: "2025-05-15", data_scadenza: "2026-05-15", stato: "in_scadenza", categoria: "Assicurazione", processing_status: "approved", file_size_kb: 350, mime_type: "application/pdf", sha256_hash: "i9j0k1l2m3n4", extracted_fields: null, uploaded_by: "Sara Colombo" },
+  { id: "d10", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "mezzo", riferimento_id: "m4", nome_file: "Libretto_Piattaforma.pdf", data_caricamento: "2025-02-28", data_scadenza: "2027-02-28", stato: "valido", categoria: "Libretto", processing_status: "approved", file_size_kb: 280, mime_type: "application/pdf", sha256_hash: "j0k1l2m3n4o5", extracted_fields: null, uploaded_by: "Fabio Galli" },
+  { id: "d11", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l1", nome_file: "Attestato_Sicurezza_Rossi.pdf", data_caricamento: "2025-10-01", data_scadenza: "2027-10-01", stato: "valido", categoria: "Attestato Sicurezza", processing_status: "approved", file_size_kb: 490, mime_type: "application/pdf", sha256_hash: "k1l2m3n4o5p6", extracted_fields: { corso: "Corso Preposto", ore: "16" }, uploaded_by: "Andrea Rossi" },
+  { id: "d12", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l3", nome_file: "Attestato_Sicurezza_Verdi.pdf", data_caricamento: "2025-08-15", data_scadenza: "2026-08-15", stato: "valido", categoria: "Attestato Sicurezza", processing_status: "approved", file_size_kb: 460, mime_type: "application/pdf", sha256_hash: "l2m3n4o5p6q7", extracted_fields: null, uploaded_by: "Sara Colombo" },
+  { id: "d13", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "lavoratore", riferimento_id: "l4", nome_file: "Attestato_Sicurezza_Neri.pdf", data_caricamento: "2025-06-01", data_scadenza: "2026-06-01", stato: "in_scadenza", categoria: "Attestato Sicurezza", processing_status: "approved", file_size_kb: 510, mime_type: "application/pdf", sha256_hash: "m3n4o5p6q7r8", extracted_fields: null, uploaded_by: "Fabio Galli" },
+  { id: "d14", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l5", nome_file: "Attestato_Sicurezza_Ferrari.pdf", data_caricamento: "2025-11-10", data_scadenza: "2027-11-10", stato: "valido", categoria: "Attestato Sicurezza", processing_status: "approved", file_size_kb: 475, mime_type: "application/pdf", sha256_hash: "n4o5p6q7r8s9", extracted_fields: null, uploaded_by: "Andrea Rossi" },
+  { id: "d15", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l3", nome_file: "Idoneita_Sanitaria_Verdi.pdf", data_caricamento: "2025-09-20", data_scadenza: "2026-03-20", stato: "in_scadenza", categoria: "Idoneità Sanitaria", processing_status: "approved", file_size_kb: 195, mime_type: "application/pdf", sha256_hash: "o5p6q7r8s9t0", extracted_fields: { esito: "Idoneo con limitazioni" }, uploaded_by: "Sara Colombo" },
+  { id: "d16", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l2", nome_file: "Idoneita_Sanitaria_Bianchi.pdf", data_caricamento: "2025-07-01", data_scadenza: "2026-07-01", stato: "valido", categoria: "Idoneità Sanitaria", processing_status: "approved", file_size_kb: 210, mime_type: "application/pdf", sha256_hash: "p6q7r8s9t0u1", extracted_fields: null, uploaded_by: "Andrea Rossi" },
+  { id: "d17", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "lavoratore", riferimento_id: "l4", nome_file: "Idoneita_Sanitaria_Neri.pdf", data_caricamento: "2025-12-01", data_scadenza: "2026-12-01", stato: "valido", categoria: "Idoneità Sanitaria", processing_status: "approved", file_size_kb: 185, mime_type: "application/pdf", sha256_hash: "q7r8s9t0u1v2", extracted_fields: null, uploaded_by: "Fabio Galli" },
+  { id: "d18", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "lavoratore", riferimento_id: "l5", nome_file: "Idoneita_Sanitaria_Ferrari.pdf", data_caricamento: "2025-10-15", data_scadenza: "2026-10-15", stato: "valido", categoria: "Idoneità Sanitaria", processing_status: "approved", file_size_kb: 200, mime_type: "application/pdf", sha256_hash: "r8s9t0u1v2w3", extracted_fields: null, uploaded_by: "Andrea Rossi" },
+  { id: "d19", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore", riferimento_id: "s2", nome_file: "DURC_Verdi_2026.pdf", data_caricamento: "2025-12-15", data_scadenza: "2026-06-15", stato: "in_scadenza", categoria: "DURC", processing_status: "approved", file_size_kb: 260, mime_type: "application/pdf", sha256_hash: "s9t0u1v2w3x4", extracted_fields: { ragione_sociale: "Idraulica Verdi & Figli", p_iva: "IT05678901234" }, uploaded_by: "Andrea Rossi" },
+  { id: "d20", tenant_id: "t1", cantiere_id: "c2", riferimento_tipo: "subappaltatore", riferimento_id: "s3", nome_file: "DURC_Neri_2026.pdf", data_caricamento: "2025-11-01", data_scadenza: "2026-02-28", stato: "scaduto", categoria: "DURC", processing_status: "approved", file_size_kb: 240, mime_type: "application/pdf", sha256_hash: "t0u1v2w3x4y5", extracted_fields: { ragione_sociale: "Carpenteria Metallica Neri" }, uploaded_by: "Fabio Galli" },
+  { id: "d21", tenant_id: "t1", cantiere_id: "c1", riferimento_tipo: "subappaltatore", riferimento_id: "t1", nome_file: "DURC_RossiCostruzioni_2026.pdf", data_caricamento: "2026-01-05", data_scadenza: "2026-07-05", stato: "valido", categoria: "DURC", processing_status: "approved", file_size_kb: 255, mime_type: "application/pdf", sha256_hash: "u1v2w3x4y5z6", extracted_fields: { ragione_sociale: "Rossi Costruzioni S.r.l.", p_iva: "IT01234567890" }, uploaded_by: "Andrea Rossi" },
+];
+
+// ── Document Audit Logs ──
+
+export type AuditAction = "upload" | "view" | "download" | "approve" | "archive" | "delete";
+
+export interface DocumentAuditLog {
+  id: string;
+  documento_id: string;
+  action: AuditAction;
+  user_name: string;
+  timestamp: string;
+  details: string | null;
+}
+
+export const mockDocumentAuditLogs: DocumentAuditLog[] = [
+  { id: "al1", documento_id: "d1", action: "upload", user_name: "Andrea Rossi", timestamp: "2026-01-10T09:00:00", details: null },
+  { id: "al2", documento_id: "d1", action: "approve", user_name: "Andrea Rossi", timestamp: "2026-01-10T09:15:00", details: "DURC verificato" },
+  { id: "al3", documento_id: "d1", action: "view", user_name: "Sara Colombo", timestamp: "2026-03-10T14:00:00", details: null },
+  { id: "al4", documento_id: "d4", action: "upload", user_name: "Fabio Galli", timestamp: "2026-02-01T10:00:00", details: null },
+  { id: "al5", documento_id: "d4", action: "view", user_name: "Andrea Rossi", timestamp: "2026-02-02T08:30:00", details: null },
+  { id: "al6", documento_id: "d3", action: "download", user_name: "Sara Colombo", timestamp: "2026-03-08T11:00:00", details: null },
+  { id: "al7", documento_id: "d20", action: "upload", user_name: "Fabio Galli", timestamp: "2025-11-01T14:00:00", details: null },
+  { id: "al8", documento_id: "d20", action: "approve", user_name: "Andrea Rossi", timestamp: "2025-11-02T09:00:00", details: "DURC approvato" },
 ];
 
 export const mockAccessi = [
