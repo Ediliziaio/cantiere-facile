@@ -20,6 +20,7 @@ const navGroups = [
       { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard, adminOnly: false },
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
+      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },
     ],
   },
   {

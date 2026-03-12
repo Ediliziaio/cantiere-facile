@@ -21,6 +21,7 @@ const menuGroups = [
     items: [
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
+      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },
     ],
   },
   {
