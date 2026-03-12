@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { SuperAdminSidebar } from "./SuperAdminSidebar";
 import { SuperAdminMobileBottomNav } from "./SuperAdminMobileBottomNav";
@@ -33,8 +33,21 @@ function PageFallback() {
 }
 
 export function SuperAdminLayout() {
-  const { user, superadminRole, logout } = useAuth();
+  const { user, superadminRole, logout, login, role } = useAuth();
   const navigate = useNavigate();
+
+  // Auto-login con utente mock superadmin se non autenticato
+  useEffect(() => {
+    if (!user || role !== "superadmin") {
+      login(
+        { id: "sa1", email: "admin@cantiereincloud.it", nome: "Marco", cognome: "Ferretti" },
+        "superadmin",
+        null,
+        null,
+        "superadmin"
+      );
+    }
+  }, [user, role, login]);
 
   const handleLogout = () => {
     logout();

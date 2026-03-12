@@ -94,7 +94,7 @@ export default function SuperAdminBilling() {
                     contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
                     formatter={(val: number) => [`€${val}`, "Revenue"]}
                   />
-                  <Line type="monotone" dataKey="revenue" stroke="hsl(var(--superadmin))" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
