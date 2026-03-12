@@ -112,6 +112,7 @@ const App = () => (
               <Route path="scadenze" element={<Scadenze />} />
               <Route path="subappaltatori" element={<Subappaltatori />} />
               <Route path="lavoratori" element={<Lavoratori />} />
+              <Route path="lavoratori/:id" element={<LavoratoreDetail />} />
               <Route path="mezzi" element={<Mezzi />} />
               <Route path="mezzi/nuovo" element={<NuovoMezzo />} />
               <Route path="mezzi/:id" element={<MezzoDetail />} />
