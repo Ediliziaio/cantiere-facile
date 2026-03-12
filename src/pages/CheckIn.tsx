@@ -106,7 +106,7 @@ export default function CheckIn() {
       setLastAction("in");
       setManualNote("");
 
-      if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
+      vibrateCheckIn();
 
       toast.success("Ingresso registrato", {
         description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`,
