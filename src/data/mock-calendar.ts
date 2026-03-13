@@ -154,6 +154,8 @@ export function buildCalendarData(
   const timbByDayWorker = new Map<string, Timbratura[]>();
   for (const t of mockTimbrature) {
     if (filterCantiereId && t.cantiere_id !== filterCantiereId) continue;
+    // Skip pause entries for calendar presence calculation
+    if (t.tipo === "pausa_inizio" || t.tipo === "pausa_fine") continue;
     const dateKey = t.timestamp.substring(0, 10);
     const key = `${dateKey}|${t.lavoratore_id}|${t.cantiere_id}`;
     if (!timbByDayWorker.has(key)) timbByDayWorker.set(key, []);
