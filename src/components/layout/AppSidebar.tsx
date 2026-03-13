@@ -1,12 +1,15 @@
+import { useState, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy, ChevronDown
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar,
 } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import { mockThreads } from "@/data/mock-comunicazioni";
 import { useAuth } from "@/contexts/AuthContext";
@@ -64,6 +67,30 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const { role } = useAuth();
   const isManager = role === "manager";
+  const location = useLocation();
+
+  const activeGroupLabel = useMemo(() => {
+    for (const group of navGroups) {
+      if (group.items.some(item => location.pathname.startsWith(item.url))) {
+        return group.label;
+      }
+    }
+    return navGroups[0].label;
+  }, [location.pathname]);
+
+  const [openGroups, setOpenGroups] = useState<Set<string>>(() => new Set([activeGroupLabel]));
+
+  const toggleGroup = (label: string) => {
+    setOpenGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(label)) {
+        next.delete(label);
+      } else {
+        next.add(label);
+      }
+      return next;
+    });
+  };
 
   return (
     <Sidebar collapsible="none" className="border-r border-border hidden md:flex">
@@ -79,41 +106,50 @@ export function AppSidebar() {
         {navGroups.map((group) => {
           const visibleItems = group.items.filter(item => !isManager || !item.adminOnly);
           if (visibleItems.length === 0) return null;
+          const isOpen = openGroups.has(group.label);
+
           return (
-            <SidebarGroup key={group.label}>
-              {!collapsed && (
-                <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-3 pt-3 pb-1">
-                  {group.label}
-                </SidebarGroupLabel>
-              )}
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {visibleItems.map((item) => (
-                    <SidebarMenuItem key={item.url}>
-                      <SidebarMenuButton asChild>
-                        <NavLink
-                          to={item.url}
-                          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-                          activeClassName="bg-primary/10 text-primary font-medium"
-                        >
-                          <item.icon className="h-4 w-4 shrink-0" />
-                          {!collapsed && (
-                            <span className="flex-1 flex items-center justify-between">
-                              <span>{item.title}</span>
-                              {"badge" in item && item.badge && item.badge > 0 && (
-                                <Badge variant="destructive" className="text-[10px] h-4 min-w-4 flex items-center justify-center px-1 ml-auto">
-                                  {item.badge}
-                                </Badge>
+            <Collapsible key={group.label} open={isOpen} onOpenChange={() => toggleGroup(group.label)}>
+              <SidebarGroup>
+                {!collapsed && (
+                  <CollapsibleTrigger asChild>
+                    <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold px-3 pt-3 pb-1 cursor-pointer hover:text-foreground transition-colors flex items-center justify-between w-full">
+                      <span>{group.label}</span>
+                      <ChevronDown className={`h-3 w-3 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"}`} />
+                    </SidebarGroupLabel>
+                  </CollapsibleTrigger>
+                )}
+                <CollapsibleContent className="sidebar-collapsible-content">
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {visibleItems.map((item) => (
+                        <SidebarMenuItem key={item.url}>
+                          <SidebarMenuButton asChild>
+                            <NavLink
+                              to={item.url}
+                              className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                              activeClassName="bg-primary/10 text-primary font-medium"
+                            >
+                              <item.icon className="h-4 w-4 shrink-0" />
+                              {!collapsed && (
+                                <span className="flex-1 flex items-center justify-between">
+                                  <span>{item.title}</span>
+                                  {"badge" in item && item.badge && item.badge > 0 && (
+                                    <Badge variant="destructive" className="text-[10px] h-4 min-w-4 flex items-center justify-center px-1 ml-auto">
+                                      {item.badge}
+                                    </Badge>
+                                  )}
+                                </span>
                               )}
-                            </span>
-                          )}
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+                            </NavLink>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
           );
         })}
       </SidebarContent>
