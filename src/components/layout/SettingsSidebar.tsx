@@ -26,7 +26,7 @@ export function SettingsSidebar() {
   const visibleItems = settingsNav.filter(item => !item.adminOnly || isAdmin);
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border hidden md:flex">
+    <Sidebar collapsible="none" className="border-r border-border hidden md:flex">
       <div className={`px-3 py-3 border-b border-border ${collapsed ? "flex justify-center" : ""}`}>
         <Button
           variant="ghost"
