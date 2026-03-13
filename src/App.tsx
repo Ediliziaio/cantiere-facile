@@ -172,7 +172,7 @@ const App = () => (
                 <Route path="cantieri/:id" element={<CantiereDetail />} />
                 <Route path="documenti" element={<Documenti />} />
                 <Route path="scadenze" element={<Scadenze />} />
-                <Route path="subappaltatori" element={<Subappaltatori />} />
+                <Route path="subappaltatori" element={<ProtectedRoute minRole="admin"><Subappaltatori /></ProtectedRoute>} />
                 <Route path="lavoratori" element={<Lavoratori />} />
                 <Route path="lavoratori/:id" element={<LavoratoreDetail />} />
                 <Route path="mezzi" element={<Mezzi />} />
