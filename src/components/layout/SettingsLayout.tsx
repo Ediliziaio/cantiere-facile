@@ -39,7 +39,7 @@ export function SettingsLayout() {
   const visibleItems = mobileSettingsNav.filter(item => !item.adminOnly || isAdmin);
 
   return (
-    <SidebarProvider style={{ "--sidebar-width": "13rem" } as React.CSSProperties}>
+    <SidebarProvider>
       <OfflineBanner />
       {impersonation.isImpersonating && <ImpersonationBanner />}
       <div className={`min-h-screen flex w-full ${impersonation.isImpersonating ? "pt-10" : ""}`}>
@@ -73,7 +73,7 @@ export function SettingsLayout() {
               })}
             </div>
           </div>
-          <main className="flex-1 p-4 md:p-6 overflow-auto pb-20 md:pb-6 safe-area-left safe-area-right">
+          <main className="flex-1 p-4 md:p-8 overflow-auto pb-20 md:pb-6 safe-area-left safe-area-right">
             <Suspense fallback={<PageFallback />}>
               <Outlet />
             </Suspense>
