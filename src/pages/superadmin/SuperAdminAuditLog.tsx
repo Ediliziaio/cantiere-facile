@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { mockSecurityAuditLogs } from "@/data/mock-security";
 import { useToast } from "@/hooks/use-toast";
+import { usePagination } from "@/hooks/usePagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const severityColors: Record<string, string> = {
   info: "bg-muted text-muted-foreground",
