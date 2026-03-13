@@ -37,6 +37,8 @@ export default function SuperAdminAziende() {
     t.p_iva.includes(search)
   );
 
+  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filtered, 10);
+
   const totale = mockTenantsAll.length;
   const attive = mockTenantsAll.filter(t => t.stato === "attivo").length;
   const trial = mockTenantsAll.filter(t => t.stato === "trial").length;
