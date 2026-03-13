@@ -164,7 +164,7 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
                     <div
                       key={app.id}
                       className={cn(
-                        "absolute left-1 right-1 sm:left-2 sm:right-2 rounded-md border p-2 overflow-hidden z-10 cursor-default",
+                        "absolute left-1 right-1 sm:left-2 sm:right-2 rounded-md border p-2 overflow-hidden z-10 pointer-events-none",
                         COLORE_BG[app.colore] || "bg-primary/10 border-primary/30"
                       )}
                       style={{ top, height }}
@@ -183,10 +183,10 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
                               <span className="truncate">{app.cantiere_nome}</span>
                             </div>
                           )}
-                          {height >= 72 && app.indirizzo && (
+                          {app.indirizzo && (
                             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
                               <MapPin className="w-3 h-3 shrink-0" />
-                              <a href={mapsUrl(app.indirizzo)} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
+                              <a href={mapsUrl(app.indirizzo)} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors pointer-events-auto" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
                             </div>
                           )}
                           {height >= 88 && app.assegnato_a.length > 0 && (
