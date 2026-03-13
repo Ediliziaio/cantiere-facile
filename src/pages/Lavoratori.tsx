@@ -2,14 +2,22 @@ import { HardHat, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { mockLavoratori, mockSubappaltatori } from "@/data/mock-data";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { mockLavoratori, mockSubappaltatori, mockCantieri, mockSiteAssignments } from "@/data/mock-data";
 
 export default function Lavoratori() {
   const [search, setSearch] = useState("");
-  const filtered = mockLavoratori.filter((l) =>
-    `${l.nome} ${l.cognome}`.toLowerCase().includes(search.toLowerCase()) ||
-    l.mansione.toLowerCase().includes(search.toLowerCase())
-  );
+  const [filterTipo, setFilterTipo] = useState("tutti");
+  const [filterCantiere, setFilterCantiere] = useState("tutti");
+
+  const filtered = mockLavoratori.filter((l) => {
+    const matchSearch = `${l.nome} ${l.cognome}`.toLowerCase().includes(search.toLowerCase()) ||
+      l.mansione.toLowerCase().includes(search.toLowerCase());
+    const matchTipo = filterTipo === "tutti" || l.tipo === filterTipo;
+    const matchCantiere = filterCantiere === "tutti" ||
+      mockSiteAssignments.some((sa) => sa.lavoratore_id === l.id && sa.cantiere_id === filterCantiere && sa.attivo);
+    return matchSearch && matchTipo && matchCantiere;
+  });
 
   return (
     <div className="space-y-6">
@@ -18,9 +26,28 @@ export default function Lavoratori() {
         <h1 className="font-heading font-bold text-2xl text-foreground">Lavoratori</h1>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Cerca lavoratore..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+      <div className="flex flex-wrap gap-3">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Cerca lavoratore..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        </div>
+        <Select value={filterTipo} onValueChange={setFilterTipo}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Tipo" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti i tipi</SelectItem>
+            <SelectItem value="interno">Interno</SelectItem>
+            <SelectItem value="esterno">Esterno</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterCantiere} onValueChange={setFilterCantiere}>
+          <SelectTrigger className="w-52"><SelectValue placeholder="Cantiere" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+            {mockCantieri.map((c) => (
+              <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border border-border rounded-lg divide-y divide-border">
