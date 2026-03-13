@@ -20,7 +20,7 @@ const profileFields = [
 
 export default function ImpostazioniProfilo() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-3xl">
       <div className="flex items-center gap-2 mb-1">
         <Building2 className="h-5 w-5 text-primary" />
         <h1 className="font-heading font-bold text-xl text-foreground">Profilo Azienda</h1>
