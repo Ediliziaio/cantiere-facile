@@ -40,11 +40,11 @@ export function SettingsLayout() {
 
   return (
     <SidebarProvider>
-      <OfflineBanner />
-      {impersonation.isImpersonating && <ImpersonationBanner />}
       <div className={`min-h-screen flex w-full ${impersonation.isImpersonating ? "pt-10" : ""}`}>
         <SettingsSidebar />
         <div className="flex-1 flex flex-col min-w-0">
+          <OfflineBanner />
+          {impersonation.isImpersonating && <ImpersonationBanner />}
           <TopBar />
           {/* Mobile: back button + horizontal nav */}
           <div className="md:hidden border-b border-border">
