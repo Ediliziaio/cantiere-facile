@@ -101,7 +101,7 @@ export default function SuperAdminNuovaAzienda() {
         {steps.map((s, i) => (
           <div key={i} className="flex items-center gap-1 flex-1">
             <div className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
-              i === step ? "bg-superadmin/10 text-superadmin" : i < step ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+              i === step ? "bg-primary/10 text-primary" : i < step ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
             }`}>
               <s.icon className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">{s.label}</span>
