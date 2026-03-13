@@ -76,6 +76,7 @@ const SuperAdminAnalytics = lazy(() => import("./pages/superadmin/SuperAdminAnal
 const SuperAdminSupporto = lazy(() => import("./pages/superadmin/SuperAdminSupporto"));
 const Supporto = lazy(() => import("./pages/Supporto"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+const Install = lazy(() => import("./pages/Install"));
 
 // Settings sub-pages
 const ImpostazioniProfilo = lazy(() => import("./pages/impostazioni/ImpostazioniProfilo"));
@@ -133,6 +134,7 @@ const App = () => (
               <Route path="/funzionalita/comunicazioni" element={<FunzionalitaComunicazioni />} />
               <Route path="/funzionalita/veicoli" element={<FunzionalitaVeicoli />} />
               <Route path="/help-center" element={<HelpCenter />} />
+              <Route path="/install" element={<Install />} />
 
               {/* SuperAdmin routes */}
               <Route path="/superadmin/login" element={<SuperAdminLogin />} />
