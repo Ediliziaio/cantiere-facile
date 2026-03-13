@@ -15,9 +15,10 @@ import { toast } from "sonner";
 
 export default function SuperAdminAziendaDetail() {
   const { id } = useParams<{ id: string }>();
-  const tenant = mockTenantsAll.find((t) => t.id === id);
   const { startImpersonation } = useAuth();
   const navigate = useNavigate();
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const tenant = mockTenantsAll.find((t) => t.id === id);
 
   if (!tenant) {
     return (
