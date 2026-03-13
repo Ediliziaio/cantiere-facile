@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { SuperAdminLayout } from "@/components/layout/SuperAdminLayout";
+import { SettingsLayout } from "@/components/layout/SettingsLayout";
 
 // Lazy loaded pages
 const Landing = lazy(() => import("./pages/Landing"));
@@ -30,7 +31,6 @@ const MezzoDetail = lazy(() => import("./pages/MezzoDetail"));
 const NuovoMezzo = lazy(() => import("./pages/NuovoMezzo"));
 const Accessi = lazy(() => import("./pages/Accessi"));
 const Comunicazioni = lazy(() => import("./pages/Comunicazioni"));
-const Impostazioni = lazy(() => import("./pages/Impostazioni"));
 const BadgeList = lazy(() => import("./pages/BadgeList"));
 const BadgeNuovo = lazy(() => import("./pages/BadgeNuovo"));
 const BadgeDetail = lazy(() => import("./pages/BadgeDetail"));
@@ -76,6 +76,13 @@ const SuperAdminAnalytics = lazy(() => import("./pages/superadmin/SuperAdminAnal
 const SuperAdminSupporto = lazy(() => import("./pages/superadmin/SuperAdminSupporto"));
 const Supporto = lazy(() => import("./pages/Supporto"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+
+// Settings sub-pages
+const ImpostazioniProfilo = lazy(() => import("./pages/impostazioni/ImpostazioniProfilo"));
+const ImpostazioniUtenti = lazy(() => import("./pages/impostazioni/ImpostazioniUtenti"));
+const ImpostazioniLog = lazy(() => import("./pages/impostazioni/ImpostazioniLog"));
+const ImpostazioniNotifiche = lazy(() => import("./pages/impostazioni/ImpostazioniNotifiche"));
+const ImpostazioniPreferenze = lazy(() => import("./pages/impostazioni/ImpostazioniPreferenze"));
 
 const queryClient = new QueryClient();
 
@@ -141,6 +148,16 @@ const App = () => (
                 <Route path="supporto" element={<SuperAdminSupporto />} />
               </Route>
 
+              {/* Settings routes with dedicated sidebar */}
+              <Route path="/app/impostazioni" element={<SettingsLayout />}>
+                <Route index element={<Navigate to="profilo" replace />} />
+                <Route path="profilo" element={<ImpostazioniProfilo />} />
+                <Route path="utenti" element={<ImpostazioniUtenti />} />
+                <Route path="log" element={<ImpostazioniLog />} />
+                <Route path="notifiche" element={<ImpostazioniNotifiche />} />
+                <Route path="preferenze" element={<ImpostazioniPreferenze />} />
+              </Route>
+
               {/* Tenant app routes with sidebar layout */}
               <Route path="/app" element={<AppLayout />}>
                 <Route path="dashboard" element={<Dashboard />} />
@@ -174,7 +191,6 @@ const App = () => (
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="billing" element={<Billing />} />
                 <Route path="supporto" element={<Supporto />} />
-                <Route path="impostazioni" element={<Impostazioni />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
