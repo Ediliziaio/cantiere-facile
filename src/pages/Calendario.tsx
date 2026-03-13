@@ -1,14 +1,21 @@
 import { useState, useMemo } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent } from "@/components/ui/card";
 import { CalendarDayDetail } from "@/components/dashboard/CalendarDayDetail";
+import { MonthGrid } from "@/components/calendario/MonthGrid";
 import { buildCalendarData, type CalendarDayData } from "@/data/mock-calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarDays } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { mockCantieri } from "@/data/mock-data";
+
+const MONTH_NAMES = [
+  "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+  "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre",
+];
 
 export default function Calendario() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date("2026-03-10"));
+  const [currentMonth, setCurrentMonth] = useState(2); // March (0-indexed)
+  const [currentYear, setCurrentYear] = useState(2026);
   const [filterCantiere, setFilterCantiere] = useState("tutti");
 
   const calendarData = useMemo(
@@ -22,28 +29,43 @@ export default function Calendario() {
 
   const selectedDayData: CalendarDayData | null = selectedKey ? calendarData.get(selectedKey) || null : null;
 
-  const okDays: Date[] = [];
-  const warningDays: Date[] = [];
-  const dangerDays: Date[] = [];
+  const goToPrevMonth = () => {
+    if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); }
+    else setCurrentMonth(currentMonth - 1);
+  };
 
-  for (const [key, data] of calendarData) {
-    const d = new Date(key + "T00:00:00");
-    if (data.worstStatus === "danger") dangerDays.push(d);
-    else if (data.worstStatus === "warning") warningDays.push(d);
-    else if (data.presenze.length > 0) okDays.push(d);
-  }
+  const goToNextMonth = () => {
+    if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); }
+    else setCurrentMonth(currentMonth + 1);
+  };
+
+  const goToToday = () => {
+    const now = new Date();
+    setCurrentMonth(now.getMonth());
+    setCurrentYear(now.getFullYear());
+    setSelectedDate(now);
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
-            <CalendarDays className="h-6 w-6 text-primary" />
-            Calendario
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Presenze, scadenze e attività per giorno
-          </p>
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <CalendarDays className="h-6 w-6 text-primary shrink-0" />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" onClick={goToPrevMonth} className="h-8 w-8">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="font-heading text-xl sm:text-2xl font-bold text-foreground min-w-[200px] text-center">
+              {MONTH_NAMES[currentMonth]} {currentYear}
+            </h1>
+            <Button variant="outline" size="icon" onClick={goToNextMonth} className="h-8 w-8">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={goToToday} className="text-xs ml-1">
+              Oggi
+            </Button>
+          </div>
         </div>
         <Select value={filterCantiere} onValueChange={setFilterCantiere}>
           <SelectTrigger className="w-[220px]">
@@ -58,27 +80,17 @@ export default function Calendario() {
         </Select>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-        <Card className="w-fit">
-          <CardContent className="p-4">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              defaultMonth={new Date("2026-03-01")}
-              className="pointer-events-auto"
-              modifiers={{ ok: okDays, warning: warningDays, danger: dangerDays }}
-              modifiersClassNames={{
-                ok: "calendar-dot-ok",
-                warning: "calendar-dot-warning",
-                danger: "calendar-dot-danger",
-              }}
-            />
-          </CardContent>
-        </Card>
+      {/* Month grid */}
+      <MonthGrid
+        year={currentYear}
+        month={currentMonth}
+        data={calendarData}
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
+      />
 
-        <CalendarDayDetail date={selectedDate} data={selectedDayData} />
-      </div>
+      {/* Day detail */}
+      <CalendarDayDetail date={selectedDate} data={selectedDayData} />
     </div>
   );
 }
