@@ -107,6 +107,15 @@ export default function SuperAdminAuditLog() {
             <SelectItem value="critical">Critical</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={filterTenant} onValueChange={setFilterTenant}>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Azienda" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tutte le aziende</SelectItem>
+            {tenantNames.map((t) => (
+              <SelectItem key={t} value={t}>{t}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Da:</span>
           <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36 h-9 text-xs" />
