@@ -6,6 +6,16 @@ export const mockTenant = {
   p_iva: "IT01234567890",
   email_admin: "admin@rossicostruzioni.it",
   piano: "pro" as const,
+  telefono: "+39 02 9876543",
+  pec: "rossicostruzioni@pec.it",
+  codice_sdi: "M5UXCR1",
+  indirizzo_sede_legale: "Via Manzoni 45, 20121 Milano (MI)",
+  codice_ateco: "41.20.00 — Costruzione di edifici residenziali e non",
+  ccnl: "CCNL Edilizia Industria",
+  responsabile_legale: "Ing. Giovanni Rossi",
+  data_iscrizione: "2025-06-15",
+  cantieri_attivi: 2,
+  lavoratori_totali: 30,
 };
 
 export const mockCantieri = [
