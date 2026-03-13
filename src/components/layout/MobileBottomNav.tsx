@@ -50,7 +50,7 @@ const menuGroups = [
   {
     label: "Sistema",
     items: [
-      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: false },
+      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: true },
     ],
   },
 ];
