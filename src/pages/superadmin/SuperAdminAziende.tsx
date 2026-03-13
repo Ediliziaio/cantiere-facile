@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, LogIn, Eye, Plus, Building2, Clock, AlertTriangle, CheckCircle } from "lucide-react";
+import { Search, LogIn, Eye, Plus, Building2, Clock, AlertTriangle, CheckCircle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { mockTenantsAll } from "@/data/mock-superadmin";
@@ -41,14 +42,30 @@ function AziendaAvatar({ name }: { name: string }) {
 
 export default function SuperAdminAziende() {
   const [search, setSearch] = useState("");
+  const [filterStato, setFilterStato] = useState("all");
+  const [filterPiano, setFilterPiano] = useState("all");
   const { startImpersonation } = useAuth();
   const navigate = useNavigate();
 
   const filtered = useMemo(() =>
-    mockTenantsAll.filter((t) =>
-      t.nome_azienda.toLowerCase().includes(search.toLowerCase()) ||
-      t.p_iva.includes(search)
-    ), [search]);
+    mockTenantsAll.filter((t) => {
+      const matchSearch = t.nome_azienda.toLowerCase().includes(search.toLowerCase()) || t.p_iva.includes(search);
+      const matchStato = filterStato === "all" || t.stato === filterStato;
+      const matchPiano = filterPiano === "all" || t.piano === filterPiano;
+      return matchSearch && matchStato && matchPiano;
+    }), [search, filterStato, filterPiano]);
+
+  const exportCsv = () => {
+    const headers = "Azienda,P.IVA,Piano,Stato,Cantieri,Utenti,Health,Ultima Attività\n";
+    const rows = filtered.map((t) =>
+      `"${t.nome_azienda}",${t.p_iva},${t.piano},${t.stato},${t.cantieri_count},${t.utenti_count},${t.health_score},${t.last_active}`
+    ).join("\n");
+    const blob = new Blob([headers + rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `aziende-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const { sortedItems, sortConfig, toggleSort } = useSortable(filtered, comparators);
   const pagination = usePagination(sortedItems, 10);
@@ -96,9 +113,33 @@ export default function SuperAdminAziende() {
         ))}
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Cerca azienda..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+      <div className="flex flex-wrap gap-3 items-center">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Cerca azienda..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        </div>
+        <Select value={filterStato} onValueChange={setFilterStato}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Stato" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tutti gli stati</SelectItem>
+            <SelectItem value="attivo">Attivo</SelectItem>
+            <SelectItem value="trial">Trial</SelectItem>
+            <SelectItem value="sospeso">Sospeso</SelectItem>
+            <SelectItem value="scaduto">Scaduto</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterPiano} onValueChange={setFilterPiano}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Piano" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tutti i piani</SelectItem>
+            <SelectItem value="free">Free</SelectItem>
+            <SelectItem value="pro">Pro</SelectItem>
+            <SelectItem value="enterprise">Enterprise</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" size="sm" onClick={exportCsv}>
+          <Download className="h-4 w-4 mr-1" /> Export CSV
+        </Button>
       </div>
 
       {/* Desktop table */}

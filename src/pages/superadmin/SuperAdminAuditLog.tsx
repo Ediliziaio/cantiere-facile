@@ -33,6 +33,9 @@ export default function SuperAdminAuditLog() {
   const [search, setSearch] = useState("");
   const [filterSeverity, setFilterSeverity] = useState<string>("all");
 
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
   const filtered = useMemo(() => {
     const base = [...mockSecurityAuditLogs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
     return base.filter((log) => {
@@ -40,9 +43,12 @@ export default function SuperAdminAuditLog() {
         log.action.toLowerCase().includes(search.toLowerCase()) ||
         (log.tenant_name?.toLowerCase().includes(search.toLowerCase()) ?? false);
       const matchSeverity = filterSeverity === "all" || log.severity === filterSeverity;
-      return matchSearch && matchSeverity;
+      const logDate = new Date(log.timestamp);
+      const matchFrom = !dateFrom || logDate >= new Date(dateFrom);
+      const matchTo = !dateTo || logDate <= new Date(dateTo + "T23:59:59");
+      return matchSearch && matchSeverity && matchFrom && matchTo;
     });
-  }, [search, filterSeverity]);
+  }, [search, filterSeverity, dateFrom, dateTo]);
 
   const { sortedItems, sortConfig, toggleSort } = useSortable(filtered, comparators);
   const pagination = usePagination(sortedItems, 15);
@@ -94,6 +100,14 @@ export default function SuperAdminAuditLog() {
             <SelectItem value="critical">Critical</SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Da:</span>
+          <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36 h-9 text-xs" />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">A:</span>
+          <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-36 h-9 text-xs" />
+        </div>
       </div>
 
       {/* Desktop table */}

@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TrendingUp, TrendingDown, DollarSign, Users, AlertTriangle, Receipt, FileText, CreditCard } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Users, AlertTriangle, Receipt, FileText, CreditCard, Download } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import {
@@ -34,13 +35,31 @@ const comparators: Record<BillingSortKey, (a: MockInvoice, b: MockInvoice) => nu
 
 export default function SuperAdminBilling() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const m = mockBillingMetrics;
 
   const filteredInvoices = useMemo(() =>
-    statusFilter === "all"
-      ? mockInvoices
-      : mockInvoices.filter((i) => i.stato === statusFilter),
-    [statusFilter]);
+    mockInvoices.filter((i) => {
+      const matchStatus = statusFilter === "all" || i.stato === statusFilter;
+      const invDate = new Date(i.data_emissione);
+      const matchFrom = !dateFrom || invDate >= new Date(dateFrom);
+      const matchTo = !dateTo || invDate <= new Date(dateTo + "T23:59:59");
+      return matchStatus && matchFrom && matchTo;
+    }),
+    [statusFilter, dateFrom, dateTo]);
+
+  const exportCsv = () => {
+    const headers = "N° Fattura,Azienda,Descrizione,Data Emissione,Totale,Stato\n";
+    const rows = filteredInvoices.map((i) =>
+      `${i.numero_fattura},"${i.tenant_name}","${i.descrizione}",${i.data_emissione},${i.totale.toFixed(2)},${i.stato}`
+    ).join("\n");
+    const blob = new Blob([headers + rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `fatture-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const { sortedItems, sortConfig, toggleSort } = useSortable(filteredInvoices, comparators);
   const pagination = usePagination(sortedItems, 10);
@@ -137,22 +156,37 @@ export default function SuperAdminBilling() {
 
       {/* Invoices */}
       <Card>
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
-          <div>
-            <CardTitle className="text-base">Fatture recenti</CardTitle>
-            <CardDescription>Tutte le fatture cross-tenant</CardDescription>
+        <CardHeader className="pb-2 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base">Fatture recenti</CardTitle>
+              <CardDescription>Tutte le fatture cross-tenant</CardDescription>
+            </div>
+            <Button variant="outline" size="sm" onClick={exportCsv}>
+              <Download className="h-4 w-4 mr-1" /> Export CSV
+            </Button>
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="Filtra stato" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tutti</SelectItem>
-              <SelectItem value="pagata">Pagate</SelectItem>
-              <SelectItem value="in_scadenza">In scadenza</SelectItem>
-              <SelectItem value="scaduta">Scadute</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap gap-3 items-center">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="Filtra stato" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tutti</SelectItem>
+                <SelectItem value="pagata">Pagate</SelectItem>
+                <SelectItem value="in_scadenza">In scadenza</SelectItem>
+                <SelectItem value="scaduta">Scadute</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Da:</span>
+              <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36 h-9 text-xs" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">A:</span>
+              <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-36 h-9 text-xs" />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Desktop table */}
