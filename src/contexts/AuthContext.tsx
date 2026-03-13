@@ -65,12 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null, impersonatedRole: null });
   }, []);
 
-  const startImpersonation = useCallback((tid: string, tname: string) => {
-    setImpersonation({ isImpersonating: true, tenantId: tid, tenantName: tname });
+  const startImpersonation = useCallback((tid: string, tname: string, impRole: UserRole) => {
+    setImpersonation({ isImpersonating: true, tenantId: tid, tenantName: tname, impersonatedRole: impRole });
   }, []);
 
   const stopImpersonation = useCallback(() => {
-    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null });
+    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null, impersonatedRole: null });
   }, []);
 
   const hasPermission = useCallback((permission: string): boolean => {
