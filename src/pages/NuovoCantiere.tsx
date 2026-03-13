@@ -9,7 +9,7 @@ import { mockWorkTemplates } from "@/data/mock-avanzamento";
 
 export default function NuovoCantiere() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ nome: "", indirizzo: "", comune: "", data_inizio: "", data_fine: "" });
+  const [form, setForm] = useState({ nome: "", indirizzo: "", comune: "", data_inizio: "", data_fine: "", template_id: "" });
 
   const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
