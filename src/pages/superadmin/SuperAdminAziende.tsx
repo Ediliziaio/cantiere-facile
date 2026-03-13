@@ -190,6 +190,22 @@ export default function SuperAdminAziende() {
           </Card>
         ))}
       </div>
+
+      {/* Pagination */}
+      {showPagination && (
+        <div className="flex items-center justify-between gap-3 text-sm">
+          <span className="text-xs text-muted-foreground">{from}–{to} di {total} risultati</span>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={prevPage} disabled={page === 1}>
+              <ChevronLeft className="h-4 w-4 mr-1" /> Precedente
+            </Button>
+            <span className="text-xs text-muted-foreground">Pagina {page} di {totalPages}</span>
+            <Button variant="outline" size="sm" onClick={nextPage} disabled={page === totalPages}>
+              Successivo <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
