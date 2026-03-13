@@ -1,7 +1,7 @@
 import { mockLavoratori, mockCantieri, mockTenant, mockDocumenti } from "./mock-data";
 
 export type BadgeStato = "attivo" | "sospeso" | "revocato";
-export type TimbraturaTipo = "entrata" | "uscita";
+export type TimbraturaTipo = "entrata" | "uscita" | "pausa_inizio" | "pausa_fine";
 export type TimbrataMetodo = "qr_scan" | "rfid" | "manuale";
 export type TimbrataEsito = "autorizzato" | "bloccato" | "warning";
 export type EsitoFinale = "verde" | "giallo" | "rosso";
