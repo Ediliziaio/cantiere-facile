@@ -21,7 +21,7 @@ const menuGroups = [
     items: [
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
-      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },
+      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: true },
     ],
   },
   {
@@ -50,7 +50,7 @@ const menuGroups = [
   {
     label: "Sistema",
     items: [
-      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: false },
+      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: true },
     ],
   },
 ];
@@ -58,7 +58,7 @@ const menuGroups = [
 export function MobileBottomNav() {
   const [open, setOpen] = useState(false);
   const { effectiveRole } = useAuth();
-  const isManager = effectiveRole === "manager";
+  const isAdminOrAbove = effectiveRole === "admin" || effectiveRole === "superadmin" || !effectiveRole;
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card safe-area-bottom touch-manipulation">
@@ -83,7 +83,7 @@ export function MobileBottomNav() {
             <SheetTitle className="sr-only">Menu di navigazione</SheetTitle>
             <div className="space-y-5 py-4">
               {menuGroups.map((group) => {
-                const visibleItems = group.items.filter(item => !isManager || !item.adminOnly);
+                const visibleItems = group.items.filter(item => !item.adminOnly || isAdminOrAbove);
                 if (visibleItems.length === 0) return null;
                 return (
                   <div key={group.label}>

@@ -20,8 +20,8 @@ export function SettingsSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
-  const { role } = useAuth();
-  const isAdmin = role === "admin" || role === "superadmin" || !role;
+  const { effectiveRole } = useAuth();
+  const isAdmin = effectiveRole === "admin" || effectiveRole === "superadmin" || !effectiveRole;
 
   const visibleItems = settingsNav.filter(item => !item.adminOnly || isAdmin);
 

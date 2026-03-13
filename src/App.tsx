@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { SuperAdminLayout } from "@/components/layout/SuperAdminLayout";
 import { SettingsLayout } from "@/components/layout/SettingsLayout";
+import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 
 // Lazy loaded pages
 const Landing = lazy(() => import("./pages/Landing"));
@@ -152,8 +153,8 @@ const App = () => (
                 <Route path="supporto" element={<SuperAdminSupporto />} />
               </Route>
 
-              {/* Settings routes with dedicated sidebar */}
-              <Route path="/app/impostazioni" element={<SettingsLayout />}>
+              {/* Settings routes with dedicated sidebar — admin only */}
+              <Route path="/app/impostazioni" element={<ProtectedRoute minRole="admin"><SettingsLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="profilo" replace />} />
                 <Route path="profilo" element={<ImpostazioniProfilo />} />
                 <Route path="utenti" element={<ImpostazioniUtenti />} />
@@ -171,7 +172,7 @@ const App = () => (
                 <Route path="cantieri/:id" element={<CantiereDetail />} />
                 <Route path="documenti" element={<Documenti />} />
                 <Route path="scadenze" element={<Scadenze />} />
-                <Route path="subappaltatori" element={<Subappaltatori />} />
+                <Route path="subappaltatori" element={<ProtectedRoute minRole="admin"><Subappaltatori /></ProtectedRoute>} />
                 <Route path="lavoratori" element={<Lavoratori />} />
                 <Route path="lavoratori/:id" element={<LavoratoreDetail />} />
                 <Route path="mezzi" element={<Mezzi />} />
@@ -193,8 +194,8 @@ const App = () => (
                 <Route path="firma/:id/anteprima" element={<FirmaAnteprima />} />
                 <Route path="firma/:id/certificato" element={<CertificatoFirma />} />
                 <Route path="sicurezza" element={<Sicurezza />} />
-                <Route path="analytics" element={<Analytics />} />
-                <Route path="billing" element={<Billing />} />
+                <Route path="analytics" element={<ProtectedRoute minRole="admin"><Analytics /></ProtectedRoute>} />
+                <Route path="billing" element={<ProtectedRoute minRole="admin"><Billing /></ProtectedRoute>} />
                 <Route path="supporto" element={<Supporto />} />
               </Route>
 

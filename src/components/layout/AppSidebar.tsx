@@ -24,7 +24,7 @@ const navGroups = [
       { title: "Calendario", url: "/app/calendario", icon: CalendarDays, adminOnly: false },
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
-      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },
+      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: true },
     ],
   },
   {
@@ -57,8 +57,8 @@ const navGroups = [
     label: "Sistema",
     items: [
       { title: "Supporto", url: "/app/supporto", icon: LifeBuoy, adminOnly: false },
-      { title: "Abbonamento", url: "/app/billing", icon: Receipt, adminOnly: false },
-      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: false },
+      { title: "Abbonamento", url: "/app/billing", icon: Receipt, adminOnly: true },
+      { title: "Impostazioni", url: "/app/impostazioni", icon: Settings, adminOnly: true },
     ],
   },
 ];
@@ -67,7 +67,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { effectiveRole } = useAuth();
-  const isManager = effectiveRole === "manager";
+  const isAdminOrAbove = effectiveRole === "admin" || effectiveRole === "superadmin" || !effectiveRole;
   const location = useLocation();
 
   const activeGroupLabel = useMemo(() => {
@@ -105,7 +105,7 @@ export function AppSidebar() {
       </div>
       <SidebarContent>
         {navGroups.map((group) => {
-          const visibleItems = group.items.filter(item => !isManager || !item.adminOnly);
+          const visibleItems = group.items.filter(item => !item.adminOnly || isAdminOrAbove);
           if (visibleItems.length === 0) return null;
           const isOpen = openGroups.has(group.label);
 
