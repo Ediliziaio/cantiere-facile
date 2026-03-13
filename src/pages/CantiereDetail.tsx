@@ -138,6 +138,9 @@ export default function CantiereDetail() {
             ))}
           </div>
         </TabsContent>
+        <TabsContent value="avanzamento">
+          <AvanzamentoLavori cantiereId={id!} />
+        </TabsContent>
         <TabsContent value="galleria">
           <GalleriaCantiere cantiereId={id!} />
         </TabsContent>

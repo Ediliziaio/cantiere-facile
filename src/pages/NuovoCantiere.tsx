@@ -51,6 +51,22 @@ export default function NuovoCantiere() {
             <Input id="data_fine" type="date" value={form.data_fine} onChange={update("data_fine")} />
           </div>
         </div>
+        <div className="space-y-1.5">
+          <Label>Template avanzamento lavori</Label>
+          <Select value={form.template_id} onValueChange={(v) => setForm((f) => ({ ...f, template_id: v }))}>
+            <SelectTrigger>
+              <SelectValue placeholder="Nessun template (opzionale)" />
+            </SelectTrigger>
+            <SelectContent>
+              {mockWorkTemplates.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.nome} — {t.fasi.length} fasi
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">Pre-carica le fasi di lavoro da un template</p>
+        </div>
         <div className="sticky bottom-16 sm:bottom-0 bg-background pt-3 pb-3 -mb-3">
           <Button type="submit" className="w-full sm:w-auto">Crea cantiere</Button>
         </div>
