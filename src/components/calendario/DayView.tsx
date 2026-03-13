@@ -164,7 +164,7 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
                     <div
                       key={app.id}
                       className={cn(
-                        "absolute left-1 right-1 sm:left-2 sm:right-2 rounded-md border p-2 overflow-hidden z-10 cursor-default",
+                        "absolute left-1 right-1 sm:left-2 sm:right-2 rounded-md border p-2 overflow-hidden z-10 pointer-events-none",
                         COLORE_BG[app.colore] || "bg-primary/10 border-primary/30"
                       )}
                       style={{ top, height }}
