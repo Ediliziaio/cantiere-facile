@@ -162,7 +162,7 @@ export default function SuperAdminBilling() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredInvoices.map((inv) => {
+                {paginatedItems.map((inv) => {
                   const st = invoiceStatusMap[inv.stato];
                   return (
                     <TableRow key={inv.id}>
