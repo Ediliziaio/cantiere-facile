@@ -153,8 +153,8 @@ const App = () => (
                 <Route path="supporto" element={<SuperAdminSupporto />} />
               </Route>
 
-              {/* Settings routes with dedicated sidebar */}
-              <Route path="/app/impostazioni" element={<SettingsLayout />}>
+              {/* Settings routes with dedicated sidebar — admin only */}
+              <Route path="/app/impostazioni" element={<ProtectedRoute minRole="admin"><SettingsLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="profilo" replace />} />
                 <Route path="profilo" element={<ImpostazioniProfilo />} />
                 <Route path="utenti" element={<ImpostazioniUtenti />} />
