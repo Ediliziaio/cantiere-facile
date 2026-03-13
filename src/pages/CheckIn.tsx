@@ -184,7 +184,7 @@ export default function CheckIn() {
         setLastAction(null);
       }, 2000);
     },
-    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation]
+    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation, geofence.distance]
   );
 
   const recentHistory = getHistory().slice(0, 5);
