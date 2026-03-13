@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { mockTenantsAll } from "@/data/mock-superadmin";
 import { TenantStatusBadge } from "@/components/layout/TenantStatusBadge";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePagination } from "@/hooks/usePagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const planBadgeVariant: Record<string, "outline" | "default" | "secondary"> = {
   free: "outline",
