@@ -8,6 +8,11 @@ import { cn } from "@/lib/utils";
 interface DayViewProps {
   date: Date;
   data: CalendarDayData | null;
+  onSlotClick?: (hour: number) => void;
+}
+
+function mapsUrl(address: string) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
 
 const START_HOUR = 7;
