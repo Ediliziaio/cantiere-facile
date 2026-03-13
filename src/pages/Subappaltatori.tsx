@@ -2,14 +2,21 @@ import { Link } from "react-router-dom";
 import { Building, Search } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mockSubappaltatori, mockCantieri } from "@/data/mock-data";
 import { ChecklistProgress } from "@/components/cantiere/ChecklistProgress";
 
 export default function Subappaltatori() {
   const [search, setSearch] = useState("");
-  const filtered = mockSubappaltatori.filter((s) =>
-    s.ragione_sociale.toLowerCase().includes(search.toLowerCase())
-  );
+  const [filterCantiere, setFilterCantiere] = useState("tutti");
+  const [filterStato, setFilterStato] = useState("tutti");
+
+  const filtered = mockSubappaltatori.filter((s) => {
+    const matchSearch = s.ragione_sociale.toLowerCase().includes(search.toLowerCase());
+    const matchCantiere = filterCantiere === "tutti" || s.cantiere_id === filterCantiere;
+    const matchStato = filterStato === "tutti" || s.stato_documenti === filterStato;
+    return matchSearch && matchCantiere && matchStato;
+  });
 
   const semaphore = (stato: string) => {
     if (stato === "completo") return "bg-success";
@@ -24,9 +31,29 @@ export default function Subappaltatori() {
         <h1 className="font-heading font-bold text-2xl text-foreground">Subappaltatori</h1>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Cerca subappaltatore..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+      <div className="flex flex-wrap gap-3">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Cerca subappaltatore..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        </div>
+        <Select value={filterCantiere} onValueChange={setFilterCantiere}>
+          <SelectTrigger className="w-52"><SelectValue placeholder="Cantiere" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+            {mockCantieri.map((c) => (
+              <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={filterStato} onValueChange={setFilterStato}>
+          <SelectTrigger className="w-44"><SelectValue placeholder="Stato documenti" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti gli stati</SelectItem>
+            <SelectItem value="completo">Completo</SelectItem>
+            <SelectItem value="in_scadenza">In scadenza</SelectItem>
+            <SelectItem value="incompleto">Incompleto</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border border-border rounded-lg divide-y divide-border">

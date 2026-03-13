@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, IdCard, Truck, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { dashboardStats, mockCantieri, mockScadenze, mockAccessi, mockMezzi, getScadenzaStatus } from "@/data/mock-data";
 import { CantiereSummaryCard } from "@/components/cantiere/CantiereSummaryCard";
 import { ScadenzaAlert } from "@/components/cantiere/ScadenzaAlert";
@@ -8,43 +10,63 @@ import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { PresenzaLiveWidget } from "@/components/badge/PresenzaLiveWidget";
 import { mockBadges } from "@/data/mock-badges";
 
-const badgeInScadenza = mockBadges.filter((b) => {
-  const exp = new Date(b.data_scadenza);
-  const now = new Date("2026-03-10");
-  const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-  return diff <= 30 && diff > 0 && b.stato === "attivo";
-}).length;
-
-// Mezzi con scadenze imminenti
-const mezziScadenze: { mezzo: typeof mockMezzi[0]; tipo_scad: string; data: string; stato: string }[] = [];
-mockMezzi.forEach((m) => {
-  const checks = [
-    { label: "Revisione", date: m.data_prossima_revisione },
-    { label: "Manutenzione", date: m.data_prossima_manutenzione },
-    { label: "Assicurazione", date: m.scadenza_assicurazione },
-    ...(m.scadenza_collaudo ? [{ label: "Collaudo", date: m.scadenza_collaudo }] : []),
-  ];
-  checks.forEach((c) => {
-    const s = getScadenzaStatus(c.date);
-    if (s !== "valido") mezziScadenze.push({ mezzo: m, tipo_scad: c.label, data: c.date, stato: s });
-  });
-});
-const mezziConScadenze = new Set(mezziScadenze.map((ms) => ms.mezzo.id)).size;
-
-const statCards = [
-  { label: "Cantieri attivi", value: dashboardStats.cantieriAttivi, icon: Building2, href: "/app/cantieri" },
-  { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/app/scadenze", accent: true },
-  { label: "Accessi oggi", value: dashboardStats.accessiOggi, icon: ShieldCheck, href: "/app/accessi" },
-  { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/app/subappaltatori" },
-  { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/app/badge" },
-  { label: "Mezzi con scadenze", value: mezziConScadenze, icon: Truck, href: "/app/mezzi", accent: mezziConScadenze > 0 },
-];
-
 export default function Dashboard() {
+  const [filterCantiere, setFilterCantiere] = useState("tutti");
+
+  const cantieriFiltered = filterCantiere === "tutti" ? mockCantieri : mockCantieri.filter((c) => c.id === filterCantiere);
+
+  const badgeInScadenza = mockBadges.filter((b) => {
+    const exp = new Date(b.data_scadenza);
+    const now = new Date("2026-03-10");
+    const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+    return diff <= 30 && diff > 0 && b.stato === "attivo";
+  }).length;
+
+  const mezziScadenze: { mezzo: typeof mockMezzi[0]; tipo_scad: string; data: string; stato: string }[] = [];
+  const mezziPool = filterCantiere === "tutti" ? mockMezzi : mockMezzi.filter((m) => m.cantiere_id === filterCantiere);
+  mezziPool.forEach((m) => {
+    const checks = [
+      { label: "Revisione", date: m.data_prossima_revisione },
+      { label: "Manutenzione", date: m.data_prossima_manutenzione },
+      { label: "Assicurazione", date: m.scadenza_assicurazione },
+      ...(m.scadenza_collaudo ? [{ label: "Collaudo", date: m.scadenza_collaudo }] : []),
+    ];
+    checks.forEach((c) => {
+      const s = getScadenzaStatus(c.date);
+      if (s !== "valido") mezziScadenze.push({ mezzo: m, tipo_scad: c.label, data: c.date, stato: s });
+    });
+  });
+  const mezziConScadenze = new Set(mezziScadenze.map((ms) => ms.mezzo.id)).size;
+
+  const scadenzeFiltered = filterCantiere === "tutti" ? mockScadenze : mockScadenze.filter((s) => {
+    const c = mockCantieri.find((c) => c.nome === s.cantiere || c.id === filterCantiere);
+    return c && c.id === filterCantiere;
+  });
+
+  const accessiFiltered = filterCantiere === "tutti" ? mockAccessi : mockAccessi.filter((a) => a.cantiere_id === filterCantiere);
+
+  const statCards = [
+    { label: "Cantieri attivi", value: cantieriFiltered.length, icon: Building2, href: "/app/cantieri" },
+    { label: "Documenti in scadenza", value: dashboardStats.documentiInScadenza, icon: AlertTriangle, href: "/app/scadenze", accent: true },
+    { label: "Accessi oggi", value: accessiFiltered.length, icon: ShieldCheck, href: "/app/accessi" },
+    { label: "Subappaltatori con problemi", value: dashboardStats.subAppConProblemi, icon: Building, href: "/app/subappaltatori" },
+    { label: "Badge in scadenza", value: badgeInScadenza, icon: IdCard, href: "/app/badge" },
+    { label: "Mezzi con scadenze", value: mezziConScadenze, icon: Truck, href: "/app/mezzi", accent: mezziConScadenze > 0 },
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="font-heading font-bold text-xl sm:text-2xl text-foreground">Dashboard</h1>
+        <Select value={filterCantiere} onValueChange={setFilterCantiere}>
+          <SelectTrigger className="w-52"><SelectValue placeholder="Filtra cantiere" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+            {mockCantieri.map((c) => (
+              <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <ScadenzaAlert count={dashboardStats.documentiInScadenza} scadutiCount={dashboardStats.documentiScaduti} />
@@ -84,7 +106,7 @@ export default function Dashboard() {
       <section>
         <h2 className="font-heading font-semibold text-lg text-foreground mb-3">Cantieri attivi</h2>
         <div className="grid gap-3 sm:grid-cols-2">
-          {mockCantieri.map((c) => (
+          {cantieriFiltered.map((c) => (
             <CantiereSummaryCard key={c.id} id={c.id} nome={c.nome} comune={c.comune} stato={c.stato} lavoratoriCount={c.lavoratori_count} documentiOk={c.documenti_ok} documentiTotali={c.documenti_totali} />
           ))}
         </div>
@@ -98,7 +120,7 @@ export default function Dashboard() {
           </Button>
         </div>
         <div className="border border-border rounded-lg divide-y divide-border">
-          {mockScadenze.slice(0, 4).map((s) => (
+          {scadenzeFiltered.slice(0, 4).map((s) => (
             <div key={s.id} className="flex items-center justify-between px-4 py-3">
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{s.categoria}</p>
@@ -151,7 +173,7 @@ export default function Dashboard() {
           </Button>
         </div>
         <div className="border border-border rounded-lg divide-y divide-border">
-          {mockAccessi.map((a) => (
+          {accessiFiltered.map((a) => (
             <div key={a.id} className="flex items-center justify-between px-4 py-3">
               <div>
                 <p className="text-sm font-medium text-foreground">{a.lavoratore_nome}</p>

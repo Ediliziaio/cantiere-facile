@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mockScadenze } from "@/data/mock-data";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { mockScadenze, mockCantieri } from "@/data/mock-data";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import type { DocumentoStato } from "@/data/mock-data";
 
@@ -9,16 +10,22 @@ type FilterRange = "tutti" | "oggi" | "7gg" | "30gg" | "scaduto";
 
 export default function Scadenze() {
   const [range, setRange] = useState<FilterRange>("tutti");
+  const [filterCantiere, setFilterCantiere] = useState("tutti");
   const today = new Date();
+
+  const cantieriNames = [...new Set(mockScadenze.map((s) => s.cantiere))].sort();
 
   const filtered = mockScadenze.filter((s) => {
     const scad = new Date(s.data_scadenza);
     const diff = Math.ceil((scad.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    if (range === "oggi") return diff <= 0 && diff >= -1;
-    if (range === "7gg") return diff <= 7 && diff > 0;
-    if (range === "30gg") return diff <= 30 && diff > 0;
-    if (range === "scaduto") return diff < 0;
-    return true;
+    const matchRange = range === "tutti" ? true
+      : range === "oggi" ? diff <= 0 && diff >= -1
+      : range === "7gg" ? diff <= 7 && diff > 0
+      : range === "30gg" ? diff <= 30 && diff > 0
+      : range === "scaduto" ? diff < 0
+      : true;
+    const matchCantiere = filterCantiere === "tutti" || s.cantiere === filterCantiere;
+    return matchRange && matchCantiere;
   });
 
   const ranges: { key: FilterRange; label: string }[] = [
@@ -36,14 +43,25 @@ export default function Scadenze() {
         <h1 className="font-heading font-bold text-2xl text-foreground">Scadenze</h1>
       </div>
 
-      <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
-        <div className="flex gap-1 w-max">
-          {ranges.map((r) => (
-            <Button key={r.key} variant={range === r.key ? "default" : "outline"} size="sm" onClick={() => setRange(r.key)} className="text-xs whitespace-nowrap">
-              {r.label}
-            </Button>
-          ))}
+      <div className="flex flex-wrap gap-3 items-center">
+        <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+          <div className="flex gap-1 w-max">
+            {ranges.map((r) => (
+              <Button key={r.key} variant={range === r.key ? "default" : "outline"} size="sm" onClick={() => setRange(r.key)} className="text-xs whitespace-nowrap">
+                {r.label}
+              </Button>
+            ))}
+          </div>
         </div>
+        <Select value={filterCantiere} onValueChange={setFilterCantiere}>
+          <SelectTrigger className="w-52"><SelectValue placeholder="Cantiere" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+            {cantieriNames.map((name) => (
+              <SelectItem key={name} value={name}>{name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="border border-border rounded-lg divide-y divide-border">
