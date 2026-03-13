@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { CalendarDayData, CalendarAppuntamento } from "@/data/mock-calendar";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Users, AlertTriangle, Building2, CalendarCheck, Plus, Clock, MapPin, Pencil, Trash2 } from "lucide-react";
@@ -164,10 +165,17 @@ export function CalendarDayDetail({ date, data, onAddAppuntamento, onEditAppunta
                                 </span>
                               )}
                               {app.indirizzo && (
-                                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(app.indirizzo)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline hover:text-primary transition-colors">
-                                  <MapPin className="w-3 h-3" />
-                                  {app.indirizzo}
-                                </a>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(app.indirizzo)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline hover:text-primary transition-colors">
+                                        <MapPin className="w-3 h-3" />
+                                        {app.indirizzo}
+                                      </a>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Apri in Google Maps</TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                               )}
                             </div>
                             {app.assegnato_a.length > 0 && (

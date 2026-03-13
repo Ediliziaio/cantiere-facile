@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { type CalendarDayData } from "@/data/mock-calendar";
 import { Users, AlertTriangle, CalendarCheck, Clock, MapPin, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -109,7 +110,14 @@ export function WeekView({ weekStart, data, selectedDate, onSelectDate }: WeekVi
                         {app.indirizzo && (
                           <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <MapPin className="w-3 h-3 shrink-0" />
-                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(app.indirizzo)}`} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(app.indirizzo)}`} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
+                                </TooltipTrigger>
+                                <TooltipContent>Apri in Google Maps</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </div>
                         )}
                         {app.assegnato_a.length > 0 && (
