@@ -58,7 +58,7 @@ const menuGroups = [
 export function MobileBottomNav() {
   const [open, setOpen] = useState(false);
   const { effectiveRole } = useAuth();
-  const isManager = effectiveRole === "manager";
+  const isAdminOrAbove = effectiveRole === "admin" || effectiveRole === "superadmin" || !effectiveRole;
 
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card safe-area-bottom touch-manipulation">
