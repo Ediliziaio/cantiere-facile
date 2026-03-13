@@ -35,19 +35,26 @@ const comparators: Record<BillingSortKey, (a: MockInvoice, b: MockInvoice) => nu
 
 export default function SuperAdminBilling() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [filterTenant, setFilterTenant] = useState<string>("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const m = mockBillingMetrics;
 
+  const tenantNames = useMemo(() => {
+    const names = new Set(mockInvoices.map((i) => i.tenant_name));
+    return Array.from(names).sort();
+  }, []);
+
   const filteredInvoices = useMemo(() =>
     mockInvoices.filter((i) => {
       const matchStatus = statusFilter === "all" || i.stato === statusFilter;
+      const matchTenant = filterTenant === "all" || i.tenant_name === filterTenant;
       const invDate = new Date(i.data_emissione);
       const matchFrom = !dateFrom || invDate >= new Date(dateFrom);
       const matchTo = !dateTo || invDate <= new Date(dateTo + "T23:59:59");
-      return matchStatus && matchFrom && matchTo;
+      return matchStatus && matchTenant && matchFrom && matchTo;
     }),
-    [statusFilter, dateFrom, dateTo]);
+    [statusFilter, filterTenant, dateFrom, dateTo]);
 
   const exportCsv = () => {
     const headers = "N° Fattura,Azienda,Descrizione,Data Emissione,Totale,Stato\n";
