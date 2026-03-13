@@ -14,6 +14,7 @@ interface NuovoAppuntamentoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultDate?: string; // YYYY-MM-DD
+  defaultOraInizio?: string; // HH:MM
   onSave: (app: CalendarAppuntamento) => void;
   editAppuntamento?: CalendarAppuntamento | null;
 }
