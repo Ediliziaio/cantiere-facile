@@ -203,7 +203,7 @@ export default function Calendario() {
           <ToggleGroup
             type="single"
             value={viewMode}
-            onValueChange={(v) => { if (v) setViewMode(v as "month" | "week"); }}
+            onValueChange={(v) => { if (v) setViewMode(v as "month" | "week" | "day"); }}
             className="border border-border rounded-md"
           >
             <ToggleGroupItem value="month" aria-label="Vista mensile" className="h-8 px-2.5">
@@ -211,6 +211,9 @@ export default function Calendario() {
             </ToggleGroupItem>
             <ToggleGroupItem value="week" aria-label="Vista settimanale" className="h-8 px-2.5">
               <List className="h-4 w-4" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="day" aria-label="Vista giornaliera" className="h-8 px-2.5">
+              <Clock className="h-4 w-4" />
             </ToggleGroupItem>
           </ToggleGroup>
           <Button onClick={() => { setEditingAppuntamento(null); setDialogOpen(true); }} size="sm" className="gap-1.5">
