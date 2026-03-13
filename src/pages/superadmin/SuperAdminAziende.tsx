@@ -9,6 +9,8 @@ import { Progress } from "@/components/ui/progress";
 import { mockTenantsAll } from "@/data/mock-superadmin";
 import { TenantStatusBadge } from "@/components/layout/TenantStatusBadge";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePagination } from "@/hooks/usePagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const planBadgeVariant: Record<string, "outline" | "default" | "secondary"> = {
   free: "outline",
@@ -34,6 +36,8 @@ export default function SuperAdminAziende() {
     t.nome_azienda.toLowerCase().includes(search.toLowerCase()) ||
     t.p_iva.includes(search)
   );
+
+  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filtered, 10);
 
   const totale = mockTenantsAll.length;
   const attive = mockTenantsAll.filter(t => t.stato === "attivo").length;
@@ -101,7 +105,7 @@ export default function SuperAdminAziende() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {filtered.map((t) => (
+            {paginatedItems.map((t) => (
               <tr key={t.id} className="hover:bg-muted/20 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2.5">
@@ -149,7 +153,7 @@ export default function SuperAdminAziende() {
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
-        {filtered.map((t) => (
+        {paginatedItems.map((t) => (
           <Card key={t.id}>
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center justify-between">
@@ -186,6 +190,22 @@ export default function SuperAdminAziende() {
           </Card>
         ))}
       </div>
+
+      {/* Pagination */}
+      {showPagination && (
+        <div className="flex items-center justify-between gap-3 text-sm">
+          <span className="text-xs text-muted-foreground">{from}–{to} di {total} risultati</span>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={prevPage} disabled={page === 1}>
+              <ChevronLeft className="h-4 w-4 mr-1" /> Precedente
+            </Button>
+            <span className="text-xs text-muted-foreground">Pagina {page} di {totalPages}</span>
+            <Button variant="outline" size="sm" onClick={nextPage} disabled={page === totalPages}>
+              Successivo <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

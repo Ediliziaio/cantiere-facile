@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { mockSecurityAuditLogs } from "@/data/mock-security";
 import { useToast } from "@/hooks/use-toast";
+import { usePagination } from "@/hooks/usePagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const severityColors: Record<string, string> = {
   info: "bg-muted text-muted-foreground",
@@ -28,6 +30,8 @@ export default function SuperAdminAuditLog() {
     const matchSeverity = filterSeverity === "all" || log.severity === filterSeverity;
     return matchSearch && matchSeverity;
   });
+
+  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filtered, 15);
 
   const exportCsv = () => {
     const headers = "Timestamp,Attore,Azione,Risorsa,Tenant,Severity,IP,Hash\n";
@@ -94,7 +98,7 @@ export default function SuperAdminAuditLog() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filtered.map((log) => (
+              {paginatedItems.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
                     {new Date(log.timestamp).toLocaleString("it-IT")}
@@ -141,7 +145,7 @@ export default function SuperAdminAuditLog() {
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
-        {filtered.map((log) => (
+        {paginatedItems.map((log) => (
           <div key={log.id} className="border border-border rounded-lg p-4 space-y-2">
             <div className="flex items-center justify-between">
               <Badge variant="outline" className={`text-[10px] ${severityColors[log.severity]}`}>
@@ -163,6 +167,22 @@ export default function SuperAdminAuditLog() {
           <p className="text-center text-muted-foreground py-8">Nessun log trovato</p>
         )}
       </div>
+
+      {/* Pagination */}
+      {showPagination && (
+        <div className="flex items-center justify-between gap-3 text-sm">
+          <span className="text-xs text-muted-foreground">{from}–{to} di {total} risultati</span>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={prevPage} disabled={page === 1}>
+              <ChevronLeft className="h-4 w-4 mr-1" /> Precedente
+            </Button>
+            <span className="text-xs text-muted-foreground">Pagina {page} di {totalPages}</span>
+            <Button variant="outline" size="sm" onClick={nextPage} disabled={page === totalPages}>
+              Successivo <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <p className="text-xs text-muted-foreground">
         {filtered.length} di {mockSecurityAuditLogs.length} eventi • Append-only • Retention: 7 anni • Hash chain SHA-256

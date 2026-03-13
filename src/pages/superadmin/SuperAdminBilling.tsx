@@ -4,12 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TrendingUp, TrendingDown, DollarSign, Users, AlertTriangle, Receipt, FileText, CreditCard } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Users, AlertTriangle, Receipt, FileText, CreditCard, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import {
   mockBillingMetrics, mockRevenueTrend, mockPlanDistribution, mockInvoices, type MockInvoice,
 } from "@/data/mock-billing";
+import { usePagination } from "@/hooks/usePagination";
 
 const invoiceStatusMap: Record<MockInvoice["stato"], { label: string; variant: "default" | "destructive" | "secondary" | "outline" }> = {
   pagata: { label: "Pagata", variant: "default" },
@@ -25,6 +26,8 @@ export default function SuperAdminBilling() {
   const filteredInvoices = statusFilter === "all"
     ? mockInvoices
     : mockInvoices.filter((i) => i.stato === statusFilter);
+
+  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filteredInvoices, 10);
 
   const kpis = [
     { label: "MRR", value: `€${m.mrr.toLocaleString("it-IT")}`, icon: DollarSign, trend: "+5.7%", up: true },
@@ -159,7 +162,7 @@ export default function SuperAdminBilling() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredInvoices.map((inv) => {
+                {paginatedItems.map((inv) => {
                   const st = invoiceStatusMap[inv.stato];
                   return (
                     <TableRow key={inv.id}>
@@ -188,7 +191,7 @@ export default function SuperAdminBilling() {
 
           {/* Mobile cards */}
           <div className="md:hidden space-y-3">
-            {filteredInvoices.map((inv) => {
+            {paginatedItems.map((inv) => {
               const st = invoiceStatusMap[inv.stato];
               return (
                 <div key={inv.id} className="border border-border rounded-lg p-3 space-y-2">
@@ -216,6 +219,22 @@ export default function SuperAdminBilling() {
               );
             })}
           </div>
+
+          {/* Pagination */}
+          {showPagination && (
+            <div className="flex items-center justify-between gap-3 text-sm mt-4">
+              <span className="text-xs text-muted-foreground">{from}–{to} di {total} risultati</span>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={prevPage} disabled={page === 1}>
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Precedente
+                </Button>
+                <span className="text-xs text-muted-foreground">Pagina {page} di {totalPages}</span>
+                <Button variant="outline" size="sm" onClick={nextPage} disabled={page === totalPages}>
+                  Successivo <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
