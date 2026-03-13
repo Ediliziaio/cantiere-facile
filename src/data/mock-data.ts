@@ -501,6 +501,21 @@ export const mockUtentiAzienda: UtenteAzienda[] = [
     email: "r.conti@rossicostruzioni.it", ruolo: "admin", stato: "disabilitato",
     ultimo_accesso: "2026-01-20T09:45:00", cantieri_assegnati: [],
   },
+  {
+    id: "ua6", tenant_id: "t1", nome: "Marco", cognome: "Rossi",
+    email: "m.rossi@rossicostruzioni.it", ruolo: "utente", stato: "attivo",
+    ultimo_accesso: "2026-03-11T07:30:00", cantieri_assegnati: ["c1"],
+  },
+  {
+    id: "ua7", tenant_id: "t1", nome: "Luca", cognome: "Ferrari",
+    email: "l.ferrari@rossicostruzioni.it", ruolo: "utente", stato: "attivo",
+    ultimo_accesso: "2026-03-10T08:00:00", cantieri_assegnati: ["c1"],
+  },
+  {
+    id: "ua8", tenant_id: "t1", nome: "Paolo", cognome: "Neri",
+    email: "p.neri@rossicostruzioni.it", ruolo: "utente", stato: "attivo",
+    ultimo_accesso: "2026-03-09T08:15:00", cantieri_assegnati: ["c2"],
+  },
 ];
 
 export type LogTipoAzione = "login" | "modifica" | "upload" | "creazione" | "eliminazione" | "invito";
