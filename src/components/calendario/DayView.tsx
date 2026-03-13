@@ -212,7 +212,6 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
             </div>
           </CardContent>
         </Card>
-      )}
     </div>
   );
 }
