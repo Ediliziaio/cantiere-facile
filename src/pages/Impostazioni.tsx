@@ -762,8 +762,6 @@ export default function Impostazioni() {
         </DialogContent>
       </Dialog>
 
-      {/* Tab Preferenze Notifiche */}
-      <NotificationPreferencesTab />
     </div>
   );
 }
