@@ -2,13 +2,14 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { CalendarDayDetail } from "@/components/dashboard/CalendarDayDetail";
 import { MonthGrid } from "@/components/calendario/MonthGrid";
 import { WeekView } from "@/components/calendario/WeekView";
+import { DayView } from "@/components/calendario/DayView";
 import { NuovoAppuntamentoDialog } from "@/components/calendario/NuovoAppuntamentoDialog";
 import { buildCalendarData, mockAppuntamenti, type CalendarDayData, type CalendarAppuntamento } from "@/data/mock-calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { CalendarDays, ChevronLeft, ChevronRight, Plus, Bell, Grid3X3, List } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, Bell, Grid3X3, List, Clock } from "lucide-react";
 import { mockCantieri } from "@/data/mock-data";
 import { toast } from "sonner";
 
