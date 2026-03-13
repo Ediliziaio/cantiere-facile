@@ -69,6 +69,7 @@ export default function Timbrature() {
   const [filtroTipo, setFiltroTipo] = useState("tutti");
   const [filtroData, setFiltroData] = useState<Date | undefined>(undefined);
   const [searchLav, setSearchLav] = useState("");
+  const [vista, setVista] = useState<"log" | "riepilogo">("log");
 
   const sorted = useMemo(() => [...mockTimbrature].sort((a, b) => b.timestamp.localeCompare(a.timestamp)), []);
 
