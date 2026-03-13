@@ -157,6 +157,7 @@ export default function CheckIn() {
           lat: geo.position?.lat || null,
           lng: geo.position?.lng || null,
           accuracy: geo.position?.accuracy || null,
+          distance: geofence.distance,
           verification_method: method === "auto_gps" ? "auto_gps" : method === "qr_scan" ? "qr_scan" : "manual",
           note: method === "manual" ? manualNote : undefined,
           server_validated: false,
@@ -170,8 +171,12 @@ export default function CheckIn() {
 
       vibrateCheckOut();
 
+      const posDesc = geo.position
+        ? `${geo.position.lat.toFixed(4)}°N, ${geo.position.lng.toFixed(4)}°E (±${Math.round(geo.position.accuracy)}m)${geofence.distance !== null ? ` — a ${geofence.distance}m dal cantiere` : ""}`
+        : "Posizione non disponibile";
+
       toast.success("Uscita registrata", {
-        description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`,
+        description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}\n📍 ${posDesc}`,
       });
 
       setTimeout(() => {
