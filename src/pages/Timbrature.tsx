@@ -4,9 +4,8 @@ import { mockTimbrature, mockBadges } from "@/data/mock-badges";
 import { mockCantieri, mockLavoratori } from "@/data/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Download, Search, IdCard, Clock } from "lucide-react";
+import { Download, Search, IdCard, Clock, Coffee, Play } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -19,24 +18,54 @@ const esitoColors: Record<string, string> = {
   bloccato: "border-l-red-500",
 };
 
+const tipoLabels: Record<string, { icon: React.ReactNode; label: string }> = {
+  entrata: { icon: <span>↗</span>, label: "Entrata" },
+  uscita: { icon: <span>↙</span>, label: "Uscita" },
+  pausa_inizio: { icon: <Coffee className="inline h-3 w-3" />, label: "Pausa" },
+  pausa_fine: { icon: <Play className="inline h-3 w-3" />, label: "Fine pausa" },
+};
+
 function calcOreLavorate(timbrature: typeof mockTimbrature, lavoratoreId: string, dateStr: string) {
   const dayTs = timbrature
     .filter((t) => t.lavoratore_id === lavoratoreId && t.timestamp.startsWith(dateStr))
     .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+
   let totalMinutes = 0;
-  for (let i = 0; i < dayTs.length - 1; i += 2) {
-    if (dayTs[i].tipo === "entrata" && dayTs[i + 1]?.tipo === "uscita") {
-      const enter = new Date(dayTs[i].timestamp).getTime();
-      const exit = new Date(dayTs[i + 1].timestamp).getTime();
-      totalMinutes += (exit - enter) / 60000;
+  let activeStart: Date | null = null;
+
+  for (const t of dayTs) {
+    const time = new Date(t.timestamp);
+    if (t.tipo === "entrata" || t.tipo === "pausa_fine") {
+      if (!activeStart) activeStart = time;
+    } else if (t.tipo === "pausa_inizio" || t.tipo === "uscita") {
+      if (activeStart) {
+        totalMinutes += (time.getTime() - activeStart.getTime()) / 60000;
+        activeStart = null;
+      }
     }
   }
   return totalMinutes;
 }
 
+function calcDurataPausa(timbrature: typeof mockTimbrature, lavoratoreId: string, dateStr: string, pausaTimestamp: string) {
+  const dayTs = timbrature
+    .filter((t) => t.lavoratore_id === lavoratoreId && t.timestamp.startsWith(dateStr))
+    .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+
+  const idx = dayTs.findIndex((t) => t.timestamp === pausaTimestamp && t.tipo === "pausa_inizio");
+  if (idx >= 0) {
+    const fine = dayTs.slice(idx + 1).find((t) => t.tipo === "pausa_fine");
+    if (fine) {
+      return Math.round((new Date(fine.timestamp).getTime() - new Date(pausaTimestamp).getTime()) / 60000);
+    }
+  }
+  return 0;
+}
+
 export default function Timbrature() {
   const [filtroEsito, setFiltroEsito] = useState("tutti");
   const [filtroCantiere, setFiltroCantiere] = useState("tutti");
+  const [filtroTipo, setFiltroTipo] = useState("tutti");
   const [filtroData, setFiltroData] = useState<Date | undefined>(undefined);
   const [searchLav, setSearchLav] = useState("");
 
@@ -46,6 +75,11 @@ export default function Timbrature() {
     return sorted.filter((t) => {
       if (filtroEsito !== "tutti" && t.esito !== filtroEsito) return false;
       if (filtroCantiere !== "tutti" && t.cantiere_id !== filtroCantiere) return false;
+      if (filtroTipo !== "tutti") {
+        if (filtroTipo === "pause") {
+          if (t.tipo !== "pausa_inizio" && t.tipo !== "pausa_fine") return false;
+        } else if (t.tipo !== filtroTipo) return false;
+      }
       if (filtroData) {
         const dateStr = format(filtroData, "yyyy-MM-dd");
         if (!t.timestamp.startsWith(dateStr)) return false;
@@ -56,15 +90,15 @@ export default function Timbrature() {
       }
       return true;
     });
-  }, [sorted, filtroEsito, filtroCantiere, filtroData, searchLav]);
+  }, [sorted, filtroEsito, filtroCantiere, filtroTipo, filtroData, searchLav]);
 
   const today = "2026-03-10";
   const todayTs = sorted.filter((t) => t.timestamp.startsWith(today));
   const presenti = new Set(todayTs.filter((t) => t.tipo === "entrata").map((t) => t.lavoratore_id)).size;
   const ingressi = todayTs.filter((t) => t.tipo === "entrata").length;
   const bloccati = todayTs.filter((t) => t.esito === "bloccato").length;
+  const pauseOggi = todayTs.filter((t) => t.tipo === "pausa_inizio").length;
 
-  // Calculate total hours for filtered set
   const oreTotali = useMemo(() => {
     const dayWorkerPairs = new Set<string>();
     let total = 0;
@@ -91,7 +125,7 @@ export default function Timbrature() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="border border-border rounded-lg p-4 text-center">
           <p className="font-heading font-bold text-2xl text-foreground">{presenti}</p>
           <p className="text-xs text-muted-foreground">Presenti oggi</p>
@@ -105,9 +139,14 @@ export default function Timbrature() {
           <p className="text-xs text-muted-foreground">Bloccati oggi</p>
         </div>
         <div className="border border-border rounded-lg p-4 text-center">
+          <Coffee className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
+          <p className="font-heading font-bold text-2xl text-foreground">{pauseOggi}</p>
+          <p className="text-xs text-muted-foreground">Pause oggi</p>
+        </div>
+        <div className="border border-border rounded-lg p-4 text-center">
           <Clock className="h-4 w-4 text-primary mx-auto mb-1" />
           <p className="font-heading font-bold text-2xl text-foreground">{oreTotali}h</p>
-          <p className="text-xs text-muted-foreground">Ore (filtro attivo)</p>
+          <p className="text-xs text-muted-foreground">Ore nette (filtro)</p>
         </div>
       </div>
 
@@ -136,6 +175,15 @@ export default function Timbrature() {
               {mockCantieri.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+            <SelectTrigger className="w-full sm:w-40"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti i tipi</SelectItem>
+              <SelectItem value="entrata">↗ Entrata</SelectItem>
+              <SelectItem value="uscita">↙ Uscita</SelectItem>
+              <SelectItem value="pause">☕ Pause</SelectItem>
+            </SelectContent>
+          </Select>
           <Select value={filtroEsito} onValueChange={setFiltroEsito}>
             <SelectTrigger className="w-full sm:w-40"><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -158,6 +206,8 @@ export default function Timbrature() {
           const badge = getBadgeForLav(t.lavoratore_id);
           const dateStr = t.timestamp.substring(0, 10);
           const ore = t.tipo === "uscita" ? calcOreLavorate(mockTimbrature, t.lavoratore_id, dateStr) : 0;
+          const pausaDurata = t.tipo === "pausa_inizio" ? calcDurataPausa(mockTimbrature, t.lavoratore_id, dateStr, t.timestamp) : 0;
+          const tipoInfo = tipoLabels[t.tipo] || tipoLabels.entrata;
 
           return (
             <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
@@ -166,12 +216,13 @@ export default function Timbrature() {
                   {lav ? `${lav.nome} ${lav.cognome}` : "—"}
                   <span className="font-normal text-muted-foreground ml-1.5 text-xs">{lav?.mansione}</span>
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {t.tipo === "entrata" ? "↗ Entrata" : "↙ Uscita"} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", {
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  {tipoInfo.icon} {tipoInfo.label} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", {
                     day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
                   })}
                   {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
-                  {t.tipo === "uscita" && ore > 0 && ` · ${Math.floor(ore / 60)}h ${Math.round(ore % 60)}m lavorati`}
+                  {t.tipo === "uscita" && ore > 0 && ` · ${Math.floor(ore / 60)}h ${Math.round(ore % 60)}m netti`}
+                  {t.tipo === "pausa_inizio" && pausaDurata > 0 && ` · ${pausaDurata}min`}
                 </p>
                 {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
               </div>

@@ -181,6 +181,57 @@ function generateTimbrature(): Timbratura[] {
       });
 
       if (esito !== "bloccato") {
+        // Pausa pranzo (~12:30-13:15)
+        const pausaPranzoInizio = 12 + Math.floor(Math.random() * 1);
+        const pausaPranzoIMin = 15 + Math.floor(Math.random() * 30);
+        const pausaPranzoFineMin = pausaPranzoIMin + 30 + Math.floor(Math.random() * 20);
+        const pausaPranzoFineH = pausaPranzoInizio + Math.floor(pausaPranzoFineMin / 60);
+        const pausaPranzoFineM = pausaPranzoFineMin % 60;
+        const metodoDay = Math.random() > 0.3 ? "qr_scan" as const : "manuale" as const;
+
+        result.push({
+          id: `tim${id++}`, tenant_id: "t1", badge_id: w.bid,
+          lavoratore_id: w.lid, cantiere_id: w.cid, tipo: "pausa_inizio",
+          timestamp: ts(pausaPranzoInizio, pausaPranzoIMin),
+          latitudine: lat, longitudine: lon,
+          metodo: metodoDay, preposto_id: null,
+          esito: "autorizzato", motivo_blocco: null,
+          created_at: ts(pausaPranzoInizio, pausaPranzoIMin),
+        });
+        result.push({
+          id: `tim${id++}`, tenant_id: "t1", badge_id: w.bid,
+          lavoratore_id: w.lid, cantiere_id: w.cid, tipo: "pausa_fine",
+          timestamp: ts(pausaPranzoFineH, pausaPranzoFineM),
+          latitudine: lat, longitudine: lon,
+          metodo: metodoDay, preposto_id: null,
+          esito: "autorizzato", motivo_blocco: null,
+          created_at: ts(pausaPranzoFineH, pausaPranzoFineM),
+        });
+
+        // Pausa breve occasionale (~10:00-10:15)
+        if (day % 3 === 0) {
+          const pausaBreveH = 9 + Math.floor(Math.random() * 2);
+          const pausaBreveM = Math.floor(Math.random() * 30);
+          result.push({
+            id: `tim${id++}`, tenant_id: "t1", badge_id: w.bid,
+            lavoratore_id: w.lid, cantiere_id: w.cid, tipo: "pausa_inizio",
+            timestamp: ts(pausaBreveH, pausaBreveM),
+            latitudine: lat, longitudine: lon,
+            metodo: metodoDay, preposto_id: null,
+            esito: "autorizzato", motivo_blocco: null,
+            created_at: ts(pausaBreveH, pausaBreveM),
+          });
+          result.push({
+            id: `tim${id++}`, tenant_id: "t1", badge_id: w.bid,
+            lavoratore_id: w.lid, cantiere_id: w.cid, tipo: "pausa_fine",
+            timestamp: ts(pausaBreveH, pausaBreveM + 10 + Math.floor(Math.random() * 10)),
+            latitudine: lat, longitudine: lon,
+            metodo: metodoDay, preposto_id: null,
+            esito: "autorizzato", motivo_blocco: null,
+            created_at: ts(pausaBreveH, pausaBreveM + 10 + Math.floor(Math.random() * 10)),
+          });
+        }
+
         const exitLat = baseLat + (Math.random() - 0.5) * 0.0008;
         const exitLon = baseLon + (Math.random() - 0.5) * 0.0008;
         result.push({
@@ -189,8 +240,8 @@ function generateTimbrature(): Timbratura[] {
           timestamp: ts(exitHour, exitMin),
           latitudine: exitLat,
           longitudine: exitLon,
-          metodo: Math.random() > 0.3 ? "qr_scan" : "manuale",
-          preposto_id: "l1", esito: "autorizzato", motivo_blocco: null,
+          metodo: metodoDay, preposto_id: "l1",
+          esito: "autorizzato", motivo_blocco: null,
           created_at: ts(exitHour, exitMin),
         });
       }
