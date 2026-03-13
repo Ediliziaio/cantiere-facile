@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import { permissionMatrix, type SuperAdminRole } from "@/data/mock-security";
 
-export type UserRole = "superadmin" | "admin" | "manager";
+export type UserRole = "superadmin" | "admin" | "manager" | "utente";
 
 interface AuthUser {
   id: string;

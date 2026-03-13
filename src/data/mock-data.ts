@@ -6,6 +6,16 @@ export const mockTenant = {
   p_iva: "IT01234567890",
   email_admin: "admin@rossicostruzioni.it",
   piano: "pro" as const,
+  telefono: "+39 02 9876543",
+  pec: "rossicostruzioni@pec.it",
+  codice_sdi: "M5UXCR1",
+  indirizzo_sede_legale: "Via Manzoni 45, 20121 Milano (MI)",
+  codice_ateco: "41.20.00 — Costruzione di edifici residenziali e non",
+  ccnl: "CCNL Edilizia Industria",
+  responsabile_legale: "Ing. Giovanni Rossi",
+  data_iscrizione: "2025-06-15",
+  cantieri_attivi: 2,
+  lavoratori_totali: 30,
 };
 
 export const mockCantieri = [
@@ -450,7 +460,7 @@ export function getScadenzaStatus(dateStr: string): "valido" | "in_scadenza" | "
   return "valido";
 }
 
-export type UtenteRuolo = "admin" | "manager";
+export type UtenteRuolo = "admin" | "manager" | "utente";
 export type UtenteStato = "attivo" | "invitato" | "disabilitato";
 
 export interface UtenteAzienda {
@@ -490,6 +500,21 @@ export const mockUtentiAzienda: UtenteAzienda[] = [
     id: "ua5", tenant_id: "t1", nome: "Roberto", cognome: "Conti",
     email: "r.conti@rossicostruzioni.it", ruolo: "admin", stato: "disabilitato",
     ultimo_accesso: "2026-01-20T09:45:00", cantieri_assegnati: [],
+  },
+  {
+    id: "ua6", tenant_id: "t1", nome: "Marco", cognome: "Rossi",
+    email: "m.rossi@rossicostruzioni.it", ruolo: "utente", stato: "attivo",
+    ultimo_accesso: "2026-03-11T07:30:00", cantieri_assegnati: ["c1"],
+  },
+  {
+    id: "ua7", tenant_id: "t1", nome: "Luca", cognome: "Ferrari",
+    email: "l.ferrari@rossicostruzioni.it", ruolo: "utente", stato: "attivo",
+    ultimo_accesso: "2026-03-10T08:00:00", cantieri_assegnati: ["c1"],
+  },
+  {
+    id: "ua8", tenant_id: "t1", nome: "Paolo", cognome: "Neri",
+    email: "p.neri@rossicostruzioni.it", ruolo: "utente", stato: "attivo",
+    ultimo_accesso: "2026-03-09T08:15:00", cantieri_assegnati: ["c2"],
   },
 ];
 
