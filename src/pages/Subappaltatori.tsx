@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
-import { Building, Search } from "lucide-react";
+import { Building, Search, Download } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mockSubappaltatori, mockCantieri } from "@/data/mock-data";
 import { ChecklistProgress } from "@/components/cantiere/ChecklistProgress";
+import { usePagination } from "@/hooks/usePagination";
+import { PaginationControls } from "@/components/superadmin/PaginationControls";
 
 export default function Subappaltatori() {
   const [search, setSearch] = useState("");
@@ -18,17 +21,37 @@ export default function Subappaltatori() {
     return matchSearch && matchCantiere && matchStato;
   });
 
+  const { paginatedItems, page, totalPages, from, to, total, perPage, setPerPage, nextPage, prevPage, showPagination } = usePagination(filtered, 10);
+
   const semaphore = (stato: string) => {
     if (stato === "completo") return "bg-success";
     if (stato === "in_scadenza") return "bg-warning";
     return "bg-destructive";
   };
 
+  const exportCsv = () => {
+    const header = "Ragione Sociale,Cantiere,Email Referente,Documenti OK,Documenti Totali,Stato";
+    const rows = filtered.map((s) => {
+      const cantiere = mockCantieri.find((c) => c.id === s.cantiere_id);
+      return `"${s.ragione_sociale}","${cantiere?.nome || ""}","${s.email_referente}",${s.documenti_ok},${s.documenti_totali},"${s.stato_documenti}"`;
+    });
+    const blob = new Blob([header + "\n" + rows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "subappaltatori.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Building className="h-5 w-5 text-primary" />
-        <h1 className="font-heading font-bold text-2xl text-foreground">Subappaltatori</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Building className="h-5 w-5 text-primary" />
+          <h1 className="font-heading font-bold text-2xl text-foreground">Subappaltatori</h1>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportCsv}>
+          <Download className="h-4 w-4 mr-1" /> CSV
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -57,8 +80,8 @@ export default function Subappaltatori() {
       </div>
 
       <div className="border border-border rounded-lg divide-y divide-border">
-        {filtered.length === 0 && <p className="p-6 text-sm text-muted-foreground text-center">Nessun subappaltatore trovato.</p>}
-        {filtered.map((s) => {
+        {paginatedItems.length === 0 && <p className="p-6 text-sm text-muted-foreground text-center">Nessun subappaltatore trovato.</p>}
+        {paginatedItems.map((s) => {
           const cantiere = mockCantieri.find((c) => c.id === s.cantiere_id);
           return (
             <Link key={s.id} to={`/app/subappaltatori/${s.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors">
@@ -74,6 +97,8 @@ export default function Subappaltatori() {
           );
         })}
       </div>
+
+      <PaginationControls from={from} to={to} total={total} page={page} totalPages={totalPages} perPage={perPage} setPerPage={setPerPage} nextPage={nextPage} prevPage={prevPage} showPagination={showPagination} />
     </div>
   );
 }
