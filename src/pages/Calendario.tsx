@@ -282,6 +282,7 @@ export default function Calendario() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         defaultDate={defaultDateStr}
+        defaultOraInizio={defaultOraInizio}
         onSave={handleSaveAppuntamento}
         editAppuntamento={editingAppuntamento}
       />

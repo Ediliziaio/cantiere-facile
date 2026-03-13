@@ -58,8 +58,10 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, defau
     setTitolo("");
     setDescrizione("");
     setData(defaultDate || "");
-    setOraInizio("09:00");
-    setOraFine("10:00");
+    const startH = defaultOraInizio || "09:00";
+    setOraInizio(startH);
+    const [h] = startH.split(":").map(Number);
+    setOraFine(`${String(h + 1).padStart(2, "0")}:00`);
     setCantiereId("nessuno");
     setIndirizzo("");
     setColore("blue");
