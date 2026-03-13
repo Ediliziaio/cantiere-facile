@@ -73,10 +73,10 @@ export default function SuperAdminSupporto() {
 
       <Tabs defaultValue="inbox">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="inbox" className="gap-1"><Inbox className="h-4 w-4" /> Inbox</TabsTrigger>
-          <TabsTrigger value="kanban" className="gap-1"><KanbanSquare className="h-4 w-4" /> Kanban</TabsTrigger>
-          <TabsTrigger value="analytics" className="gap-1"><BarChart3 className="h-4 w-4" /> Analytics</TabsTrigger>
-          <TabsTrigger value="kb" className="gap-1"><BookOpen className="h-4 w-4" /> Knowledge Base</TabsTrigger>
+          <TabsTrigger value="inbox" className="gap-1"><Inbox className="h-4 w-4" /><span className="hidden sm:inline"> Inbox</span></TabsTrigger>
+          <TabsTrigger value="kanban" className="gap-1"><KanbanSquare className="h-4 w-4" /><span className="hidden sm:inline"> Kanban</span></TabsTrigger>
+          <TabsTrigger value="analytics" className="gap-1"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline"> Analytics</span></TabsTrigger>
+          <TabsTrigger value="kb" className="gap-1"><BookOpen className="h-4 w-4" /><span className="hidden sm:inline"> Knowledge Base</span></TabsTrigger>
         </TabsList>
 
         {/* INBOX */}
@@ -111,7 +111,8 @@ export default function SuperAdminSupporto() {
             </Select>
           </div>
 
-          <div className="rounded-md border">
+          {/* Desktop table */}
+          <div className="rounded-md border hidden md:block">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -148,6 +149,32 @@ export default function SuperAdminSupporto() {
                 ))}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Mobile card layout */}
+          <div className="space-y-2 md:hidden">
+            {filtered.map((ticket) => (
+              <Card key={ticket.id} className="cursor-pointer hover:border-primary/40 transition-colors" onClick={() => setSelectedTicket(ticket)}>
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[10px] text-muted-foreground">{ticket.id}</span>
+                    <div className="flex items-center gap-1.5">
+                      <Badge className={`${priorityColors[ticket.priority]} text-[10px] px-1.5`}>{priorityLabels[ticket.priority]}</Badge>
+                      {ticket.sla_breached && <AlertTriangle className="h-3.5 w-3.5 text-destructive" />}
+                    </div>
+                  </div>
+                  <p className="text-sm font-medium text-foreground leading-tight">{ticket.subject}</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge className={`${statusColors[ticket.status]} text-[10px]`}>{statusLabels[ticket.status]}</Badge>
+                    <Badge variant="outline" className="text-[10px]">{categoryLabels[ticket.category]}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                    <span>{ticket.tenant_name}</span>
+                    <span>{new Date(ticket.updated_at).toLocaleDateString("it-IT")}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </TabsContent>
 
