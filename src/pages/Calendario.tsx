@@ -1,12 +1,14 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { CalendarDayDetail } from "@/components/dashboard/CalendarDayDetail";
 import { MonthGrid } from "@/components/calendario/MonthGrid";
+import { WeekView } from "@/components/calendario/WeekView";
 import { NuovoAppuntamentoDialog } from "@/components/calendario/NuovoAppuntamentoDialog";
 import { buildCalendarData, mockAppuntamenti, type CalendarDayData, type CalendarAppuntamento } from "@/data/mock-calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CalendarDays, ChevronLeft, ChevronRight, Plus, Bell } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, Bell, Grid3X3, List } from "lucide-react";
 import { mockCantieri } from "@/data/mock-data";
 import { toast } from "sonner";
 
@@ -14,6 +16,15 @@ const MONTH_NAMES = [
   "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
   "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre",
 ];
+
+function getMonday(d: Date): Date {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+  date.setDate(diff);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
 
 export default function Calendario() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date("2026-03-10"));
@@ -23,8 +34,8 @@ export default function Calendario() {
   const [extraAppuntamenti, setExtraAppuntamenti] = useState<CalendarAppuntamento[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAppuntamento, setEditingAppuntamento] = useState<CalendarAppuntamento | null>(null);
+  const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
-  // All appointments = mock + extra
   const allAppuntamenti = useMemo(() => [...mockAppuntamenti, ...extraAppuntamenti], [extraAppuntamenti]);
 
   const calendarData = useMemo(
@@ -42,7 +53,9 @@ export default function Calendario() {
     ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
     : undefined;
 
-  // 24h reminder: find upcoming appointments
+  const weekStart = useMemo(() => getMonday(selectedDate || new Date()), [selectedDate]);
+
+  // 24h reminder
   const upcomingAppointments = useMemo(() => {
     const now = new Date();
     const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -52,7 +65,6 @@ export default function Calendario() {
     });
   }, [allAppuntamenti]);
 
-  // Toast on mount if there are upcoming appointments
   useEffect(() => {
     if (upcomingAppointments.length > 0) {
       toast.info(`Hai ${upcomingAppointments.length} appuntament${upcomingAppointments.length === 1 ? "o" : "i"} nelle prossime 24 ore`, {
@@ -60,16 +72,32 @@ export default function Calendario() {
         duration: 6000,
       });
     }
-  }, []); // only on mount
+  }, []);
 
-  const goToPrevMonth = () => {
-    if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); }
-    else setCurrentMonth(currentMonth - 1);
+  const goToPrev = () => {
+    if (viewMode === "week") {
+      const prev = new Date(weekStart);
+      prev.setDate(prev.getDate() - 7);
+      setSelectedDate(prev);
+      setCurrentMonth(prev.getMonth());
+      setCurrentYear(prev.getFullYear());
+    } else {
+      if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); }
+      else setCurrentMonth(currentMonth - 1);
+    }
   };
 
-  const goToNextMonth = () => {
-    if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); }
-    else setCurrentMonth(currentMonth + 1);
+  const goToNext = () => {
+    if (viewMode === "week") {
+      const next = new Date(weekStart);
+      next.setDate(next.getDate() + 7);
+      setSelectedDate(next);
+      setCurrentMonth(next.getMonth());
+      setCurrentYear(next.getFullYear());
+    } else {
+      if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); }
+      else setCurrentMonth(currentMonth + 1);
+    }
   };
 
   const goToToday = () => {
@@ -79,9 +107,18 @@ export default function Calendario() {
     setSelectedDate(now);
   };
 
+  const headerLabel = useMemo(() => {
+    if (viewMode === "week") {
+      const end = new Date(weekStart);
+      end.setDate(end.getDate() + 6);
+      const fmt = (d: Date) => d.toLocaleDateString("it-IT", { day: "numeric", month: "short" });
+      return `${fmt(weekStart)} — ${fmt(end)} ${end.getFullYear()}`;
+    }
+    return `${MONTH_NAMES[currentMonth]} ${currentYear}`;
+  }, [viewMode, weekStart, currentMonth, currentYear]);
+
   const handleSaveAppuntamento = useCallback((app: CalendarAppuntamento) => {
     setExtraAppuntamenti((prev) => {
-      // If editing an existing extra appointment, replace it
       const existingIdx = prev.findIndex((a) => a.id === app.id);
       if (existingIdx >= 0) {
         const next = [...prev];
@@ -132,13 +169,13 @@ export default function Calendario() {
         <div className="flex items-center gap-3">
           <CalendarDays className="h-6 w-6 text-primary shrink-0" />
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={goToPrevMonth} className="h-8 w-8">
+            <Button variant="outline" size="icon" onClick={goToPrev} className="h-8 w-8">
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <h1 className="font-heading text-xl sm:text-2xl font-bold text-foreground min-w-[200px] text-center">
-              {MONTH_NAMES[currentMonth]} {currentYear}
+            <h1 className="font-heading text-lg sm:text-2xl font-bold text-foreground min-w-[200px] sm:min-w-[280px] text-center">
+              {headerLabel}
             </h1>
-            <Button variant="outline" size="icon" onClick={goToNextMonth} className="h-8 w-8">
+            <Button variant="outline" size="icon" onClick={goToNext} className="h-8 w-8">
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={goToToday} className="text-xs ml-1">
@@ -147,12 +184,25 @@ export default function Calendario() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <ToggleGroup
+            type="single"
+            value={viewMode}
+            onValueChange={(v) => { if (v) setViewMode(v as "month" | "week"); }}
+            className="border border-border rounded-md"
+          >
+            <ToggleGroupItem value="month" aria-label="Vista mensile" className="h-8 px-2.5">
+              <Grid3X3 className="h-4 w-4" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="week" aria-label="Vista settimanale" className="h-8 px-2.5">
+              <List className="h-4 w-4" />
+            </ToggleGroupItem>
+          </ToggleGroup>
           <Button onClick={() => { setEditingAppuntamento(null); setDialogOpen(true); }} size="sm" className="gap-1.5">
             <Plus className="h-4 w-4" />
-            Appuntamento
+            <span className="hidden sm:inline">Appuntamento</span>
           </Button>
           <Select value={filterCantiere} onValueChange={setFilterCantiere}>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-[180px] sm:w-[220px]">
               <SelectValue placeholder="Filtra cantiere" />
             </SelectTrigger>
             <SelectContent>
@@ -165,14 +215,23 @@ export default function Calendario() {
         </div>
       </div>
 
-      {/* Month grid */}
-      <MonthGrid
-        year={currentYear}
-        month={currentMonth}
-        data={calendarData}
-        selectedDate={selectedDate}
-        onSelectDate={setSelectedDate}
-      />
+      {/* View */}
+      {viewMode === "month" ? (
+        <MonthGrid
+          year={currentYear}
+          month={currentMonth}
+          data={calendarData}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+        />
+      ) : (
+        <WeekView
+          weekStart={weekStart}
+          data={calendarData}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+        />
+      )}
 
       {/* Day detail */}
       <CalendarDayDetail
