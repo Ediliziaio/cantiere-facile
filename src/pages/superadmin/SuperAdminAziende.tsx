@@ -153,7 +153,7 @@ export default function SuperAdminAziende() {
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
-        {filtered.map((t) => (
+        {paginatedItems.map((t) => (
           <Card key={t.id}>
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center justify-between">
