@@ -27,6 +27,8 @@ export default function SuperAdminBilling() {
     ? mockInvoices
     : mockInvoices.filter((i) => i.stato === statusFilter);
 
+  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filteredInvoices, 10);
+
   const kpis = [
     { label: "MRR", value: `€${m.mrr.toLocaleString("it-IT")}`, icon: DollarSign, trend: "+5.7%", up: true },
     { label: "ARR", value: `€${m.arr.toLocaleString("it-IT")}`, icon: TrendingUp, trend: "+12%", up: true },
