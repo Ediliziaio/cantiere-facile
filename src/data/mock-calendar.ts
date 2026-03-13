@@ -29,6 +29,7 @@ export interface CalendarAppuntamento {
   ora_fine: string;
   cantiere_id?: string;
   cantiere_nome?: string;
+  indirizzo?: string;
   assegnato_a: { id: string; nome: string }[];
   colore: "blue" | "purple" | "teal" | "rose";
 }
@@ -50,7 +51,8 @@ export const mockAppuntamenti: CalendarAppuntamento[] = [
     ora_inizio: "09:00",
     ora_fine: "11:00",
     cantiere_id: "c1",
-    cantiere_nome: "Residenza Parco Verde",
+    cantiere_nome: "Residenziale Via Roma 12",
+    indirizzo: "Via Roma 12, Milano",
     assegnato_a: [
       { id: "l1", nome: "Marco Rossi" },
       { id: "l2", nome: "Giuseppe Bianchi" },
@@ -65,7 +67,8 @@ export const mockAppuntamenti: CalendarAppuntamento[] = [
     ora_inizio: "14:00",
     ora_fine: "15:30",
     cantiere_id: "c2",
-    cantiere_nome: "Torre Meridiana",
+    cantiere_nome: "Ristrutturazione Palazzina",
+    indirizzo: "Via Dante 5, Bergamo",
     assegnato_a: [
       { id: "l3", nome: "Antonio Verdi" },
       { id: "l1", nome: "Marco Rossi" },
@@ -80,7 +83,8 @@ export const mockAppuntamenti: CalendarAppuntamento[] = [
     ora_inizio: "07:30",
     ora_fine: "09:00",
     cantiere_id: "c1",
-    cantiere_nome: "Residenza Parco Verde",
+    cantiere_nome: "Residenziale Via Roma 12",
+    indirizzo: "Via Roma 12, Milano",
     assegnato_a: [{ id: "l4", nome: "Luigi Neri" }],
     colore: "teal",
   },
@@ -91,6 +95,7 @@ export const mockAppuntamenti: CalendarAppuntamento[] = [
     data: "2026-03-18",
     ora_inizio: "10:00",
     ora_fine: "12:00",
+    indirizzo: "Via Montenapoleone 8, Milano",
     assegnato_a: [
       { id: "l1", nome: "Marco Rossi" },
       { id: "l5", nome: "Francesco Esposito" },
@@ -105,7 +110,8 @@ export const mockAppuntamenti: CalendarAppuntamento[] = [
     ora_inizio: "09:00",
     ora_fine: "13:00",
     cantiere_id: "c2",
-    cantiere_nome: "Torre Meridiana",
+    cantiere_nome: "Ristrutturazione Palazzina",
+    indirizzo: "Via Dante 5, Bergamo",
     assegnato_a: [
       { id: "l3", nome: "Antonio Verdi" },
       { id: "l2", nome: "Giuseppe Bianchi" },
@@ -120,7 +126,8 @@ export const mockAppuntamenti: CalendarAppuntamento[] = [
     ora_inizio: "14:00",
     ora_fine: "17:00",
     cantiere_id: "c1",
-    cantiere_nome: "Residenza Parco Verde",
+    cantiere_nome: "Residenziale Via Roma 12",
+    indirizzo: "Via Roma 12, Milano",
     assegnato_a: [{ id: "l4", nome: "Luigi Neri" }, { id: "l6", nome: "Paolo Ricci" }],
     colore: "purple",
   },

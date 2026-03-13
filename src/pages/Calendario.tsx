@@ -1,12 +1,14 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { CalendarDayDetail } from "@/components/dashboard/CalendarDayDetail";
 import { MonthGrid } from "@/components/calendario/MonthGrid";
 import { NuovoAppuntamentoDialog } from "@/components/calendario/NuovoAppuntamentoDialog";
-import { buildCalendarData, type CalendarDayData, type CalendarAppuntamento } from "@/data/mock-calendar";
+import { buildCalendarData, mockAppuntamenti, type CalendarDayData, type CalendarAppuntamento } from "@/data/mock-calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, Bell } from "lucide-react";
 import { mockCantieri } from "@/data/mock-data";
+import { toast } from "sonner";
 
 const MONTH_NAMES = [
   "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
@@ -20,6 +22,10 @@ export default function Calendario() {
   const [filterCantiere, setFilterCantiere] = useState("tutti");
   const [extraAppuntamenti, setExtraAppuntamenti] = useState<CalendarAppuntamento[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingAppuntamento, setEditingAppuntamento] = useState<CalendarAppuntamento | null>(null);
+
+  // All appointments = mock + extra
+  const allAppuntamenti = useMemo(() => [...mockAppuntamenti, ...extraAppuntamenti], [extraAppuntamenti]);
 
   const calendarData = useMemo(
     () => buildCalendarData(filterCantiere === "tutti" ? undefined : filterCantiere, extraAppuntamenti),
@@ -35,6 +41,26 @@ export default function Calendario() {
   const defaultDateStr = selectedDate
     ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
     : undefined;
+
+  // 24h reminder: find upcoming appointments
+  const upcomingAppointments = useMemo(() => {
+    const now = new Date();
+    const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    return allAppuntamenti.filter((app) => {
+      const appDate = new Date(`${app.data}T${app.ora_inizio}`);
+      return appDate >= now && appDate <= in24h;
+    });
+  }, [allAppuntamenti]);
+
+  // Toast on mount if there are upcoming appointments
+  useEffect(() => {
+    if (upcomingAppointments.length > 0) {
+      toast.info(`Hai ${upcomingAppointments.length} appuntament${upcomingAppointments.length === 1 ? "o" : "i"} nelle prossime 24 ore`, {
+        description: upcomingAppointments.map((a) => `${a.ora_inizio} — ${a.titolo}`).join(", "),
+        duration: 6000,
+      });
+    }
+  }, []); // only on mount
 
   const goToPrevMonth = () => {
     if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); }
@@ -53,16 +79,54 @@ export default function Calendario() {
     setSelectedDate(now);
   };
 
-  const handleAddAppuntamento = useCallback((app: CalendarAppuntamento) => {
-    setExtraAppuntamenti((prev) => [...prev, app]);
+  const handleSaveAppuntamento = useCallback((app: CalendarAppuntamento) => {
+    setExtraAppuntamenti((prev) => {
+      // If editing an existing extra appointment, replace it
+      const existingIdx = prev.findIndex((a) => a.id === app.id);
+      if (existingIdx >= 0) {
+        const next = [...prev];
+        next[existingIdx] = app;
+        return next;
+      }
+      return [...prev, app];
+    });
+    setEditingAppuntamento(null);
+  }, []);
+
+  const handleEditAppuntamento = useCallback((app: CalendarAppuntamento) => {
+    setEditingAppuntamento(app);
+    setDialogOpen(true);
+  }, []);
+
+  const handleDeleteAppuntamento = useCallback((appId: string) => {
+    setExtraAppuntamenti((prev) => prev.filter((a) => a.id !== appId));
+    toast.success("Appuntamento eliminato");
   }, []);
 
   const openDialogForSelectedDate = useCallback(() => {
+    setEditingAppuntamento(null);
     setDialogOpen(true);
   }, []);
 
   return (
     <div className="space-y-4">
+      {/* 24h reminder banner */}
+      {upcomingAppointments.length > 0 && (
+        <Alert className="border-warning/50 bg-warning/5">
+          <Bell className="h-4 w-4 text-warning" />
+          <AlertTitle className="text-warning">
+            {upcomingAppointments.length} appuntament{upcomingAppointments.length === 1 ? "o" : "i"} nelle prossime 24 ore
+          </AlertTitle>
+          <AlertDescription className="text-sm text-muted-foreground">
+            {upcomingAppointments.map((a) => (
+              <span key={a.id} className="inline-flex items-center gap-1 mr-3">
+                <span className="font-medium text-foreground">{a.ora_inizio}</span> {a.titolo}
+              </span>
+            ))}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -83,7 +147,7 @@ export default function Calendario() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={() => setDialogOpen(true)} size="sm" className="gap-1.5">
+          <Button onClick={() => { setEditingAppuntamento(null); setDialogOpen(true); }} size="sm" className="gap-1.5">
             <Plus className="h-4 w-4" />
             Appuntamento
           </Button>
@@ -115,6 +179,8 @@ export default function Calendario() {
         date={selectedDate}
         data={selectedDayData}
         onAddAppuntamento={openDialogForSelectedDate}
+        onEditAppuntamento={handleEditAppuntamento}
+        onDeleteAppuntamento={handleDeleteAppuntamento}
       />
 
       {/* Dialog */}
@@ -122,7 +188,8 @@ export default function Calendario() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         defaultDate={defaultDateStr}
-        onSave={handleAddAppuntamento}
+        onSave={handleSaveAppuntamento}
+        editAppuntamento={editingAppuntamento}
       />
     </div>
   );

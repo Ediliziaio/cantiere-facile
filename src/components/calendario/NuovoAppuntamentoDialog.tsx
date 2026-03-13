@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ interface NuovoAppuntamentoDialogProps {
   onOpenChange: (open: boolean) => void;
   defaultDate?: string; // YYYY-MM-DD
   onSave: (app: CalendarAppuntamento) => void;
+  editAppuntamento?: CalendarAppuntamento | null;
 }
 
 const COLORI: { value: CalendarAppuntamento["colore"]; label: string }[] = [
@@ -24,15 +25,33 @@ const COLORI: { value: CalendarAppuntamento["colore"]; label: string }[] = [
   { value: "rose", label: "Rosa" },
 ];
 
-export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSave }: NuovoAppuntamentoDialogProps) {
+export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSave, editAppuntamento }: NuovoAppuntamentoDialogProps) {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   const [data, setData] = useState(defaultDate || "");
   const [oraInizio, setOraInizio] = useState("09:00");
   const [oraFine, setOraFine] = useState("10:00");
   const [cantiereId, setCantiereId] = useState("nessuno");
+  const [indirizzo, setIndirizzo] = useState("");
   const [colore, setColore] = useState<CalendarAppuntamento["colore"]>("blue");
   const [selectedWorkers, setSelectedWorkers] = useState<Set<string>>(new Set());
+
+  // Populate form when editing
+  useEffect(() => {
+    if (editAppuntamento) {
+      setTitolo(editAppuntamento.titolo);
+      setDescrizione(editAppuntamento.descrizione);
+      setData(editAppuntamento.data);
+      setOraInizio(editAppuntamento.ora_inizio);
+      setOraFine(editAppuntamento.ora_fine);
+      setCantiereId(editAppuntamento.cantiere_id || "nessuno");
+      setIndirizzo(editAppuntamento.indirizzo || "");
+      setColore(editAppuntamento.colore);
+      setSelectedWorkers(new Set(editAppuntamento.assegnato_a.map((a) => a.id)));
+    } else {
+      resetForm();
+    }
+  }, [editAppuntamento, open]);
 
   const resetForm = () => {
     setTitolo("");
@@ -41,8 +60,20 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
     setOraInizio("09:00");
     setOraFine("10:00");
     setCantiereId("nessuno");
+    setIndirizzo("");
     setColore("blue");
     setSelectedWorkers(new Set());
+  };
+
+  // Auto-fill address when selecting a cantiere
+  const handleCantiereChange = (value: string) => {
+    setCantiereId(value);
+    if (value !== "nessuno") {
+      const cantiere = mockCantieri.find((c) => c.id === value);
+      if (cantiere) {
+        setIndirizzo(`${cantiere.indirizzo}, ${cantiere.comune}`);
+      }
+    }
   };
 
   const handleSave = () => {
@@ -53,7 +84,7 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
       .map((l) => ({ id: l.id, nome: `${l.nome} ${l.cognome}` }));
 
     onSave({
-      id: `app-custom-${Date.now()}`,
+      id: editAppuntamento?.id || `app-custom-${Date.now()}`,
       titolo: titolo.trim(),
       descrizione: descrizione.trim(),
       data,
@@ -61,6 +92,7 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
       ora_fine: oraFine,
       cantiere_id: cantiere?.id,
       cantiere_nome: cantiere?.nome,
+      indirizzo: indirizzo.trim() || undefined,
       assegnato_a: assegnati,
       colore,
     });
@@ -83,7 +115,7 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CalendarCheck className="h-5 w-5 text-primary" />
-            Nuovo Appuntamento
+            {editAppuntamento ? "Modifica Appuntamento" : "Nuovo Appuntamento"}
           </DialogTitle>
         </DialogHeader>
 
@@ -100,8 +132,14 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
             <Textarea id="descrizione" value={descrizione} onChange={(e) => setDescrizione(e.target.value)} placeholder="Dettagli sull'appuntamento..." rows={2} />
           </div>
 
+          {/* Indirizzo */}
+          <div className="space-y-1.5">
+            <Label htmlFor="indirizzo">Indirizzo</Label>
+            <Input id="indirizzo" value={indirizzo} onChange={(e) => setIndirizzo(e.target.value)} placeholder="Es. Via Roma 12, Milano" />
+          </div>
+
           {/* Data + Orari */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="data">Data *</Label>
               <Input id="data" type="date" value={data} onChange={(e) => setData(e.target.value)} />
@@ -117,10 +155,10 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
           </div>
 
           {/* Cantiere + Colore */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label>Cantiere</Label>
-              <Select value={cantiereId} onValueChange={setCantiereId}>
+              <Select value={cantiereId} onValueChange={handleCantiereChange}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="nessuno">Nessun cantiere</SelectItem>
@@ -175,7 +213,9 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Annulla</Button>
-          <Button onClick={handleSave} disabled={!titolo.trim() || !data}>Salva appuntamento</Button>
+          <Button onClick={handleSave} disabled={!titolo.trim() || !data}>
+            {editAppuntamento ? "Salva modifiche" : "Salva appuntamento"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
