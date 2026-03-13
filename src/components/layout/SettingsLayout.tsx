@@ -39,7 +39,7 @@ export function SettingsLayout() {
   const visibleItems = mobileSettingsNav.filter(item => !item.adminOnly || isAdmin);
 
   return (
-    <SidebarProvider>
+    <SidebarProvider style={{ "--sidebar-width": "13rem" } as React.CSSProperties}>
       <OfflineBanner />
       {impersonation.isImpersonating && <ImpersonationBanner />}
       <div className={`min-h-screen flex w-full ${impersonation.isImpersonating ? "pt-10" : ""}`}>
