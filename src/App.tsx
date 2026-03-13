@@ -134,6 +134,7 @@ const App = () => (
               <Route path="/funzionalita/comunicazioni" element={<FunzionalitaComunicazioni />} />
               <Route path="/funzionalita/veicoli" element={<FunzionalitaVeicoli />} />
               <Route path="/help-center" element={<HelpCenter />} />
+              <Route path="/install" element={<Install />} />
 
               {/* SuperAdmin routes */}
               <Route path="/superadmin/login" element={<SuperAdminLogin />} />
