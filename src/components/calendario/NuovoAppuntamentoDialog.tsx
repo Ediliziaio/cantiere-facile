@@ -163,7 +163,7 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
                     onCheckedChange={() => toggleWorker(l.id)}
                   />
                   <span className="text-sm">{l.nome} {l.cognome}</span>
-                  <span className="text-xs text-muted-foreground ml-auto">{l.ruolo}</span>
+                  <span className="text-xs text-muted-foreground ml-auto">{l.mansione}</span>
                 </label>
               ))}
             </div>
