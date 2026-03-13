@@ -104,6 +104,8 @@ export default function Dashboard() {
         <PresenzaLiveWidget />
       </div>
 
+      <DashboardCalendar filterCantiere={filterCantiere} />
+
       <section>
         <h2 className="font-heading font-semibold text-lg text-foreground mb-3">Cantieri attivi</h2>
         <div className="grid gap-3 sm:grid-cols-2">
