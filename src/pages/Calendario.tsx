@@ -2,13 +2,14 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { CalendarDayDetail } from "@/components/dashboard/CalendarDayDetail";
 import { MonthGrid } from "@/components/calendario/MonthGrid";
 import { WeekView } from "@/components/calendario/WeekView";
+import { DayView } from "@/components/calendario/DayView";
 import { NuovoAppuntamentoDialog } from "@/components/calendario/NuovoAppuntamentoDialog";
 import { buildCalendarData, mockAppuntamenti, type CalendarDayData, type CalendarAppuntamento } from "@/data/mock-calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { CalendarDays, ChevronLeft, ChevronRight, Plus, Bell, Grid3X3, List } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, Bell, Grid3X3, List, Clock } from "lucide-react";
 import { mockCantieri } from "@/data/mock-data";
 import { toast } from "sonner";
 
@@ -34,7 +35,7 @@ export default function Calendario() {
   const [extraAppuntamenti, setExtraAppuntamenti] = useState<CalendarAppuntamento[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAppuntamento, setEditingAppuntamento] = useState<CalendarAppuntamento | null>(null);
-  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+  const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month");
 
   const allAppuntamenti = useMemo(() => [...mockAppuntamenti, ...extraAppuntamenti], [extraAppuntamenti]);
 
@@ -75,7 +76,13 @@ export default function Calendario() {
   }, []);
 
   const goToPrev = () => {
-    if (viewMode === "week") {
+    if (viewMode === "day") {
+      const prev = new Date(selectedDate || new Date());
+      prev.setDate(prev.getDate() - 1);
+      setSelectedDate(prev);
+      setCurrentMonth(prev.getMonth());
+      setCurrentYear(prev.getFullYear());
+    } else if (viewMode === "week") {
       const prev = new Date(weekStart);
       prev.setDate(prev.getDate() - 7);
       setSelectedDate(prev);
@@ -88,7 +95,13 @@ export default function Calendario() {
   };
 
   const goToNext = () => {
-    if (viewMode === "week") {
+    if (viewMode === "day") {
+      const next = new Date(selectedDate || new Date());
+      next.setDate(next.getDate() + 1);
+      setSelectedDate(next);
+      setCurrentMonth(next.getMonth());
+      setCurrentYear(next.getFullYear());
+    } else if (viewMode === "week") {
       const next = new Date(weekStart);
       next.setDate(next.getDate() + 7);
       setSelectedDate(next);
@@ -108,6 +121,9 @@ export default function Calendario() {
   };
 
   const headerLabel = useMemo(() => {
+    if (viewMode === "day" && selectedDate) {
+      return selectedDate.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    }
     if (viewMode === "week") {
       const end = new Date(weekStart);
       end.setDate(end.getDate() + 6);
@@ -115,7 +131,7 @@ export default function Calendario() {
       return `${fmt(weekStart)} — ${fmt(end)} ${end.getFullYear()}`;
     }
     return `${MONTH_NAMES[currentMonth]} ${currentYear}`;
-  }, [viewMode, weekStart, currentMonth, currentYear]);
+  }, [viewMode, selectedDate, weekStart, currentMonth, currentYear]);
 
   const handleSaveAppuntamento = useCallback((app: CalendarAppuntamento) => {
     setExtraAppuntamenti((prev) => {
@@ -187,7 +203,7 @@ export default function Calendario() {
           <ToggleGroup
             type="single"
             value={viewMode}
-            onValueChange={(v) => { if (v) setViewMode(v as "month" | "week"); }}
+            onValueChange={(v) => { if (v) setViewMode(v as "month" | "week" | "day"); }}
             className="border border-border rounded-md"
           >
             <ToggleGroupItem value="month" aria-label="Vista mensile" className="h-8 px-2.5">
@@ -195,6 +211,9 @@ export default function Calendario() {
             </ToggleGroupItem>
             <ToggleGroupItem value="week" aria-label="Vista settimanale" className="h-8 px-2.5">
               <List className="h-4 w-4" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="day" aria-label="Vista giornaliera" className="h-8 px-2.5">
+              <Clock className="h-4 w-4" />
             </ToggleGroupItem>
           </ToggleGroup>
           <Button onClick={() => { setEditingAppuntamento(null); setDialogOpen(true); }} size="sm" className="gap-1.5">
@@ -224,23 +243,30 @@ export default function Calendario() {
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
         />
-      ) : (
+      ) : viewMode === "week" ? (
         <WeekView
           weekStart={weekStart}
           data={calendarData}
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
         />
+      ) : (
+        <DayView
+          date={selectedDate || new Date()}
+          data={selectedDayData}
+        />
       )}
 
-      {/* Day detail */}
-      <CalendarDayDetail
-        date={selectedDate}
-        data={selectedDayData}
-        onAddAppuntamento={openDialogForSelectedDate}
-        onEditAppuntamento={handleEditAppuntamento}
-        onDeleteAppuntamento={handleDeleteAppuntamento}
-      />
+      {/* Day detail (hide in day view to avoid redundancy) */}
+      {viewMode !== "day" && (
+        <CalendarDayDetail
+          date={selectedDate}
+          data={selectedDayData}
+          onAddAppuntamento={openDialogForSelectedDate}
+          onEditAppuntamento={handleEditAppuntamento}
+          onDeleteAppuntamento={handleDeleteAppuntamento}
+        />
+      )}
 
       {/* Dialog */}
       <NuovoAppuntamentoDialog
