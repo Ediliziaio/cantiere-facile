@@ -72,9 +72,40 @@ export default function SuperAdminAziendaDetail() {
           <TenantStatusBadge stato={tenant.stato} />
         </div>
         <div className="flex gap-2 flex-wrap">
-          <Button size="sm" onClick={handleImpersonate}>
-            <LogIn className="h-3.5 w-3.5 mr-1.5" /> Impersona
-          </Button>
+          <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm">
+                <LogIn className="h-3.5 w-3.5 mr-1.5" /> Impersona
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Scegli il ruolo da impersonare</DialogTitle>
+              </DialogHeader>
+              <p className="text-sm text-muted-foreground">
+                Navigherai come <strong>{tenant.nome_azienda}</strong> con i permessi del ruolo selezionato.
+              </p>
+              <div className="flex flex-col gap-2 mt-2">
+                {([
+                  { role: "admin" as UserRole, label: "Admin", desc: "Piena gestione dell'azienda" },
+                  { role: "manager" as UserRole, label: "Manager", desc: "Accesso limitato ai cantieri assegnati" },
+                  { role: "utente" as UserRole, label: "Utente", desc: "Dipendente operativo (check-in, badge, firma)" },
+                ]).map((opt) => (
+                  <Button
+                    key={opt.role}
+                    variant="outline"
+                    className="justify-start h-auto py-3 px-4"
+                    onClick={() => handleImpersonate(opt.role)}
+                  >
+                    <div className="text-left">
+                      <div className="font-medium">{opt.label}</div>
+                      <div className="text-xs text-muted-foreground">{opt.desc}</div>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button size="sm" variant="outline" onClick={handleExport}>
             <Download className="h-3.5 w-3.5 mr-1.5" /> Export
           </Button>
