@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy, ChevronDown
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy, ChevronDown, CalendarDays
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {

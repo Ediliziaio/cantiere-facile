@@ -165,6 +165,7 @@ const App = () => (
               {/* Tenant app routes with sidebar layout */}
               <Route path="/app" element={<AppLayout />}>
                 <Route path="dashboard" element={<Dashboard />} />
+                <Route path="calendario" element={<Calendario />} />
                 <Route path="cantieri" element={<Cantieri />} />
                 <Route path="cantieri/nuovo" element={<NuovoCantiere />} />
                 <Route path="cantieri/:id" element={<CantiereDetail />} />
