@@ -5,7 +5,8 @@ import { mockCantieri, mockLavoratori } from "@/data/mock-data";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download, Search, IdCard, Clock, Coffee, Play } from "lucide-react";
+import { Download, Search, IdCard, Clock, Coffee, Play, List, LayoutGrid } from "lucide-react";
+import { RiepilogoGiornaliero, exportRiepilogoCsv } from "@/components/timbrature/RiepilogoGiornaliero";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -68,6 +69,7 @@ export default function Timbrature() {
   const [filtroTipo, setFiltroTipo] = useState("tutti");
   const [filtroData, setFiltroData] = useState<Date | undefined>(undefined);
   const [searchLav, setSearchLav] = useState("");
+  const [vista, setVista] = useState<"log" | "riepilogo">("log");
 
   const sorted = useMemo(() => [...mockTimbrature].sort((a, b) => b.timestamp.localeCompare(a.timestamp)), []);
 
@@ -116,12 +118,39 @@ export default function Timbrature() {
   const getLav = (lid: string) => mockLavoratori.find((x) => x.id === lid);
   const getCantName = (cid: string) => mockCantieri.find((c) => c.id === cid)?.nome ?? "—";
   const getBadgeForLav = (lid: string) => mockBadges.find((b) => b.lavoratore_id === lid);
+  const handleExportCsv = () => {
+    if (vista === "riepilogo") {
+      exportRiepilogoCsv(filtered, mockTimbrature);
+      return;
+    }
+    const header = "Lavoratore,Data,Ora,Tipo,Cantiere,Esito,Metodo,Motivo blocco";
+    const rows = filtered.map((t) => {
+      const lav = getLav(t.lavoratore_id);
+      const ts = new Date(t.timestamp);
+      return `"${lav ? `${lav.nome} ${lav.cognome}` : ""}","${ts.toLocaleDateString("it-IT")}","${ts.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}","${t.tipo}","${getCantName(t.cantiere_id)}","${t.esito}","${t.metodo ?? ""}","${t.motivo_blocco ?? ""}"`;
+    });
+    const blob = new Blob([header + "\n" + rows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "timbrature-log.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading font-bold text-2xl text-foreground">Timbrature</h1>
-        <Button variant="outline" size="sm"><Download className="h-3.5 w-3.5 mr-1" /> Esporta CSV</Button>
+        <div className="flex items-center gap-3">
+          <h1 className="font-heading font-bold text-2xl text-foreground">Timbrature</h1>
+          <div className="flex border border-border rounded-md overflow-hidden">
+            <Button variant={vista === "log" ? "default" : "ghost"} size="sm" className="rounded-none h-8 px-3" onClick={() => setVista("log")}>
+              <List className="h-3.5 w-3.5 mr-1" /> Log
+            </Button>
+            <Button variant={vista === "riepilogo" ? "default" : "ghost"} size="sm" className="rounded-none h-8 px-3" onClick={() => setVista("riepilogo")}>
+              <LayoutGrid className="h-3.5 w-3.5 mr-1" /> Riepilogo
+            </Button>
+          </div>
+        </div>
+        <Button variant="outline" size="sm" onClick={handleExportCsv}><Download className="h-3.5 w-3.5 mr-1" /> Esporta CSV</Button>
       </div>
 
       {/* Stats */}
@@ -199,50 +228,54 @@ export default function Timbrature() {
         </div>
       </div>
 
-      {/* Log */}
-      <div className="border border-border rounded-lg divide-y divide-border">
-        {filtered.slice(0, 50).map((t) => {
-          const lav = getLav(t.lavoratore_id);
-          const badge = getBadgeForLav(t.lavoratore_id);
-          const dateStr = t.timestamp.substring(0, 10);
-          const ore = t.tipo === "uscita" ? calcOreLavorate(mockTimbrature, t.lavoratore_id, dateStr) : 0;
-          const pausaDurata = t.tipo === "pausa_inizio" ? calcDurataPausa(mockTimbrature, t.lavoratore_id, dateStr, t.timestamp) : 0;
-          const tipoInfo = tipoLabels[t.tipo] || tipoLabels.entrata;
+      {/* Content */}
+      {vista === "riepilogo" ? (
+        <RiepilogoGiornaliero filtered={filtered} allTimbrature={mockTimbrature} />
+      ) : (
+        <div className="border border-border rounded-lg divide-y divide-border">
+          {filtered.slice(0, 50).map((t) => {
+            const lav = getLav(t.lavoratore_id);
+            const badge = getBadgeForLav(t.lavoratore_id);
+            const dateStr = t.timestamp.substring(0, 10);
+            const ore = t.tipo === "uscita" ? calcOreLavorate(mockTimbrature, t.lavoratore_id, dateStr) : 0;
+            const pausaDurata = t.tipo === "pausa_inizio" ? calcDurataPausa(mockTimbrature, t.lavoratore_id, dateStr, t.timestamp) : 0;
+            const tipoInfo = tipoLabels[t.tipo] || tipoLabels.entrata;
 
-          return (
-            <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground">
-                  {lav ? `${lav.nome} ${lav.cognome}` : "—"}
-                  <span className="font-normal text-muted-foreground ml-1.5 text-xs">{lav?.mansione}</span>
-                </p>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  {tipoInfo.icon} {tipoInfo.label} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", {
-                    day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
-                  })}
-                  {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
-                  {t.tipo === "uscita" && ore > 0 && ` · ${Math.floor(ore / 60)}h ${Math.round(ore % 60)}m netti`}
-                  {t.tipo === "pausa_inizio" && pausaDurata > 0 && ` · ${pausaDurata}min`}
-                </p>
-                {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
+            return (
+              <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground">
+                    {lav ? `${lav.nome} ${lav.cognome}` : "—"}
+                    <span className="font-normal text-muted-foreground ml-1.5 text-xs">{lav?.mansione}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    {tipoInfo.icon} {tipoInfo.label} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", {
+                      day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+                    })}
+                    {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
+                    {t.tipo === "uscita" && ore > 0 && ` · ${Math.floor(ore / 60)}h ${Math.round(ore % 60)}m netti`}
+                    {t.tipo === "pausa_inizio" && pausaDurata > 0 && ` · ${pausaDurata}min`}
+                  </p>
+                  {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs">
+                    {t.esito === "autorizzato" ? "🟢" : t.esito === "warning" ? "🟡" : "🔴"}
+                  </span>
+                  {badge && (
+                    <Button variant="ghost" size="sm" className="h-7 px-2" asChild>
+                      <Link to={`/app/badge/${badge.id}`}><IdCard className="h-3 w-3" /></Link>
+                    </Button>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs">
-                  {t.esito === "autorizzato" ? "🟢" : t.esito === "warning" ? "🟡" : "🔴"}
-                </span>
-                {badge && (
-                  <Button variant="ghost" size="sm" className="h-7 px-2" asChild>
-                    <Link to={`/app/badge/${badge.id}`}><IdCard className="h-3 w-3" /></Link>
-                  </Button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-        {filtered.length === 0 && (
-          <p className="px-4 py-8 text-sm text-muted-foreground text-center">Nessuna timbratura trovata</p>
-        )}
-      </div>
+            );
+          })}
+          {filtered.length === 0 && (
+            <p className="px-4 py-8 text-sm text-muted-foreground text-center">Nessuna timbratura trovata</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
