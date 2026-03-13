@@ -45,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isImpersonating: false,
     tenantId: null,
     tenantName: null,
+    impersonatedRole: null,
   });
 
   const login = useCallback((user: AuthUser, role: UserRole, tid: string | null, tname: string | null, saRole?: SuperAdminRole) => {
