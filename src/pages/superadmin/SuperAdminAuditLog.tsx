@@ -98,7 +98,7 @@ export default function SuperAdminAuditLog() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filtered.map((log) => (
+              {paginatedItems.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
                     {new Date(log.timestamp).toLocaleString("it-IT")}
