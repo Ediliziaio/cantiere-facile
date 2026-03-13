@@ -122,8 +122,18 @@ export default function Timbrature() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading font-bold text-2xl text-foreground">Timbrature</h1>
-        <Button variant="outline" size="sm"><Download className="h-3.5 w-3.5 mr-1" /> Esporta CSV</Button>
+        <div className="flex items-center gap-3">
+          <h1 className="font-heading font-bold text-2xl text-foreground">Timbrature</h1>
+          <div className="flex border border-border rounded-md overflow-hidden">
+            <Button variant={vista === "log" ? "default" : "ghost"} size="sm" className="rounded-none h-8 px-3" onClick={() => setVista("log")}>
+              <List className="h-3.5 w-3.5 mr-1" /> Log
+            </Button>
+            <Button variant={vista === "riepilogo" ? "default" : "ghost"} size="sm" className="rounded-none h-8 px-3" onClick={() => setVista("riepilogo")}>
+              <LayoutGrid className="h-3.5 w-3.5 mr-1" /> Riepilogo
+            </Button>
+          </div>
+        </div>
+        <Button variant="outline" size="sm" onClick={handleExportCsv}><Download className="h-3.5 w-3.5 mr-1" /> Esporta CSV</Button>
       </div>
 
       {/* Stats */}
