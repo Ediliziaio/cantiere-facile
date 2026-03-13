@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSuperadminRole(null);
     setTenantId(null);
     setTenantName(null);
-    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null });
+    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null, impersonatedRole: null });
   }, []);
 
   const startImpersonation = useCallback((tid: string, tname: string) => {
