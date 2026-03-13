@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { type CalendarDayData } from "@/data/mock-calendar";
-import { Users, AlertTriangle, ShieldX } from "lucide-react";
+import { Users, AlertTriangle, ShieldX, CalendarCheck } from "lucide-react";
 
 interface MonthGridProps {
   year: number;
@@ -28,13 +28,11 @@ interface CellData {
 export function MonthGrid({ year, month, data, selectedDate, onSelectDate }: MonthGridProps) {
   const cells = useMemo(() => {
     const first = new Date(year, month, 1);
-    // Monday=0 mapping
     let startDow = first.getDay() - 1;
     if (startDow < 0) startDow = 6;
 
     const result: CellData[] = [];
 
-    // Previous month padding
     for (let i = startDow - 1; i >= 0; i--) {
       const d = new Date(year, month, -i);
       result.push({
@@ -46,7 +44,6 @@ export function MonthGrid({ year, month, data, selectedDate, onSelectDate }: Mon
       });
     }
 
-    // Current month
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(year, month, d);
@@ -60,7 +57,6 @@ export function MonthGrid({ year, month, data, selectedDate, onSelectDate }: Mon
       });
     }
 
-    // Next month padding to fill 6 rows
     while (result.length < 42) {
       const d = new Date(year, month + 1, result.length - startDow - daysInMonth + 1);
       result.push({
@@ -95,12 +91,20 @@ export function MonthGrid({ year, month, data, selectedDate, onSelectDate }: Mon
       {/* Day cells */}
       <div className="grid grid-cols-7">
         {cells.map((cell, i) => {
-          const isSelected = cell.key === selectedKey;
-          const isToday = cell.key === todayKey;
           const presenze = cell.data?.presenze.length || 0;
           const scadenze = cell.data?.scadenze.length || 0;
+          const appuntamenti = cell.data?.appuntamenti.length || 0;
           const bloccati = cell.data?.presenze.filter((p) => p.esito === "bloccato").length || 0;
-          const hasEvents = presenze > 0 || scadenze > 0;
+          const hasEvents = presenze > 0 || scadenze > 0 || appuntamenti > 0;
+
+          // Get unique cantieri names for presenze
+          const cantieriNomi = cell.data?.presenze
+            ? [...new Set(cell.data.presenze.map((p) => p.cantiere_nome))]
+            : [];
+          const cantiereLabel = cantieriNomi.length === 1 ? cantieriNomi[0] : cantieriNomi.length > 1 ? `${cantieriNomi.length} cantieri` : "";
+
+          const isSelected = cell.key === selectedKey;
+          const isToday = cell.key === todayKey;
 
           return (
             <button
@@ -126,12 +130,13 @@ export function MonthGrid({ year, month, data, selectedDate, onSelectDate }: Mon
                 {cell.day}
               </span>
 
-              {/* Event chips — hidden on very small screens, shown as dots */}
+              {/* Event chips */}
               {hasEvents && cell.isCurrentMonth && (
                 <div className="flex flex-col gap-0.5 mt-0.5 w-full overflow-hidden">
                   {/* Mobile: colored dots only */}
                   <div className="flex gap-1 sm:hidden">
-                    {presenze > 0 && <span className="w-2 h-2 rounded-full bg-success shrink-0" />}
+                    {presenze > 0 && <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />}
+                    {appuntamenti > 0 && <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
                     {scadenze > 0 && <span className="w-2 h-2 rounded-full bg-warning shrink-0" />}
                     {bloccati > 0 && <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />}
                   </div>
@@ -139,9 +144,17 @@ export function MonthGrid({ year, month, data, selectedDate, onSelectDate }: Mon
                   {/* Desktop: chips */}
                   <div className="hidden sm:flex flex-col gap-0.5 w-full">
                     {presenze > 0 && (
-                      <div className="flex items-center gap-1 text-[11px] font-medium text-success bg-success/10 rounded px-1.5 py-0.5 truncate">
+                      <div className="flex items-center gap-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 rounded px-1.5 py-0.5 truncate">
                         <Users className="w-3 h-3 shrink-0" />
-                        <span className="truncate">{presenze} presenze</span>
+                        <span className="truncate">
+                          {presenze} pres.{cantiereLabel ? ` — ${cantiereLabel}` : ""}
+                        </span>
+                      </div>
+                    )}
+                    {appuntamenti > 0 && (
+                      <div className="flex items-center gap-1 text-[11px] font-medium text-blue-700 dark:text-blue-400 bg-blue-500/10 rounded px-1.5 py-0.5 truncate">
+                        <CalendarCheck className="w-3 h-3 shrink-0" />
+                        <span className="truncate">{appuntamenti} appuntament{appuntamenti === 1 ? "o" : "i"}</span>
                       </div>
                     )}
                     {scadenze > 0 && (

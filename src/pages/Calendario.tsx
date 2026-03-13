@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { CalendarDayDetail } from "@/components/dashboard/CalendarDayDetail";
 import { MonthGrid } from "@/components/calendario/MonthGrid";
-import { buildCalendarData, type CalendarDayData } from "@/data/mock-calendar";
+import { NuovoAppuntamentoDialog } from "@/components/calendario/NuovoAppuntamentoDialog";
+import { buildCalendarData, type CalendarDayData, type CalendarAppuntamento } from "@/data/mock-calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { mockCantieri } from "@/data/mock-data";
 
 const MONTH_NAMES = [
@@ -14,13 +15,15 @@ const MONTH_NAMES = [
 
 export default function Calendario() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date("2026-03-10"));
-  const [currentMonth, setCurrentMonth] = useState(2); // March (0-indexed)
+  const [currentMonth, setCurrentMonth] = useState(2);
   const [currentYear, setCurrentYear] = useState(2026);
   const [filterCantiere, setFilterCantiere] = useState("tutti");
+  const [extraAppuntamenti, setExtraAppuntamenti] = useState<CalendarAppuntamento[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const calendarData = useMemo(
-    () => buildCalendarData(filterCantiere === "tutti" ? undefined : filterCantiere),
-    [filterCantiere]
+    () => buildCalendarData(filterCantiere === "tutti" ? undefined : filterCantiere, extraAppuntamenti),
+    [filterCantiere, extraAppuntamenti]
   );
 
   const selectedKey = selectedDate
@@ -28,6 +31,10 @@ export default function Calendario() {
     : null;
 
   const selectedDayData: CalendarDayData | null = selectedKey ? calendarData.get(selectedKey) || null : null;
+
+  const defaultDateStr = selectedDate
+    ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+    : undefined;
 
   const goToPrevMonth = () => {
     if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); }
@@ -45,6 +52,14 @@ export default function Calendario() {
     setCurrentYear(now.getFullYear());
     setSelectedDate(now);
   };
+
+  const handleAddAppuntamento = useCallback((app: CalendarAppuntamento) => {
+    setExtraAppuntamenti((prev) => [...prev, app]);
+  }, []);
+
+  const openDialogForSelectedDate = useCallback(() => {
+    setDialogOpen(true);
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -67,17 +82,23 @@ export default function Calendario() {
             </Button>
           </div>
         </div>
-        <Select value={filterCantiere} onValueChange={setFilterCantiere}>
-          <SelectTrigger className="w-[220px]">
-            <SelectValue placeholder="Filtra cantiere" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tutti">Tutti i cantieri</SelectItem>
-            {mockCantieri.map((c) => (
-              <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setDialogOpen(true)} size="sm" className="gap-1.5">
+            <Plus className="h-4 w-4" />
+            Appuntamento
+          </Button>
+          <Select value={filterCantiere} onValueChange={setFilterCantiere}>
+            <SelectTrigger className="w-[220px]">
+              <SelectValue placeholder="Filtra cantiere" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tutti">Tutti i cantieri</SelectItem>
+              {mockCantieri.map((c) => (
+                <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Month grid */}
@@ -90,7 +111,19 @@ export default function Calendario() {
       />
 
       {/* Day detail */}
-      <CalendarDayDetail date={selectedDate} data={selectedDayData} />
+      <CalendarDayDetail
+        date={selectedDate}
+        data={selectedDayData}
+        onAddAppuntamento={openDialogForSelectedDate}
+      />
+
+      {/* Dialog */}
+      <NuovoAppuntamentoDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        defaultDate={defaultDateStr}
+        onSave={handleAddAppuntamento}
+      />
     </div>
   );
 }
