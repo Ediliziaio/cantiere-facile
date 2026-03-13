@@ -35,7 +35,7 @@ export default function ImpostazioniProfilo() {
           {profileFields.map(([label, value]) => (
             <div key={label} className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-border last:border-0 gap-0.5">
               <span className="text-sm text-muted-foreground">{label}</span>
-              <span className="text-sm font-medium text-foreground sm:text-right">{value}</span>
+              <span className="text-sm font-medium text-foreground sm:text-right break-all">{value}</span>
             </div>
           ))}
         </div>
