@@ -262,6 +262,7 @@ export default function Calendario() {
         <DayView
           date={selectedDate || new Date()}
           data={selectedDayData}
+          onSlotClick={handleSlotClick}
         />
       )}
 
