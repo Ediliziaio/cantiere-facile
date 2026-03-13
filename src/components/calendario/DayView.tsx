@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { type CalendarDayData } from "@/data/mock-calendar";
-import { Users, AlertTriangle, Clock, MapPin, Building2, CalendarX } from "lucide-react";
+import { Users, AlertTriangle, Clock, MapPin, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DayViewProps {
