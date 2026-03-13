@@ -121,6 +121,9 @@ export default function Calendario() {
   };
 
   const headerLabel = useMemo(() => {
+    if (viewMode === "day" && selectedDate) {
+      return selectedDate.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    }
     if (viewMode === "week") {
       const end = new Date(weekStart);
       end.setDate(end.getDate() + 6);
@@ -128,7 +131,7 @@ export default function Calendario() {
       return `${fmt(weekStart)} — ${fmt(end)} ${end.getFullYear()}`;
     }
     return `${MONTH_NAMES[currentMonth]} ${currentYear}`;
-  }, [viewMode, weekStart, currentMonth, currentYear]);
+  }, [viewMode, selectedDate, weekStart, currentMonth, currentYear]);
 
   const handleSaveAppuntamento = useCallback((app: CalendarAppuntamento) => {
     setExtraAppuntamenti((prev) => {
