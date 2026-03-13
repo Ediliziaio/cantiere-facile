@@ -42,14 +42,30 @@ function AziendaAvatar({ name }: { name: string }) {
 
 export default function SuperAdminAziende() {
   const [search, setSearch] = useState("");
+  const [filterStato, setFilterStato] = useState("all");
+  const [filterPiano, setFilterPiano] = useState("all");
   const { startImpersonation } = useAuth();
   const navigate = useNavigate();
 
   const filtered = useMemo(() =>
-    mockTenantsAll.filter((t) =>
-      t.nome_azienda.toLowerCase().includes(search.toLowerCase()) ||
-      t.p_iva.includes(search)
-    ), [search]);
+    mockTenantsAll.filter((t) => {
+      const matchSearch = t.nome_azienda.toLowerCase().includes(search.toLowerCase()) || t.p_iva.includes(search);
+      const matchStato = filterStato === "all" || t.stato === filterStato;
+      const matchPiano = filterPiano === "all" || t.piano === filterPiano;
+      return matchSearch && matchStato && matchPiano;
+    }), [search, filterStato, filterPiano]);
+
+  const exportCsv = () => {
+    const headers = "Azienda,P.IVA,Piano,Stato,Cantieri,Utenti,Health,Ultima Attività\n";
+    const rows = filtered.map((t) =>
+      `"${t.nome_azienda}",${t.p_iva},${t.piano},${t.stato},${t.cantieri_count},${t.utenti_count},${t.health_score},${t.last_active}`
+    ).join("\n");
+    const blob = new Blob([headers + rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `aziende-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const { sortedItems, sortConfig, toggleSort } = useSortable(filtered, comparators);
   const pagination = usePagination(sortedItems, 10);
