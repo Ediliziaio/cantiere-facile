@@ -51,7 +51,7 @@ export default function Calendario() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="tutti">Tutti i cantieri</SelectItem>
-            {cantieri.map((c) => (
+            {mockCantieri.map((c) => (
               <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
             ))}
           </SelectContent>
