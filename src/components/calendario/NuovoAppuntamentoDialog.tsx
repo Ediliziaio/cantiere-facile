@@ -26,7 +26,7 @@ const COLORI: { value: CalendarAppuntamento["colore"]; label: string }[] = [
   { value: "rose", label: "Rosa" },
 ];
 
-export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSave, editAppuntamento }: NuovoAppuntamentoDialogProps) {
+export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, defaultOraInizio, onSave, editAppuntamento }: NuovoAppuntamentoDialogProps) {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   const [data, setData] = useState(defaultDate || "");
