@@ -76,7 +76,13 @@ export default function Calendario() {
   }, []);
 
   const goToPrev = () => {
-    if (viewMode === "week") {
+    if (viewMode === "day") {
+      const prev = new Date(selectedDate || new Date());
+      prev.setDate(prev.getDate() - 1);
+      setSelectedDate(prev);
+      setCurrentMonth(prev.getMonth());
+      setCurrentYear(prev.getFullYear());
+    } else if (viewMode === "week") {
       const prev = new Date(weekStart);
       prev.setDate(prev.getDate() - 7);
       setSelectedDate(prev);
@@ -89,7 +95,13 @@ export default function Calendario() {
   };
 
   const goToNext = () => {
-    if (viewMode === "week") {
+    if (viewMode === "day") {
+      const next = new Date(selectedDate || new Date());
+      next.setDate(next.getDate() + 1);
+      setSelectedDate(next);
+      setCurrentMonth(next.getMonth());
+      setCurrentYear(next.getFullYear());
+    } else if (viewMode === "week") {
       const next = new Date(weekStart);
       next.setDate(next.getDate() + 7);
       setSelectedDate(next);
