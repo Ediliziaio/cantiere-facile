@@ -9,6 +9,7 @@ export interface QueuedOperation {
     lat: number | null;
     lng: number | null;
     accuracy: number | null;
+    distance: number | null;
     verification_method: "auto_gps" | "qr_scan" | "manual";
     note?: string;
     server_validated: false;

@@ -113,6 +113,7 @@ export default function CheckIn() {
           lat: geo.position?.lat || null,
           lng: geo.position?.lng || null,
           accuracy: geo.position?.accuracy || null,
+          distance: geofence.distance,
           verification_method: method === "auto_gps" ? "auto_gps" : method === "qr_scan" ? "qr_scan" : "manual",
           note: method === "manual" ? manualNote : undefined,
           server_validated: false,
@@ -126,8 +127,12 @@ export default function CheckIn() {
 
       vibrateCheckIn();
 
+      const posDesc = geo.position
+        ? `${geo.position.lat.toFixed(4)}°N, ${geo.position.lng.toFixed(4)}°E (±${Math.round(geo.position.accuracy)}m)${geofence.distance !== null ? ` — a ${geofence.distance}m dal cantiere` : ""}`
+        : "Posizione non disponibile";
+
       toast.success("Ingresso registrato", {
-        description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`,
+        description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}\n📍 ${posDesc}`,
       });
 
       setTimeout(() => {
@@ -135,7 +140,7 @@ export default function CheckIn() {
         setLastAction(null);
       }, 2000);
     },
-    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation]
+    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation, geofence.distance]
   );
 
   const handleCheckOut = useCallback(
@@ -152,6 +157,7 @@ export default function CheckIn() {
           lat: geo.position?.lat || null,
           lng: geo.position?.lng || null,
           accuracy: geo.position?.accuracy || null,
+          distance: geofence.distance,
           verification_method: method === "auto_gps" ? "auto_gps" : method === "qr_scan" ? "qr_scan" : "manual",
           note: method === "manual" ? manualNote : undefined,
           server_validated: false,
@@ -165,8 +171,12 @@ export default function CheckIn() {
 
       vibrateCheckOut();
 
+      const posDesc = geo.position
+        ? `${geo.position.lat.toFixed(4)}°N, ${geo.position.lng.toFixed(4)}°E (±${Math.round(geo.position.accuracy)}m)${geofence.distance !== null ? ` — a ${geofence.distance}m dal cantiere` : ""}`
+        : "Posizione non disponibile";
+
       toast.success("Uscita registrata", {
-        description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`,
+        description: `${cantiere.nome} — ${new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}\n📍 ${posDesc}`,
       });
 
       setTimeout(() => {
@@ -174,7 +184,7 @@ export default function CheckIn() {
         setLastAction(null);
       }, 2000);
     },
-    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation]
+    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation, geofence.distance]
   );
 
   const recentHistory = getHistory().slice(0, 5);
@@ -525,6 +535,14 @@ export default function CheckIn() {
                           minute: "2-digit",
                         })}
                       </p>
+                      {op.payload.lat && op.payload.lng && (
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          {op.payload.lat.toFixed(4)}°N, {op.payload.lng.toFixed(4)}°E
+                          {op.payload.distance !== null && ` — ${op.payload.distance}m`}
+                          {op.payload.accuracy && ` (±${Math.round(op.payload.accuracy)}m)`}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
