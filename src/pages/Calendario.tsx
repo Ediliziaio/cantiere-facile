@@ -243,23 +243,30 @@ export default function Calendario() {
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
         />
-      ) : (
+      ) : viewMode === "week" ? (
         <WeekView
           weekStart={weekStart}
           data={calendarData}
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
         />
+      ) : (
+        <DayView
+          date={selectedDate || new Date()}
+          data={selectedDayData}
+        />
       )}
 
-      {/* Day detail */}
-      <CalendarDayDetail
-        date={selectedDate}
-        data={selectedDayData}
-        onAddAppuntamento={openDialogForSelectedDate}
-        onEditAppuntamento={handleEditAppuntamento}
-        onDeleteAppuntamento={handleDeleteAppuntamento}
-      />
+      {/* Day detail (hide in day view to avoid redundancy) */}
+      {viewMode !== "day" && (
+        <CalendarDayDetail
+          date={selectedDate}
+          data={selectedDayData}
+          onAddAppuntamento={openDialogForSelectedDate}
+          onEditAppuntamento={handleEditAppuntamento}
+          onDeleteAppuntamento={handleDeleteAppuntamento}
+        />
+      )}
 
       {/* Dialog */}
       <NuovoAppuntamentoDialog
