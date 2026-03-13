@@ -67,7 +67,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { effectiveRole } = useAuth();
-  const isManager = effectiveRole === "manager";
+  const isAdminOrAbove = effectiveRole === "admin" || effectiveRole === "superadmin" || !effectiveRole;
   const location = useLocation();
 
   const activeGroupLabel = useMemo(() => {
