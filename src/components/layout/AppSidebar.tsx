@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
-  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy, ChevronDown
+  ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy, ChevronDown, CalendarDays
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -21,6 +21,7 @@ const navGroups = [
     label: "Generale",
     items: [
       { title: "Dashboard", url: "/app/dashboard", icon: LayoutDashboard, adminOnly: false },
+      { title: "Calendario", url: "/app/calendario", icon: CalendarDays, adminOnly: false },
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
       { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },

@@ -70,6 +70,7 @@ const Tariffe = lazy(() => import("./pages/Tariffe"));
 const FunzionalitaOverview = lazy(() => import("./pages/FunzionalitaOverview"));
 const Sicurezza = lazy(() => import("./pages/Sicurezza"));
 const Analytics = lazy(() => import("./pages/Analytics"));
+const Calendario = lazy(() => import("./pages/Calendario"));
 const Billing = lazy(() => import("./pages/Billing"));
 const SuperAdminBilling = lazy(() => import("./pages/superadmin/SuperAdminBilling"));
 const SuperAdminAnalytics = lazy(() => import("./pages/superadmin/SuperAdminAnalytics"));
@@ -164,6 +165,7 @@ const App = () => (
               {/* Tenant app routes with sidebar layout */}
               <Route path="/app" element={<AppLayout />}>
                 <Route path="dashboard" element={<Dashboard />} />
+                <Route path="calendario" element={<Calendario />} />
                 <Route path="cantieri" element={<Cantieri />} />
                 <Route path="cantieri/nuovo" element={<NuovoCantiere />} />
                 <Route path="cantieri/:id" element={<CantiereDetail />} />
