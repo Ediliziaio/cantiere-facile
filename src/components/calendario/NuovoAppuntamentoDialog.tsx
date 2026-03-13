@@ -52,7 +52,7 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, defau
     } else {
       resetForm();
     }
-  }, [editAppuntamento, open]);
+  }, [editAppuntamento, open, defaultDate, defaultOraInizio]);
 
   const resetForm = () => {
     setTitolo("");

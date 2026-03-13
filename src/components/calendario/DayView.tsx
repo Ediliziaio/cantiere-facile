@@ -104,15 +104,7 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
       )}
 
       {/* Timeline */}
-      {!hasContent ? (
-        <Card>
-          <CardContent className="p-8 flex flex-col items-center justify-center text-center gap-2">
-            <CalendarX className="w-10 h-10 text-muted-foreground/50" />
-            <p className="text-muted-foreground text-sm">Nessuna attività per questa giornata</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
+      <Card>
           <CardContent className="p-0 overflow-x-auto">
             <div className="relative flex" style={{ height: TOTAL_HOURS * HOUR_HEIGHT + 1 }}>
               {/* Hour labels */}
@@ -220,7 +212,6 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
             </div>
           </CardContent>
         </Card>
-      )}
     </div>
   );
 }
