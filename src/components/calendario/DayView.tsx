@@ -129,12 +129,16 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
 
               {/* Grid + events area */}
               <div className="relative flex-1 min-w-0">
-                {/* Hour lines */}
+                {/* Hour slot click targets */}
                 {hours.map((h) => (
                   <div
-                    key={h}
-                    className="absolute left-0 right-0 border-t border-border/50"
-                    style={{ top: (h - START_HOUR) * HOUR_HEIGHT }}
+                    key={`slot-${h}`}
+                    className={cn(
+                      "absolute left-0 right-0 border-t border-border/50",
+                      onSlotClick && "cursor-pointer hover:bg-primary/5 transition-colors"
+                    )}
+                    style={{ top: (h - START_HOUR) * HOUR_HEIGHT, height: HOUR_HEIGHT }}
+                    onClick={() => onSlotClick?.(h)}
                   />
                 ))}
 
