@@ -117,6 +117,7 @@ export default function Timbrature() {
 
   const getLav = (lid: string) => mockLavoratori.find((x) => x.id === lid);
   const getCantName = (cid: string) => mockCantieri.find((c) => c.id === cid)?.nome ?? "—";
+  const getBadgeForLav = (lid: string) => mockBadges.find((b) => b.lavoratore_id === lid);
   const handleExportCsv = () => {
     if (vista === "riepilogo") {
       exportRiepilogoCsv(filtered, mockTimbrature);
