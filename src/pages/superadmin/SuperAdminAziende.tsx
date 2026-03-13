@@ -113,9 +113,33 @@ export default function SuperAdminAziende() {
         ))}
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Cerca azienda..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+      <div className="flex flex-wrap gap-3 items-center">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Cerca azienda..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        </div>
+        <Select value={filterStato} onValueChange={setFilterStato}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Stato" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tutti gli stati</SelectItem>
+            <SelectItem value="attivo">Attivo</SelectItem>
+            <SelectItem value="trial">Trial</SelectItem>
+            <SelectItem value="sospeso">Sospeso</SelectItem>
+            <SelectItem value="scaduto">Scaduto</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterPiano} onValueChange={setFilterPiano}>
+          <SelectTrigger className="w-36"><SelectValue placeholder="Piano" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tutti i piani</SelectItem>
+            <SelectItem value="free">Free</SelectItem>
+            <SelectItem value="pro">Pro</SelectItem>
+            <SelectItem value="enterprise">Enterprise</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button variant="outline" size="sm" onClick={exportCsv}>
+          <Download className="h-4 w-4 mr-1" /> Export CSV
+        </Button>
       </div>
 
       {/* Desktop table */}

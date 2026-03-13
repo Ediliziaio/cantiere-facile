@@ -100,6 +100,14 @@ export default function SuperAdminAuditLog() {
             <SelectItem value="critical">Critical</SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Da:</span>
+          <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36 h-9 text-xs" />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">A:</span>
+          <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-36 h-9 text-xs" />
+        </div>
       </div>
 
       {/* Desktop table */}

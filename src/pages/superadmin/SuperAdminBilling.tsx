@@ -156,22 +156,37 @@ export default function SuperAdminBilling() {
 
       {/* Invoices */}
       <Card>
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
-          <div>
-            <CardTitle className="text-base">Fatture recenti</CardTitle>
-            <CardDescription>Tutte le fatture cross-tenant</CardDescription>
+        <CardHeader className="pb-2 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base">Fatture recenti</CardTitle>
+              <CardDescription>Tutte le fatture cross-tenant</CardDescription>
+            </div>
+            <Button variant="outline" size="sm" onClick={exportCsv}>
+              <Download className="h-4 w-4 mr-1" /> Export CSV
+            </Button>
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="Filtra stato" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tutti</SelectItem>
-              <SelectItem value="pagata">Pagate</SelectItem>
-              <SelectItem value="in_scadenza">In scadenza</SelectItem>
-              <SelectItem value="scaduta">Scadute</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap gap-3 items-center">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-36">
+                <SelectValue placeholder="Filtra stato" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tutti</SelectItem>
+                <SelectItem value="pagata">Pagate</SelectItem>
+                <SelectItem value="in_scadenza">In scadenza</SelectItem>
+                <SelectItem value="scaduta">Scadute</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Da:</span>
+              <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-36 h-9 text-xs" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">A:</span>
+              <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-36 h-9 text-xs" />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Desktop table */}
