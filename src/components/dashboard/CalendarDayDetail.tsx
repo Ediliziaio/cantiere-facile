@@ -164,10 +164,10 @@ export function CalendarDayDetail({ date, data, onAddAppuntamento, onEditAppunta
                                 </span>
                               )}
                               {app.indirizzo && (
-                                <span className="flex items-center gap-1">
+                                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(app.indirizzo)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline hover:text-primary transition-colors">
                                   <MapPin className="w-3 h-3" />
                                   {app.indirizzo}
-                                </span>
+                                </a>
                               )}
                             </div>
                             {app.assegnato_a.length > 0 && (

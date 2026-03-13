@@ -14,6 +14,7 @@ interface NuovoAppuntamentoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultDate?: string; // YYYY-MM-DD
+  defaultOraInizio?: string; // HH:MM
   onSave: (app: CalendarAppuntamento) => void;
   editAppuntamento?: CalendarAppuntamento | null;
 }
@@ -25,7 +26,7 @@ const COLORI: { value: CalendarAppuntamento["colore"]; label: string }[] = [
   { value: "rose", label: "Rosa" },
 ];
 
-export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSave, editAppuntamento }: NuovoAppuntamentoDialogProps) {
+export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, defaultOraInizio, onSave, editAppuntamento }: NuovoAppuntamentoDialogProps) {
   const [titolo, setTitolo] = useState("");
   const [descrizione, setDescrizione] = useState("");
   const [data, setData] = useState(defaultDate || "");
@@ -57,8 +58,10 @@ export function NuovoAppuntamentoDialog({ open, onOpenChange, defaultDate, onSav
     setTitolo("");
     setDescrizione("");
     setData(defaultDate || "");
-    setOraInizio("09:00");
-    setOraFine("10:00");
+    const startH = defaultOraInizio || "09:00";
+    setOraInizio(startH);
+    const [h] = startH.split(":").map(Number);
+    setOraFine(`${String(h + 1).padStart(2, "0")}:00`);
     setCantiereId("nessuno");
     setIndirizzo("");
     setColore("blue");

@@ -8,6 +8,11 @@ import { cn } from "@/lib/utils";
 interface DayViewProps {
   date: Date;
   data: CalendarDayData | null;
+  onSlotClick?: (hour: number) => void;
+}
+
+function mapsUrl(address: string) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
 
 const START_HOUR = 7;
@@ -38,7 +43,7 @@ function formatKey(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function DayView({ date, data }: DayViewProps) {
+export function DayView({ date, data, onSlotClick }: DayViewProps) {
   const hours = useMemo(() => Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i), []);
 
   const appuntamenti = data?.appuntamenti || [];
@@ -124,12 +129,16 @@ export function DayView({ date, data }: DayViewProps) {
 
               {/* Grid + events area */}
               <div className="relative flex-1 min-w-0">
-                {/* Hour lines */}
+                {/* Hour slot click targets */}
                 {hours.map((h) => (
                   <div
-                    key={h}
-                    className="absolute left-0 right-0 border-t border-border/50"
-                    style={{ top: (h - START_HOUR) * HOUR_HEIGHT }}
+                    key={`slot-${h}`}
+                    className={cn(
+                      "absolute left-0 right-0 border-t border-border/50",
+                      onSlotClick && "cursor-pointer hover:bg-primary/5 transition-colors"
+                    )}
+                    style={{ top: (h - START_HOUR) * HOUR_HEIGHT, height: HOUR_HEIGHT }}
+                    onClick={() => onSlotClick?.(h)}
                   />
                 ))}
 
@@ -177,7 +186,7 @@ export function DayView({ date, data }: DayViewProps) {
                           {height >= 72 && app.indirizzo && (
                             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
                               <MapPin className="w-3 h-3 shrink-0" />
-                              <span className="truncate">{app.indirizzo}</span>
+                              <a href={mapsUrl(app.indirizzo)} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
                             </div>
                           )}
                           {height >= 88 && app.assegnato_a.length > 0 && (

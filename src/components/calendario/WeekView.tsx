@@ -109,7 +109,7 @@ export function WeekView({ weekStart, data, selectedDate, onSelectDate }: WeekVi
                         {app.indirizzo && (
                           <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <MapPin className="w-3 h-3 shrink-0" />
-                            <span className="truncate">{app.indirizzo}</span>
+                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(app.indirizzo)}`} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
                           </div>
                         )}
                         {app.assegnato_a.length > 0 && (

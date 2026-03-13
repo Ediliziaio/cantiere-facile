@@ -36,6 +36,7 @@ export default function Calendario() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAppuntamento, setEditingAppuntamento] = useState<CalendarAppuntamento | null>(null);
   const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month");
+  const [defaultOraInizio, setDefaultOraInizio] = useState<string | undefined>(undefined);
 
   const allAppuntamenti = useMemo(() => [...mockAppuntamenti, ...extraAppuntamenti], [extraAppuntamenti]);
 
@@ -158,6 +159,13 @@ export default function Calendario() {
 
   const openDialogForSelectedDate = useCallback(() => {
     setEditingAppuntamento(null);
+    setDefaultOraInizio(undefined);
+    setDialogOpen(true);
+  }, []);
+
+  const handleSlotClick = useCallback((hour: number) => {
+    setEditingAppuntamento(null);
+    setDefaultOraInizio(`${String(hour).padStart(2, "0")}:00`);
     setDialogOpen(true);
   }, []);
 
@@ -254,6 +262,7 @@ export default function Calendario() {
         <DayView
           date={selectedDate || new Date()}
           data={selectedDayData}
+          onSlotClick={handleSlotClick}
         />
       )}
 
@@ -273,6 +282,7 @@ export default function Calendario() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         defaultDate={defaultDateStr}
+        defaultOraInizio={defaultOraInizio}
         onSave={handleSaveAppuntamento}
         editAppuntamento={editingAppuntamento}
       />
