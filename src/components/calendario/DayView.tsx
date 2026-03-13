@@ -187,7 +187,14 @@ export function DayView({ date, data, onSlotClick }: DayViewProps) {
                           {app.indirizzo && (
                             <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
                               <MapPin className="w-3 h-3 shrink-0" />
-                              <a href={mapsUrl(app.indirizzo)} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors pointer-events-auto" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <a href={mapsUrl(app.indirizzo)} target="_blank" rel="noopener noreferrer" className="truncate hover:underline hover:text-primary transition-colors pointer-events-auto" onClick={(e) => e.stopPropagation()}>{app.indirizzo}</a>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Apri in Google Maps</TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                           )}
                           {height >= 88 && app.assegnato_a.length > 0 && (
