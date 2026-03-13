@@ -14,6 +14,7 @@ interface ImpersonationState {
   isImpersonating: boolean;
   tenantId: string | null;
   tenantName: string | null;
+  impersonatedRole: UserRole | null;
 }
 
 interface AuthContextType {
