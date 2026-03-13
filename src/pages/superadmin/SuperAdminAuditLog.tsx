@@ -145,7 +145,7 @@ export default function SuperAdminAuditLog() {
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
-        {filtered.map((log) => (
+        {paginatedItems.map((log) => (
           <div key={log.id} className="border border-border rounded-lg p-4 space-y-2">
             <div className="flex items-center justify-between">
               <Badge variant="outline" className={`text-[10px] ${severityColors[log.severity]}`}>
