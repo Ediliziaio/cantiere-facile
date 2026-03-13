@@ -223,51 +223,82 @@ function ChurnGrowthTab() {
           </CardTitle>
           <CardDescription>Ordinati per risk score decrescente</CardDescription>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Azienda</TableHead>
-                <TableHead>Piano</TableHead>
-                <TableHead className="text-center">Risk Score</TableHead>
-                <TableHead className="text-center">Ultimo Login</TableHead>
-                <TableHead className="text-center">Usage Trend</TableHead>
-                <TableHead className="text-center">Pag. Falliti</TableHead>
-                <TableHead>Azione Suggerita</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {churnRiskTenants.map((t) => (
-                <TableRow key={t.tenantId}>
-                  <TableCell className="font-medium text-sm">{t.companyName}</TableCell>
-                  <TableCell><Badge variant="outline">{t.plan}</Badge></TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant={getRiskColor(t.riskScore) as any}>{t.riskScore}</Badge>
-                  </TableCell>
-                  <TableCell className="text-center text-sm">{t.daysSinceLastLogin}gg fa</TableCell>
-                  <TableCell className="text-center">
-                    <span className={`text-sm font-medium flex items-center justify-center gap-1 ${t.usageTrend < -30 ? "text-destructive" : t.usageTrend < 0 ? "text-yellow-600" : "text-emerald-600"}`}>
-                      {t.usageTrend < 0 ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
-                      {t.usageTrend}%
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center text-sm">{t.paymentFailures}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[200px]">{t.suggestedAction}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button size="sm" variant="outline" onClick={() => toast.info(`Email inviata a ${t.companyName}`)}>
-                        <Mail className="h-3 w-3" />
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => toast.info(`Chiamata pianificata per ${t.companyName}`)}>
-                        <Phone className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </TableCell>
+        <CardContent>
+          {/* Desktop table */}
+          <div className="overflow-x-auto hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Azienda</TableHead>
+                  <TableHead>Piano</TableHead>
+                  <TableHead className="text-center">Risk Score</TableHead>
+                  <TableHead className="text-center">Ultimo Login</TableHead>
+                  <TableHead className="text-center">Usage Trend</TableHead>
+                  <TableHead className="text-center">Pag. Falliti</TableHead>
+                  <TableHead>Azione Suggerita</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {churnRiskTenants.map((t) => (
+                  <TableRow key={t.tenantId}>
+                    <TableCell className="font-medium text-sm">{t.companyName}</TableCell>
+                    <TableCell><Badge variant="outline">{t.plan}</Badge></TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant={getRiskColor(t.riskScore) as any}>{t.riskScore}</Badge>
+                    </TableCell>
+                    <TableCell className="text-center text-sm">{t.daysSinceLastLogin}gg fa</TableCell>
+                    <TableCell className="text-center">
+                      <span className={`text-sm font-medium flex items-center justify-center gap-1 ${t.usageTrend < -30 ? "text-destructive" : t.usageTrend < 0 ? "text-yellow-600" : "text-emerald-600"}`}>
+                        {t.usageTrend < 0 ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
+                        {t.usageTrend}%
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center text-sm">{t.paymentFailures}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground max-w-[200px]">{t.suggestedAction}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="outline" onClick={() => toast.info(`Email inviata a ${t.companyName}`)}>
+                          <Mail className="h-3 w-3" />
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => toast.info(`Chiamata pianificata per ${t.companyName}`)}>
+                          <Phone className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          {/* Mobile cards */}
+          <div className="space-y-2 md:hidden">
+            {churnRiskTenants.map((t) => (
+              <div key={t.tenantId} className="rounded-lg border border-border p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-sm">{t.companyName}</span>
+                  <Badge variant={getRiskColor(t.riskScore) as any}>Risk: {t.riskScore}</Badge>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline" className="text-xs">{t.plan}</Badge>
+                  <span className="text-xs text-muted-foreground">Login: {t.daysSinceLastLogin}gg fa</span>
+                  <span className={`text-xs font-medium flex items-center gap-0.5 ${t.usageTrend < -30 ? "text-destructive" : t.usageTrend < 0 ? "text-yellow-600" : "text-emerald-600"}`}>
+                    {t.usageTrend < 0 ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
+                    {t.usageTrend}%
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">{t.suggestedAction}</p>
+                <div className="flex gap-1">
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => toast.info(`Email inviata a ${t.companyName}`)}>
+                    <Mail className="h-3 w-3 mr-1" /> Email
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => toast.info(`Chiamata pianificata per ${t.companyName}`)}>
+                    <Phone className="h-3 w-3 mr-1" /> Chiama
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
