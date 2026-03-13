@@ -38,7 +38,6 @@ export default function SuperAdminAziendaDetail() {
   const auditLogs = mockSuperAdminLog.filter((l) => l.tenant_id === tenant.id).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   const storagePercent = Math.round((tenant.storage_used_mb / (tenant.max_storage_gb * 1024)) * 100);
 
-  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
 
   const handleImpersonate = (impRole: UserRole) => {
     startImpersonation(tenant.id, tenant.nome_azienda, impRole);
