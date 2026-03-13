@@ -227,50 +227,54 @@ export default function Timbrature() {
         </div>
       </div>
 
-      {/* Log */}
-      <div className="border border-border rounded-lg divide-y divide-border">
-        {filtered.slice(0, 50).map((t) => {
-          const lav = getLav(t.lavoratore_id);
-          const badge = getBadgeForLav(t.lavoratore_id);
-          const dateStr = t.timestamp.substring(0, 10);
-          const ore = t.tipo === "uscita" ? calcOreLavorate(mockTimbrature, t.lavoratore_id, dateStr) : 0;
-          const pausaDurata = t.tipo === "pausa_inizio" ? calcDurataPausa(mockTimbrature, t.lavoratore_id, dateStr, t.timestamp) : 0;
-          const tipoInfo = tipoLabels[t.tipo] || tipoLabels.entrata;
+      {/* Content */}
+      {vista === "riepilogo" ? (
+        <RiepilogoGiornaliero filtered={filtered} allTimbrature={mockTimbrature} />
+      ) : (
+        <div className="border border-border rounded-lg divide-y divide-border">
+          {filtered.slice(0, 50).map((t) => {
+            const lav = getLav(t.lavoratore_id);
+            const badge = getBadgeForLav(t.lavoratore_id);
+            const dateStr = t.timestamp.substring(0, 10);
+            const ore = t.tipo === "uscita" ? calcOreLavorate(mockTimbrature, t.lavoratore_id, dateStr) : 0;
+            const pausaDurata = t.tipo === "pausa_inizio" ? calcDurataPausa(mockTimbrature, t.lavoratore_id, dateStr, t.timestamp) : 0;
+            const tipoInfo = tipoLabels[t.tipo] || tipoLabels.entrata;
 
-          return (
-            <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground">
-                  {lav ? `${lav.nome} ${lav.cognome}` : "—"}
-                  <span className="font-normal text-muted-foreground ml-1.5 text-xs">{lav?.mansione}</span>
-                </p>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  {tipoInfo.icon} {tipoInfo.label} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", {
-                    day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
-                  })}
-                  {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
-                  {t.tipo === "uscita" && ore > 0 && ` · ${Math.floor(ore / 60)}h ${Math.round(ore % 60)}m netti`}
-                  {t.tipo === "pausa_inizio" && pausaDurata > 0 && ` · ${pausaDurata}min`}
-                </p>
-                {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
+            return (
+              <div key={t.id} className={`flex items-center justify-between px-4 py-3 border-l-4 ${esitoColors[t.esito]}`}>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground">
+                    {lav ? `${lav.nome} ${lav.cognome}` : "—"}
+                    <span className="font-normal text-muted-foreground ml-1.5 text-xs">{lav?.mansione}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    {tipoInfo.icon} {tipoInfo.label} · {getCantName(t.cantiere_id)} · {new Date(t.timestamp).toLocaleString("it-IT", {
+                      day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+                    })}
+                    {t.metodo && ` · ${t.metodo.replace("_", " ")}`}
+                    {t.tipo === "uscita" && ore > 0 && ` · ${Math.floor(ore / 60)}h ${Math.round(ore % 60)}m netti`}
+                    {t.tipo === "pausa_inizio" && pausaDurata > 0 && ` · ${pausaDurata}min`}
+                  </p>
+                  {t.motivo_blocco && <p className="text-xs text-destructive mt-0.5">{t.motivo_blocco}</p>}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs">
+                    {t.esito === "autorizzato" ? "🟢" : t.esito === "warning" ? "🟡" : "🔴"}
+                  </span>
+                  {badge && (
+                    <Button variant="ghost" size="sm" className="h-7 px-2" asChild>
+                      <Link to={`/app/badge/${badge.id}`}><IdCard className="h-3 w-3" /></Link>
+                    </Button>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-xs">
-                  {t.esito === "autorizzato" ? "🟢" : t.esito === "warning" ? "🟡" : "🔴"}
-                </span>
-                {badge && (
-                  <Button variant="ghost" size="sm" className="h-7 px-2" asChild>
-                    <Link to={`/app/badge/${badge.id}`}><IdCard className="h-3 w-3" /></Link>
-                  </Button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-        {filtered.length === 0 && (
-          <p className="px-4 py-8 text-sm text-muted-foreground text-center">Nessuna timbratura trovata</p>
-        )}
-      </div>
+            );
+          })}
+          {filtered.length === 0 && (
+            <p className="px-4 py-8 text-sm text-muted-foreground text-center">Nessuna timbratura trovata</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
