@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { SuperAdminLayout } from "@/components/layout/SuperAdminLayout";
 import { SettingsLayout } from "@/components/layout/SettingsLayout";
+import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 
 // Lazy loaded pages
 const Landing = lazy(() => import("./pages/Landing"));
