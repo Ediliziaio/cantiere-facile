@@ -10,6 +10,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import {
   mockBillingMetrics, mockRevenueTrend, mockPlanDistribution, mockInvoices, type MockInvoice,
 } from "@/data/mock-billing";
+import { usePagination } from "@/hooks/usePagination";
 
 const invoiceStatusMap: Record<MockInvoice["stato"], { label: string; variant: "default" | "destructive" | "secondary" | "outline" }> = {
   pagata: { label: "Pagata", variant: "default" },
