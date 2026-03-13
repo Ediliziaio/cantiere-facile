@@ -36,12 +36,12 @@ export default function SuperAdminBilling() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-heading font-bold text-foreground">Billing & Revenue</h1>
-          <p className="text-sm text-muted-foreground">Dashboard finanziaria della piattaforma</p>
+          <p className="text-sm text-muted-foreground">Monitora ricavi, fatture e distribuzione piani</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -60,7 +60,7 @@ export default function SuperAdminBilling() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         {kpis.map((kpi) => (
           <Card key={kpi.label} className={kpi.highlight ? "border-destructive/50" : ""}>
             <CardContent className="pt-4 pb-3 px-4">
@@ -70,7 +70,7 @@ export default function SuperAdminBilling() {
               </div>
               <p className="text-xl font-bold text-foreground">{kpi.value}</p>
               {kpi.trend && (
-                <p className={`text-xs mt-1 ${kpi.up ? "text-success" : "text-destructive"}`}>{kpi.trend} vs mese prec.</p>
+                <p className={`text-xs mt-1 ${kpi.up ? "text-green-500" : "text-destructive"}`}>{kpi.trend} vs mese prec.</p>
               )}
             </CardContent>
           </Card>
@@ -124,9 +124,9 @@ export default function SuperAdminBilling() {
         </Card>
       </div>
 
-      {/* Invoices Table */}
+      {/* Invoices */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2">
           <div>
             <CardTitle className="text-base">Fatture recenti</CardTitle>
             <CardDescription>Tutte le fatture cross-tenant</CardDescription>
@@ -144,44 +144,78 @@ export default function SuperAdminBilling() {
           </Select>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>N° Fattura</TableHead>
-                <TableHead>Azienda</TableHead>
-                <TableHead>Descrizione</TableHead>
-                <TableHead>Data emissione</TableHead>
-                <TableHead className="text-right">Totale</TableHead>
-                <TableHead>Stato</TableHead>
-                <TableHead className="w-10"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredInvoices.map((inv) => {
-                const st = invoiceStatusMap[inv.stato];
-                return (
-                  <TableRow key={inv.id}>
-                    <TableCell className="font-mono text-xs">{inv.numero_fattura}</TableCell>
-                    <TableCell className="font-medium text-sm">{inv.tenant_name}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{inv.descrizione}</TableCell>
-                    <TableCell className="text-sm">{new Date(inv.data_emissione).toLocaleDateString("it-IT")}</TableCell>
-                    <TableCell className="text-right font-medium">€{inv.totale.toFixed(2)}</TableCell>
-                    <TableCell><Badge variant={st.variant}>{st.label}</Badge></TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => toast({ title: "Rimborso", description: `Rimborso fattura ${inv.numero_fattura}... (simulato)` })}
-                      >
-                        <Receipt className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          {/* Desktop table */}
+          <div className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>N° Fattura</TableHead>
+                  <TableHead>Azienda</TableHead>
+                  <TableHead>Descrizione</TableHead>
+                  <TableHead>Data emissione</TableHead>
+                  <TableHead className="text-right">Totale</TableHead>
+                  <TableHead>Stato</TableHead>
+                  <TableHead className="w-10"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredInvoices.map((inv) => {
+                  const st = invoiceStatusMap[inv.stato];
+                  return (
+                    <TableRow key={inv.id}>
+                      <TableCell className="font-mono text-xs">{inv.numero_fattura}</TableCell>
+                      <TableCell className="font-medium text-sm">{inv.tenant_name}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{inv.descrizione}</TableCell>
+                      <TableCell className="text-sm">{new Date(inv.data_emissione).toLocaleDateString("it-IT")}</TableCell>
+                      <TableCell className="text-right font-medium">€{inv.totale.toFixed(2)}</TableCell>
+                      <TableCell><Badge variant={st.variant}>{st.label}</Badge></TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => toast({ title: "Rimborso", description: `Rimborso fattura ${inv.numero_fattura}... (simulato)` })}
+                        >
+                          <Receipt className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {filteredInvoices.map((inv) => {
+              const st = invoiceStatusMap[inv.stato];
+              return (
+                <div key={inv.id} className="border border-border rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm text-foreground">{inv.tenant_name}</span>
+                    <Badge variant={st.variant}>{st.label}</Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                    <div>N°: <span className="font-mono text-foreground">{inv.numero_fattura}</span></div>
+                    <div>Data: <span className="text-foreground">{new Date(inv.data_emissione).toLocaleDateString("it-IT")}</span></div>
+                    <div className="col-span-2">{inv.descrizione}</div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-foreground">€{inv.totale.toFixed(2)}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => toast({ title: "Rimborso", description: `Rimborso fattura ${inv.numero_fattura}... (simulato)` })}
+                    >
+                      <Receipt className="h-3.5 w-3.5 mr-1" /> Rimborso
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </CardContent>
       </Card>
     </div>

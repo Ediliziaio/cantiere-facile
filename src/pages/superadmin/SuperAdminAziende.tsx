@@ -1,11 +1,29 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, LogIn, Eye, Plus } from "lucide-react";
+import { Search, LogIn, Eye, Plus, Building2, Clock, AlertTriangle, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { mockTenantsAll } from "@/data/mock-superadmin";
 import { TenantStatusBadge } from "@/components/layout/TenantStatusBadge";
 import { useAuth } from "@/contexts/AuthContext";
+
+const planBadgeVariant: Record<string, "outline" | "default" | "secondary"> = {
+  free: "outline",
+  pro: "default",
+  enterprise: "secondary",
+};
+
+function AziendaAvatar({ name }: { name: string }) {
+  const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  return (
+    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">
+      {initials}
+    </div>
+  );
+}
 
 export default function SuperAdminAziende() {
   const [search, setSearch] = useState("");
@@ -17,6 +35,18 @@ export default function SuperAdminAziende() {
     t.p_iva.includes(search)
   );
 
+  const totale = mockTenantsAll.length;
+  const attive = mockTenantsAll.filter(t => t.stato === "attivo").length;
+  const trial = mockTenantsAll.filter(t => t.stato === "trial").length;
+  const sospese = mockTenantsAll.filter(t => t.stato === "sospeso" || t.stato === "scaduto").length;
+
+  const summaryStats = [
+    { label: "Totale", value: totale, icon: Building2 },
+    { label: "Attive", value: attive, icon: CheckCircle, color: "text-green-500" },
+    { label: "Trial", value: trial, icon: Clock, color: "text-yellow-500" },
+    { label: "Sospese", value: sospese, icon: AlertTriangle, color: "text-destructive" },
+  ];
+
   const handleImpersonate = (t: typeof mockTenantsAll[0]) => {
     startImpersonation(t.id, t.nome_azienda);
     navigate("/app/dashboard");
@@ -25,10 +55,28 @@ export default function SuperAdminAziende() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-heading font-bold text-2xl text-foreground">Aziende</h1>
+        <div>
+          <h1 className="font-heading font-bold text-2xl text-foreground">Aziende</h1>
+          <p className="text-sm text-muted-foreground mt-1">Gestisci tutte le aziende della piattaforma</p>
+        </div>
         <Button asChild>
           <Link to="/superadmin/aziende/nuova"><Plus className="h-4 w-4 mr-1.5" /> Nuova Azienda</Link>
         </Button>
+      </div>
+
+      {/* Summary stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {summaryStats.map((s) => (
+          <Card key={s.label}>
+            <CardContent className="pt-4 pb-3 px-4 flex items-center gap-3">
+              <s.icon className={`h-5 w-5 ${s.color || "text-muted-foreground"}`} />
+              <div>
+                <p className="font-heading font-bold text-xl text-foreground">{s.value}</p>
+                <p className="text-xs text-muted-foreground">{s.label}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <div className="relative max-w-sm">
@@ -41,12 +89,13 @@ export default function SuperAdminAziende() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-muted/30">
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Nome Azienda</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Azienda</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">P.IVA</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Piano</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Stato</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Cantieri</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Utenti</th>
+              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Health</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Ultima attività</th>
               <th className="px-4 py-3"></th>
             </tr>
@@ -54,12 +103,29 @@ export default function SuperAdminAziende() {
           <tbody className="divide-y divide-border">
             {filtered.map((t) => (
               <tr key={t.id} className="hover:bg-muted/20 transition-colors">
-                <td className="px-4 py-3 font-medium text-foreground">{t.nome_azienda}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2.5">
+                    <AziendaAvatar name={t.nome_azienda} />
+                    <span className="font-medium text-foreground">{t.nome_azienda}</span>
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{t.p_iva}</td>
-                <td className="px-4 py-3 uppercase text-xs text-muted-foreground">{t.piano}</td>
+                <td className="px-4 py-3">
+                  <Badge variant={planBadgeVariant[t.piano] || "outline"} className="text-[10px] uppercase">
+                    {t.piano}
+                  </Badge>
+                </td>
                 <td className="px-4 py-3"><TenantStatusBadge stato={t.stato} /></td>
                 <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">{t.cantieri_count}</td>
                 <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">{t.utenti_count}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Progress value={t.health_score} className="w-14 h-1.5" />
+                    <span className={`text-xs font-bold ${t.health_score >= 70 ? "text-green-500" : t.health_score >= 40 ? "text-yellow-500" : "text-destructive"}`}>
+                      {t.health_score}
+                    </span>
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-xs text-muted-foreground">
                   {new Date(t.last_active).toLocaleDateString("it-IT")}
                 </td>
@@ -70,13 +136,8 @@ export default function SuperAdminAziende() {
                         <Eye className="h-3.5 w-3.5 mr-1" /> Dettaglio
                       </Link>
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary"
-                      onClick={() => handleImpersonate(t)}
-                    >
-                      <LogIn className="h-3.5 w-3.5 mr-1" /> Entra come Admin →
+                    <Button variant="ghost" size="sm" className="text-primary" onClick={() => handleImpersonate(t)}>
+                      <LogIn className="h-3.5 w-3.5 mr-1" /> Entra →
                     </Button>
                   </div>
                 </td>
@@ -89,28 +150,40 @@ export default function SuperAdminAziende() {
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
         {filtered.map((t) => (
-          <div key={t.id} className="border border-border rounded-lg p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-medium text-foreground">{t.nome_azienda}</span>
-              <TenantStatusBadge stato={t.stato} />
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-              <div>Piano: <span className="uppercase font-medium text-foreground">{t.piano}</span></div>
-              <div>Cantieri: <span className="font-medium text-foreground">{t.cantieri_count}</span></div>
-              <div>Utenti: <span className="font-medium text-foreground">{t.utenti_count}</span></div>
-              <div>Attività: <span className="font-medium text-foreground">{new Date(t.last_active).toLocaleDateString("it-IT")}</span></div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex-1 text-xs" asChild>
-                <Link to={`/superadmin/aziende/${t.id}`}>
-                  <Eye className="h-3.5 w-3.5 mr-1" /> Dettaglio
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" className="flex-1 text-xs text-primary" onClick={() => handleImpersonate(t)}>
-                <LogIn className="h-3.5 w-3.5 mr-1" /> Entra
-              </Button>
-            </div>
-          </div>
+          <Card key={t.id}>
+            <CardContent className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <AziendaAvatar name={t.nome_azienda} />
+                  <span className="font-medium text-foreground">{t.nome_azienda}</span>
+                </div>
+                <TenantStatusBadge stato={t.stato} />
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                <div>Piano: <Badge variant={planBadgeVariant[t.piano] || "outline"} className="text-[10px] uppercase ml-1">{t.piano}</Badge></div>
+                <div>Cantieri: <span className="font-medium text-foreground">{t.cantieri_count}</span></div>
+                <div>Utenti: <span className="font-medium text-foreground">{t.utenti_count}</span></div>
+                <div>Attività: <span className="font-medium text-foreground">{new Date(t.last_active).toLocaleDateString("it-IT")}</span></div>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>Health:</span>
+                <Progress value={t.health_score} className="flex-1 h-1.5" />
+                <span className={`font-bold ${t.health_score >= 70 ? "text-green-500" : t.health_score >= 40 ? "text-yellow-500" : "text-destructive"}`}>
+                  {t.health_score}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="flex-1 text-xs" asChild>
+                  <Link to={`/superadmin/aziende/${t.id}`}>
+                    <Eye className="h-3.5 w-3.5 mr-1" /> Dettaglio
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" className="flex-1 text-xs text-primary" onClick={() => handleImpersonate(t)}>
+                  <LogIn className="h-3.5 w-3.5 mr-1" /> Entra
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
