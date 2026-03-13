@@ -43,7 +43,7 @@ function formatKey(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function DayView({ date, data }: DayViewProps) {
+export function DayView({ date, data, onSlotClick }: DayViewProps) {
   const hours = useMemo(() => Array.from({ length: TOTAL_HOURS }, (_, i) => START_HOUR + i), []);
 
   const appuntamenti = data?.appuntamenti || [];
