@@ -66,8 +66,8 @@ const navGroups = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const { role } = useAuth();
-  const isManager = role === "manager";
+  const { effectiveRole } = useAuth();
+  const isManager = effectiveRole === "manager";
   const location = useLocation();
 
   const activeGroupLabel = useMemo(() => {

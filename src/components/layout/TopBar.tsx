@@ -12,8 +12,8 @@ import { EmergencyBroadcastModal } from "@/components/notifications/EmergencyBro
 
 export function TopBar() {
   const navigate = useNavigate();
-  const { logout, role } = useAuth();
-  const isAdmin = role === "admin" || role === "superadmin" || !role;
+  const { logout, effectiveRole } = useAuth();
+  const isAdmin = effectiveRole === "admin" || effectiveRole === "superadmin" || !effectiveRole;
 
   const handleLogout = () => {
     logout();
