@@ -158,23 +158,17 @@ export default function SuperAdminBilling() {
           {/* Desktop table */}
           <div className="hidden md:block">
             <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>N° Fattura</TableHead>
-                  <TableHead>Azienda</TableHead>
-                  <TableHead>Descrizione</TableHead>
-                  <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("data_emissione")}>
-                    <SortableHeader label="Data emissione" sortKey="data_emissione" sortConfig={sortConfig} onToggle={() => {}} />
-                  </TableHead>
-                  <TableHead className="text-right cursor-pointer select-none" onClick={() => toggleSort("totale")}>
-                    <SortableHeader label="Totale" sortKey="totale" sortConfig={sortConfig} onToggle={() => {}} />
-                  </TableHead>
-                  <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("stato")}>
-                    <SortableHeader label="Stato" sortKey="stato" sortConfig={sortConfig} onToggle={() => {}} />
-                  </TableHead>
-                  <TableHead className="w-10"></TableHead>
-                </TableRow>
-              </TableHeader>
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">N° Fattura</th>
+                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Azienda</th>
+                  <th className="text-left px-4 py-3 font-medium text-muted-foreground">Descrizione</th>
+                  <SortableHeader label="Data emissione" sortKey="data_emissione" sortConfig={sortConfig} onToggle={toggleSort} />
+                  <SortableHeader label="Totale" sortKey="totale" sortConfig={sortConfig} onToggle={toggleSort} className="text-right" />
+                  <SortableHeader label="Stato" sortKey="stato" sortConfig={sortConfig} onToggle={toggleSort} />
+                  <th className="w-10 px-4 py-3"></th>
+                </tr>
+              </thead>
               <TableBody>
                 {pagination.paginatedItems.map((inv) => {
                   const st = invoiceStatusMap[inv.stato];
