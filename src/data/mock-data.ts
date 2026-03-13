@@ -460,7 +460,7 @@ export function getScadenzaStatus(dateStr: string): "valido" | "in_scadenza" | "
   return "valido";
 }
 
-export type UtenteRuolo = "admin" | "manager";
+export type UtenteRuolo = "admin" | "manager" | "utente";
 export type UtenteStato = "attivo" | "invitato" | "disabilitato";
 
 export interface UtenteAzienda {
