@@ -20,13 +20,14 @@ interface ImpersonationState {
 interface AuthContextType {
   user: AuthUser | null;
   role: UserRole | null;
+  effectiveRole: UserRole | null;
   superadminRole: SuperAdminRole | null;
   tenantId: string | null;
   tenantName: string | null;
   impersonation: ImpersonationState;
   login: (user: AuthUser, role: UserRole, tenantId: string | null, tenantName: string | null, saRole?: SuperAdminRole) => void;
   logout: () => void;
-  startImpersonation: (tenantId: string, tenantName: string) => void;
+  startImpersonation: (tenantId: string, tenantName: string, role: UserRole) => void;
   stopImpersonation: () => void;
   activeTenantId: string | null;
   hasPermission: (permission: string) => boolean;
