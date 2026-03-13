@@ -241,9 +241,9 @@ export default function SuperAdminNuovaAzienda() {
       <div className="flex justify-between">
         <Button variant="outline" onClick={() => setStep((s) => s - 1)} disabled={step === 0}>Indietro</Button>
         {step < 3 ? (
-          <Button onClick={() => setStep((s) => s + 1)} disabled={!canNext()} className="bg-superadmin hover:bg-superadmin/90">Avanti</Button>
+          <Button onClick={() => setStep((s) => s + 1)} disabled={!canNext()}>Avanti</Button>
         ) : (
-          <Button onClick={handleSubmit} className="bg-superadmin hover:bg-superadmin/90">Crea Azienda</Button>
+          <Button onClick={handleSubmit}>Crea Azienda</Button>
         )}
       </div>
     </div>

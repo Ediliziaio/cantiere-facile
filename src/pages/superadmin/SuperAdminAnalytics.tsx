@@ -554,10 +554,10 @@ export default function SuperAdminAnalytics() {
 
       <Tabs defaultValue="business">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="business">Business</TabsTrigger>
-          <TabsTrigger value="churn">Churn & Growth</TabsTrigger>
-          <TabsTrigger value="geo">Geo & Market</TabsTrigger>
-          <TabsTrigger value="health">System Health</TabsTrigger>
+          <TabsTrigger value="business"><Activity className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Business</span></TabsTrigger>
+          <TabsTrigger value="churn"><AlertTriangle className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Churn & Growth</span></TabsTrigger>
+          <TabsTrigger value="geo"><Users className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Geo & Market</span></TabsTrigger>
+          <TabsTrigger value="health"><Server className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">System Health</span></TabsTrigger>
         </TabsList>
 
         <TabsContent value="business"><BusinessTab /></TabsContent>

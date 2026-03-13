@@ -146,7 +146,7 @@ export default function SuperAdminLogin() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="text-[11px] text-muted-foreground">Min. 16 caratteri, maiuscole, minuscole, numeri, simboli</p>
+              <p className="text-[11px] text-muted-foreground">Min. 8 caratteri, maiuscole, minuscole, numeri, simboli</p>
             </div>
 
             <Button type="submit" className="w-full" disabled={locked || loading}>

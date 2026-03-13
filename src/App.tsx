@@ -139,6 +139,7 @@ const App = () => (
               {/* SuperAdmin routes */}
               <Route path="/superadmin/login" element={<SuperAdminLogin />} />
               <Route path="/superadmin" element={<SuperAdminLayout />}>
+                <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<SuperAdminDashboard />} />
                 <Route path="aziende" element={<SuperAdminAziende />} />
                 <Route path="aziende/nuova" element={<SuperAdminNuovaAzienda />} />
