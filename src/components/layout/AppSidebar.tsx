@@ -24,7 +24,7 @@ const navGroups = [
       { title: "Calendario", url: "/app/calendario", icon: CalendarDays, adminOnly: false },
       { title: "Comunicazioni", url: "/app/comunicazioni", icon: MessageSquare, badge: unreadCount, adminOnly: false },
       { title: "Scadenze", url: "/app/scadenze", icon: CalendarClock, adminOnly: false },
-      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: false },
+      { title: "Analytics", url: "/app/analytics", icon: BarChart3, adminOnly: true },
     ],
   },
   {
