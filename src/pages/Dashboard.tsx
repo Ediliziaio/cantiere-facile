@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Building2, FileText, AlertTriangle, ShieldCheck, Building, Plus, Upload, UserPlus, IdCard, Truck, CheckCircle2 } from "lucide-react";
+import { DashboardCalendar } from "@/components/dashboard/DashboardCalendar";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -102,6 +103,8 @@ export default function Dashboard() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <PresenzaLiveWidget />
       </div>
+
+      <DashboardCalendar filterCantiere={filterCantiere} />
 
       <section>
         <h2 className="font-heading font-semibold text-lg text-foreground mb-3">Cantieri attivi</h2>

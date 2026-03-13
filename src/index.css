@@ -213,3 +213,26 @@
     transform: translateY(-4px);
   }
 }
+
+/* Calendar dot indicators */
+.calendar-dot-ok::after,
+.calendar-dot-warning::after,
+.calendar-dot-danger::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+}
+.calendar-dot-ok::after {
+  background-color: hsl(142 71% 45%);
+}
+.calendar-dot-warning::after {
+  background-color: hsl(var(--warning));
+}
+.calendar-dot-danger::after {
+  background-color: hsl(var(--destructive));
+}
