@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockCantieri, mockDocumenti, mockSubappaltatori, mockLavoratori, mockMezzi, mockAccessi, mockFileCantiere, mockDiarioCantiere } from "@/data/mock-data";
 import { GalleriaCantiere } from "@/components/cantiere/GalleriaCantiere";
 import { DiarioCantiere } from "@/components/cantiere/DiarioCantiere";
+import { AvanzamentoLavori } from "@/components/cantiere/AvanzamentoLavori";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import { DocumentActions } from "@/components/cantiere/DocumentActions";
 import { ChecklistProgress } from "@/components/cantiere/ChecklistProgress";
