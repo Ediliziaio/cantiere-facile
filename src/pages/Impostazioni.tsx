@@ -667,6 +667,8 @@ export default function Impostazioni() {
             </div>
           </TabsContent>
         )}
+
+        <NotificationPreferencesTab />
       </Tabs>
 
       {/* Cantieri assignment dialog */}
