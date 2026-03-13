@@ -535,6 +535,14 @@ export default function CheckIn() {
                           minute: "2-digit",
                         })}
                       </p>
+                      {op.payload.lat && op.payload.lng && (
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          {op.payload.lat.toFixed(4)}°N, {op.payload.lng.toFixed(4)}°E
+                          {op.payload.distance !== null && ` — ${op.payload.distance}m`}
+                          {op.payload.accuracy && ` (±${Math.round(op.payload.accuracy)}m)`}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
