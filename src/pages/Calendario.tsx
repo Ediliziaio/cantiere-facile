@@ -159,6 +159,13 @@ export default function Calendario() {
 
   const openDialogForSelectedDate = useCallback(() => {
     setEditingAppuntamento(null);
+    setDefaultOraInizio(undefined);
+    setDialogOpen(true);
+  }, []);
+
+  const handleSlotClick = useCallback((hour: number) => {
+    setEditingAppuntamento(null);
+    setDefaultOraInizio(`${String(hour).padStart(2, "0")}:00`);
     setDialogOpen(true);
   }, []);
 
