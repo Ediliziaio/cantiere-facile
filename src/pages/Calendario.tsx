@@ -35,7 +35,7 @@ export default function Calendario() {
   const [extraAppuntamenti, setExtraAppuntamenti] = useState<CalendarAppuntamento[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAppuntamento, setEditingAppuntamento] = useState<CalendarAppuntamento | null>(null);
-  const [viewMode, setViewMode] = useState<"month" | "week">("month");
+  const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month");
 
   const allAppuntamenti = useMemo(() => [...mockAppuntamenti, ...extraAppuntamenti], [extraAppuntamenti]);
 
