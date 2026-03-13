@@ -66,7 +66,7 @@ export function AppSidebar() {
   const isManager = role === "manager";
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border hidden md:flex">
+    <Sidebar collapsible="none" className="border-r border-border hidden md:flex">
       <div className={`flex items-center gap-2 px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
         <HardHat className="h-6 w-6 text-primary shrink-0" />
         {!collapsed && (

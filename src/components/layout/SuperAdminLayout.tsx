@@ -67,7 +67,7 @@ export function SuperAdminLayout() {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4 safe-area-top">
             <div className="flex items-center gap-3">
-              <SidebarTrigger className="text-muted-foreground hover:text-foreground hidden md:flex" />
+              
               <div className="flex items-center gap-2 md:hidden">
                 <HardHat className="h-5 w-5 text-primary" />
                 <span className="text-sm font-bold text-foreground tracking-tight">Cantiere in Cloud</span>
