@@ -191,7 +191,7 @@ export default function SuperAdminBilling() {
 
           {/* Mobile cards */}
           <div className="md:hidden space-y-3">
-            {filteredInvoices.map((inv) => {
+            {paginatedItems.map((inv) => {
               const st = invoiceStatusMap[inv.stato];
               return (
                 <div key={inv.id} className="border border-border rounded-lg p-3 space-y-2">
