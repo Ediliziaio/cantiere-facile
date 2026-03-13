@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, LogIn, Users, ShieldCheck, Shield, Download, Ban, RefreshCw, Building2, FileText, ScrollText, Settings2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { mockTenantsAll, mockTenantSettings, mockSubscriptions, mockSuperAdminLog, mockCantieriAllTenants } from "@/data/mock-superadmin";
 import { mockUtentiAzienda } from "@/data/mock-data";
 import { TenantStatusBadge } from "@/components/layout/TenantStatusBadge";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, type UserRole } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 export default function SuperAdminAziendaDetail() {
