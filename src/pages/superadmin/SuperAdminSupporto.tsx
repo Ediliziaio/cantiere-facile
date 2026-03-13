@@ -73,10 +73,10 @@ export default function SuperAdminSupporto() {
 
       <Tabs defaultValue="inbox">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="inbox" className="gap-1"><Inbox className="h-4 w-4" /> Inbox</TabsTrigger>
-          <TabsTrigger value="kanban" className="gap-1"><KanbanSquare className="h-4 w-4" /> Kanban</TabsTrigger>
-          <TabsTrigger value="analytics" className="gap-1"><BarChart3 className="h-4 w-4" /> Analytics</TabsTrigger>
-          <TabsTrigger value="kb" className="gap-1"><BookOpen className="h-4 w-4" /> Knowledge Base</TabsTrigger>
+          <TabsTrigger value="inbox" className="gap-1"><Inbox className="h-4 w-4" /><span className="hidden sm:inline"> Inbox</span></TabsTrigger>
+          <TabsTrigger value="kanban" className="gap-1"><KanbanSquare className="h-4 w-4" /><span className="hidden sm:inline"> Kanban</span></TabsTrigger>
+          <TabsTrigger value="analytics" className="gap-1"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline"> Analytics</span></TabsTrigger>
+          <TabsTrigger value="kb" className="gap-1"><BookOpen className="h-4 w-4" /><span className="hidden sm:inline"> Knowledge Base</span></TabsTrigger>
         </TabsList>
 
         {/* INBOX */}
