@@ -5,7 +5,7 @@ import { CalendarDayDetail } from "@/components/dashboard/CalendarDayDetail";
 import { buildCalendarData, type CalendarDayData } from "@/data/mock-calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarDays } from "lucide-react";
-import { cantieri } from "@/data/mock-data";
+import { mockCantieri } from "@/data/mock-data";
 
 export default function Calendario() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date("2026-03-10"));
