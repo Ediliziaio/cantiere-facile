@@ -1,9 +1,12 @@
-import { HardHat, Search } from "lucide-react";
+import { HardHat, Search, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mockLavoratori, mockSubappaltatori, mockCantieri, mockSiteAssignments } from "@/data/mock-data";
+import { usePagination } from "@/hooks/usePagination";
+import { PaginationControls } from "@/components/superadmin/PaginationControls";
 
 export default function Lavoratori() {
   const [search, setSearch] = useState("");
@@ -19,11 +22,31 @@ export default function Lavoratori() {
     return matchSearch && matchTipo && matchCantiere;
   });
 
+  const { paginatedItems, page, totalPages, from, to, total, perPage, setPerPage, nextPage, prevPage, showPagination } = usePagination(filtered, 10);
+
+  const exportCsv = () => {
+    const header = "Nome,Cognome,Mansione,Tipo,Subappaltatore";
+    const rows = filtered.map((l) => {
+      const sub = l.subappaltatore_id ? mockSubappaltatori.find((s) => s.id === l.subappaltatore_id) : null;
+      return `"${l.nome}","${l.cognome}","${l.mansione}","${l.tipo}","${sub?.ragione_sociale || ""}"`;
+    });
+    const blob = new Blob([header + "\n" + rows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "lavoratori.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <HardHat className="h-5 w-5 text-primary" />
-        <h1 className="font-heading font-bold text-2xl text-foreground">Lavoratori</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <HardHat className="h-5 w-5 text-primary" />
+          <h1 className="font-heading font-bold text-2xl text-foreground">Lavoratori</h1>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportCsv}>
+          <Download className="h-4 w-4 mr-1" /> CSV
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -51,8 +74,8 @@ export default function Lavoratori() {
       </div>
 
       <div className="border border-border rounded-lg divide-y divide-border">
-        {filtered.length === 0 && <p className="p-6 text-sm text-muted-foreground text-center">Nessun lavoratore trovato.</p>}
-        {filtered.map((l) => {
+        {paginatedItems.length === 0 && <p className="p-6 text-sm text-muted-foreground text-center">Nessun lavoratore trovato.</p>}
+        {paginatedItems.map((l) => {
           const sub = l.subappaltatore_id ? mockSubappaltatori.find((s) => s.id === l.subappaltatore_id) : null;
           return (
             <Link key={l.id} to={`/app/lavoratori/${l.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-accent active:bg-accent transition-colors active:scale-[0.99]">
@@ -69,6 +92,8 @@ export default function Lavoratori() {
           );
         })}
       </div>
+
+      <PaginationControls from={from} to={to} total={total} page={page} totalPages={totalPages} perPage={perPage} setPerPage={setPerPage} nextPage={nextPage} prevPage={prevPage} showPagination={showPagination} />
     </div>
   );
 }

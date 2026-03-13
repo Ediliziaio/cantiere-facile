@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mockScadenze, mockCantieri } from "@/data/mock-data";
 import { DocumentStatusBadge } from "@/components/cantiere/DocumentStatusBadge";
 import type { DocumentoStato } from "@/data/mock-data";
+import { usePagination } from "@/hooks/usePagination";
+import { PaginationControls } from "@/components/superadmin/PaginationControls";
 
 type FilterRange = "tutti" | "oggi" | "7gg" | "30gg" | "scaduto";
 
@@ -28,6 +30,8 @@ export default function Scadenze() {
     return matchRange && matchCantiere;
   });
 
+  const { paginatedItems, page, totalPages, from, to, total, perPage, setPerPage, nextPage, prevPage, showPagination } = usePagination(filtered, 10);
+
   const ranges: { key: FilterRange; label: string }[] = [
     { key: "tutti", label: "Tutti" },
     { key: "scaduto", label: "Scaduti" },
@@ -36,11 +40,28 @@ export default function Scadenze() {
     { key: "30gg", label: "30 giorni" },
   ];
 
+  const exportCsv = () => {
+    const header = "Categoria,Cantiere,Data Scadenza,Stato";
+    const rows = filtered.map((s) =>
+      `"${s.categoria}","${s.cantiere}","${new Date(s.data_scadenza).toLocaleDateString("it-IT")}","${s.stato}"`
+    );
+    const blob = new Blob([header + "\n" + rows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "scadenze.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <CalendarClock className="h-5 w-5 text-primary" />
-        <h1 className="font-heading font-bold text-2xl text-foreground">Scadenze</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <CalendarClock className="h-5 w-5 text-primary" />
+          <h1 className="font-heading font-bold text-2xl text-foreground">Scadenze</h1>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportCsv}>
+          <Download className="h-4 w-4 mr-1" /> CSV
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
@@ -65,8 +86,8 @@ export default function Scadenze() {
       </div>
 
       <div className="border border-border rounded-lg divide-y divide-border">
-        {filtered.length === 0 && <p className="p-6 text-sm text-muted-foreground text-center">Nessuna scadenza in questo periodo.</p>}
-        {filtered.map((s) => (
+        {paginatedItems.length === 0 && <p className="p-6 text-sm text-muted-foreground text-center">Nessuna scadenza in questo periodo.</p>}
+        {paginatedItems.map((s) => (
           <div key={s.id} className="flex items-center justify-between px-4 py-3">
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-foreground">{s.categoria}</p>
@@ -76,6 +97,8 @@ export default function Scadenze() {
           </div>
         ))}
       </div>
+
+      <PaginationControls from={from} to={to} total={total} page={page} totalPages={totalPages} perPage={perPage} setPerPage={setPerPage} nextPage={nextPage} prevPage={prevPage} showPagination={showPagination} />
     </div>
   );
 }
