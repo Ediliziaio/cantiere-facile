@@ -79,10 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [superadminRole, role]);
 
   const activeTenantId = impersonation.isImpersonating ? impersonation.tenantId : tenantId;
+  const effectiveRole = impersonation.isImpersonating && impersonation.impersonatedRole ? impersonation.impersonatedRole : role;
 
   return (
     <AuthContext.Provider value={{
-      user, role, superadminRole, tenantId, tenantName, impersonation,
+      user, role, effectiveRole, superadminRole, tenantId, tenantName, impersonation,
       login, logout, startImpersonation, stopImpersonation,
       activeTenantId, hasPermission,
     }}>
