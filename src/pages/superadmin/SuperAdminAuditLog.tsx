@@ -31,6 +31,8 @@ export default function SuperAdminAuditLog() {
     return matchSearch && matchSeverity;
   });
 
+  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filtered, 15);
+
   const exportCsv = () => {
     const headers = "Timestamp,Attore,Azione,Risorsa,Tenant,Severity,IP,Hash\n";
     const rows = filtered.map((l) =>
