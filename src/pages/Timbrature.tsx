@@ -117,7 +117,23 @@ export default function Timbrature() {
 
   const getLav = (lid: string) => mockLavoratori.find((x) => x.id === lid);
   const getCantName = (cid: string) => mockCantieri.find((c) => c.id === cid)?.nome ?? "—";
-  const getBadgeForLav = (lid: string) => mockBadges.find((b) => b.lavoratore_id === lid);
+  const handleExportCsv = () => {
+    if (vista === "riepilogo") {
+      exportRiepilogoCsv(filtered, mockTimbrature);
+      return;
+    }
+    const header = "Lavoratore,Data,Ora,Tipo,Cantiere,Esito,Metodo,Motivo blocco";
+    const rows = filtered.map((t) => {
+      const lav = getLav(t.lavoratore_id);
+      const ts = new Date(t.timestamp);
+      return `"${lav ? `${lav.nome} ${lav.cognome}` : ""}","${ts.toLocaleDateString("it-IT")}","${ts.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}","${t.tipo}","${getCantName(t.cantiere_id)}","${t.esito}","${t.metodo ?? ""}","${t.motivo_blocco ?? ""}"`;
+    });
+    const blob = new Blob([header + "\n" + rows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "timbrature-log.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
