@@ -105,7 +105,7 @@ export function AppSidebar() {
       </div>
       <SidebarContent>
         {navGroups.map((group) => {
-          const visibleItems = group.items.filter(item => !isManager || !item.adminOnly);
+          const visibleItems = group.items.filter(item => !item.adminOnly || isAdminOrAbove);
           if (visibleItems.length === 0) return null;
           const isOpen = openGroups.has(group.label);
 

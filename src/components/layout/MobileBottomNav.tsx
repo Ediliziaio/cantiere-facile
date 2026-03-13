@@ -83,7 +83,7 @@ export function MobileBottomNav() {
             <SheetTitle className="sr-only">Menu di navigazione</SheetTitle>
             <div className="space-y-5 py-4">
               {menuGroups.map((group) => {
-                const visibleItems = group.items.filter(item => !isManager || !item.adminOnly);
+                const visibleItems = group.items.filter(item => !item.adminOnly || isAdminOrAbove);
                 if (visibleItems.length === 0) return null;
                 return (
                   <div key={group.label}>
