@@ -20,23 +20,125 @@ export interface CalendarScadenza {
   nome_file: string;
 }
 
+export interface CalendarAppuntamento {
+  id: string;
+  titolo: string;
+  descrizione: string;
+  data: string; // YYYY-MM-DD
+  ora_inizio: string;
+  ora_fine: string;
+  cantiere_id?: string;
+  cantiere_nome?: string;
+  assegnato_a: { id: string; nome: string }[];
+  colore: "blue" | "purple" | "teal" | "rose";
+}
+
 export interface CalendarDayData {
   presenze: CalendarPresenza[];
   scadenze: CalendarScadenza[];
+  appuntamenti: CalendarAppuntamento[];
   cantieriAttivi: { id: string; nome: string; presentiCount: number }[];
   worstStatus: "ok" | "warning" | "danger";
 }
+
+export const mockAppuntamenti: CalendarAppuntamento[] = [
+  {
+    id: "app-1",
+    titolo: "Sopralluogo tecnico",
+    descrizione: "Verifica avanzamento fondamenta",
+    data: "2026-03-10",
+    ora_inizio: "09:00",
+    ora_fine: "11:00",
+    cantiere_id: "c1",
+    cantiere_nome: "Residenza Parco Verde",
+    assegnato_a: [
+      { id: "l1", nome: "Marco Rossi" },
+      { id: "l2", nome: "Giuseppe Bianchi" },
+    ],
+    colore: "blue",
+  },
+  {
+    id: "app-2",
+    titolo: "Riunione sicurezza",
+    descrizione: "Briefing settimanale sulla sicurezza cantiere",
+    data: "2026-03-12",
+    ora_inizio: "14:00",
+    ora_fine: "15:30",
+    cantiere_id: "c2",
+    cantiere_nome: "Torre Meridiana",
+    assegnato_a: [
+      { id: "l3", nome: "Antonio Verdi" },
+      { id: "l1", nome: "Marco Rossi" },
+    ],
+    colore: "purple",
+  },
+  {
+    id: "app-3",
+    titolo: "Consegna materiali",
+    descrizione: "Arrivo cemento e acciaio per gettata",
+    data: "2026-03-15",
+    ora_inizio: "07:30",
+    ora_fine: "09:00",
+    cantiere_id: "c1",
+    cantiere_nome: "Residenza Parco Verde",
+    assegnato_a: [{ id: "l4", nome: "Luigi Neri" }],
+    colore: "teal",
+  },
+  {
+    id: "app-4",
+    titolo: "Incontro con committente",
+    descrizione: "Presentazione stato avanzamento lavori",
+    data: "2026-03-18",
+    ora_inizio: "10:00",
+    ora_fine: "12:00",
+    assegnato_a: [
+      { id: "l1", nome: "Marco Rossi" },
+      { id: "l5", nome: "Francesco Esposito" },
+    ],
+    colore: "rose",
+  },
+  {
+    id: "app-5",
+    titolo: "Ispezione ASL",
+    descrizione: "Controllo documentazione e sicurezza",
+    data: "2026-03-20",
+    ora_inizio: "09:00",
+    ora_fine: "13:00",
+    cantiere_id: "c2",
+    cantiere_nome: "Torre Meridiana",
+    assegnato_a: [
+      { id: "l3", nome: "Antonio Verdi" },
+      { id: "l2", nome: "Giuseppe Bianchi" },
+    ],
+    colore: "blue",
+  },
+  {
+    id: "app-6",
+    titolo: "Formazione nuovi operai",
+    descrizione: "Corso sicurezza base per nuovi ingressi",
+    data: "2026-03-10",
+    ora_inizio: "14:00",
+    ora_fine: "17:00",
+    cantiere_id: "c1",
+    cantiere_nome: "Residenza Parco Verde",
+    assegnato_a: [{ id: "l4", nome: "Luigi Neri" }, { id: "l6", nome: "Paolo Ricci" }],
+    colore: "purple",
+  },
+];
 
 function formatDateKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function buildCalendarData(filterCantiereId?: string): Map<string, CalendarDayData> {
+export function buildCalendarData(
+  filterCantiereId?: string,
+  extraAppuntamenti: CalendarAppuntamento[] = []
+): Map<string, CalendarDayData> {
   const map = new Map<string, CalendarDayData>();
 
   const getOrCreate = (key: string): CalendarDayData => {
     if (!map.has(key)) {
-      map.set(key, { presenze: [], scadenze: [], cantieriAttivi: [], worstStatus: "ok" });
+      map.set(key, { presenze: [], scadenze: [], appuntamenti: [], cantieriAttivi: [], worstStatus: "ok" });
     }
     return map.get(key)!;
   };
@@ -97,8 +199,17 @@ export function buildCalendarData(filterCantiereId?: string): Map<string, Calend
     else if (s.stato === "in_scadenza" && day.worstStatus !== "danger") day.worstStatus = "warning";
   }
 
+  // Appuntamenti (mock + extra)
+  const allAppuntamenti = [...mockAppuntamenti, ...extraAppuntamenti];
+  for (const app of allAppuntamenti) {
+    if (filterCantiereId && app.cantiere_id && app.cantiere_id !== filterCantiereId) continue;
+    if (filterCantiereId && !app.cantiere_id) continue; // skip generic appointments when filtering by site
+    const day = getOrCreate(app.data);
+    day.appuntamenti.push(app);
+  }
+
   // Build cantieriAttivi per day
-  for (const [dateKey, day] of map) {
+  for (const [, day] of map) {
     const cantMap = new Map<string, { nome: string; count: number }>();
     for (const p of day.presenze) {
       const existing = cantMap.get(p.cantiere_id);
