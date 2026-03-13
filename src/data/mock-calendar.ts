@@ -29,6 +29,7 @@ export interface CalendarAppuntamento {
   ora_fine: string;
   cantiere_id?: string;
   cantiere_nome?: string;
+  indirizzo?: string;
   assegnato_a: { id: string; nome: string }[];
   colore: "blue" | "purple" | "teal" | "rose";
 }
