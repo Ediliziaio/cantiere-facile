@@ -35,13 +35,31 @@ const comparators: Record<BillingSortKey, (a: MockInvoice, b: MockInvoice) => nu
 
 export default function SuperAdminBilling() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const m = mockBillingMetrics;
 
   const filteredInvoices = useMemo(() =>
-    statusFilter === "all"
-      ? mockInvoices
-      : mockInvoices.filter((i) => i.stato === statusFilter),
-    [statusFilter]);
+    mockInvoices.filter((i) => {
+      const matchStatus = statusFilter === "all" || i.stato === statusFilter;
+      const invDate = new Date(i.data_emissione);
+      const matchFrom = !dateFrom || invDate >= new Date(dateFrom);
+      const matchTo = !dateTo || invDate <= new Date(dateTo + "T23:59:59");
+      return matchStatus && matchFrom && matchTo;
+    }),
+    [statusFilter, dateFrom, dateTo]);
+
+  const exportCsv = () => {
+    const headers = "N° Fattura,Azienda,Descrizione,Data Emissione,Totale,Stato\n";
+    const rows = filteredInvoices.map((i) =>
+      `${i.numero_fattura},"${i.tenant_name}","${i.descrizione}",${i.data_emissione},${i.totale.toFixed(2)},${i.stato}`
+    ).join("\n");
+    const blob = new Blob([headers + rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `fatture-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const { sortedItems, sortConfig, toggleSort } = useSortable(filteredInvoices, comparators);
   const pagination = usePagination(sortedItems, 10);
