@@ -32,9 +32,15 @@ export default function SuperAdminAuditLog() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [filterSeverity, setFilterSeverity] = useState<string>("all");
+  const [filterTenant, setFilterTenant] = useState<string>("all");
 
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+
+  const tenantNames = useMemo(() => {
+    const names = new Set(mockSecurityAuditLogs.map((l) => l.tenant_name).filter(Boolean) as string[]);
+    return Array.from(names).sort();
+  }, []);
 
   const filtered = useMemo(() => {
     const base = [...mockSecurityAuditLogs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -43,12 +49,13 @@ export default function SuperAdminAuditLog() {
         log.action.toLowerCase().includes(search.toLowerCase()) ||
         (log.tenant_name?.toLowerCase().includes(search.toLowerCase()) ?? false);
       const matchSeverity = filterSeverity === "all" || log.severity === filterSeverity;
+      const matchTenant = filterTenant === "all" || log.tenant_name === filterTenant;
       const logDate = new Date(log.timestamp);
       const matchFrom = !dateFrom || logDate >= new Date(dateFrom);
       const matchTo = !dateTo || logDate <= new Date(dateTo + "T23:59:59");
-      return matchSearch && matchSeverity && matchFrom && matchTo;
+      return matchSearch && matchSeverity && matchTenant && matchFrom && matchTo;
     });
-  }, [search, filterSeverity, dateFrom, dateTo]);
+  }, [search, filterSeverity, filterTenant, dateFrom, dateTo]);
 
   const { sortedItems, sortConfig, toggleSort } = useSortable(filtered, comparators);
   const pagination = usePagination(sortedItems, 15);
