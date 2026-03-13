@@ -61,6 +61,7 @@ export default function CantiereDetail() {
             <TabsTrigger value="lavoratori">Lavoratori <span className="hidden sm:inline ml-1">({workers.length})</span></TabsTrigger>
             <TabsTrigger value="mezzi">Mezzi <span className="hidden sm:inline ml-1">({mezzi.length})</span></TabsTrigger>
             <TabsTrigger value="accessi">Accessi <span className="hidden sm:inline ml-1">({accessi.length})</span></TabsTrigger>
+            <TabsTrigger value="avanzamento">Avanzamento</TabsTrigger>
             <TabsTrigger value="galleria">Galleria <span className="hidden sm:inline ml-1">({fileCantiere.length})</span></TabsTrigger>
             <TabsTrigger value="diario">Diario <span className="hidden sm:inline ml-1">({diario.length})</span></TabsTrigger>
           </TabsList>
