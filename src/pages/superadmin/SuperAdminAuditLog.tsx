@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ScrollText, Search, Download, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,7 +8,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { mockSecurityAuditLogs } from "@/data/mock-security";
 import { useToast } from "@/hooks/use-toast";
 import { usePagination } from "@/hooks/usePagination";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSortable } from "@/hooks/useSortable";
+import { PaginationControls } from "@/components/superadmin/PaginationControls";
+import { SortableHeader } from "@/components/superadmin/SortableHeader";
 
 const severityColors: Record<string, string> = {
   info: "bg-muted text-muted-foreground",
@@ -16,22 +18,34 @@ const severityColors: Record<string, string> = {
   critical: "bg-destructive/10 text-destructive border-destructive/30",
 };
 
+const severityWeight: Record<string, number> = { info: 1, warning: 2, critical: 3 };
+
+type AuditLog = typeof mockSecurityAuditLogs[0];
+type AuditSortKey = "severity" | "timestamp";
+
+const comparators: Record<AuditSortKey, (a: AuditLog, b: AuditLog) => number> = {
+  severity: (a, b) => (severityWeight[a.severity] || 0) - (severityWeight[b.severity] || 0),
+  timestamp: (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+};
+
 export default function SuperAdminAuditLog() {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [filterSeverity, setFilterSeverity] = useState<string>("all");
 
-  const sorted = [...mockSecurityAuditLogs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const filtered = useMemo(() => {
+    const base = [...mockSecurityAuditLogs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return base.filter((log) => {
+      const matchSearch = !search || log.actor_name.toLowerCase().includes(search.toLowerCase()) ||
+        log.action.toLowerCase().includes(search.toLowerCase()) ||
+        (log.tenant_name?.toLowerCase().includes(search.toLowerCase()) ?? false);
+      const matchSeverity = filterSeverity === "all" || log.severity === filterSeverity;
+      return matchSearch && matchSeverity;
+    });
+  }, [search, filterSeverity]);
 
-  const filtered = sorted.filter((log) => {
-    const matchSearch = !search || log.actor_name.toLowerCase().includes(search.toLowerCase()) ||
-      log.action.toLowerCase().includes(search.toLowerCase()) ||
-      (log.tenant_name?.toLowerCase().includes(search.toLowerCase()) ?? false);
-    const matchSeverity = filterSeverity === "all" || log.severity === filterSeverity;
-    return matchSearch && matchSeverity;
-  });
-
-  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filtered, 15);
+  const { sortedItems, sortConfig, toggleSort } = useSortable(filtered, comparators);
+  const pagination = usePagination(sortedItems, 15);
 
   const exportCsv = () => {
     const headers = "Timestamp,Attore,Azione,Risorsa,Tenant,Severity,IP,Hash\n";
@@ -88,8 +102,8 @@ export default function SuperAdminAuditLog() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/30">
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Data/Ora</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Severity</th>
+                <SortableHeader label="Data/Ora" sortKey="timestamp" sortConfig={sortConfig} onToggle={toggleSort} />
+                <SortableHeader label="Severity" sortKey="severity" sortConfig={sortConfig} onToggle={toggleSort} />
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">Attore</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground">Azione</th>
                 <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Risorsa</th>
@@ -98,7 +112,7 @@ export default function SuperAdminAuditLog() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {paginatedItems.map((log) => (
+              {pagination.paginatedItems.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
                     {new Date(log.timestamp).toLocaleString("it-IT")}
@@ -145,7 +159,7 @@ export default function SuperAdminAuditLog() {
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
-        {paginatedItems.map((log) => (
+        {pagination.paginatedItems.map((log) => (
           <div key={log.id} className="border border-border rounded-lg p-4 space-y-2">
             <div className="flex items-center justify-between">
               <Badge variant="outline" className={`text-[10px] ${severityColors[log.severity]}`}>
@@ -168,21 +182,7 @@ export default function SuperAdminAuditLog() {
         )}
       </div>
 
-      {/* Pagination */}
-      {showPagination && (
-        <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-xs text-muted-foreground">{from}–{to} di {total} risultati</span>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={prevPage} disabled={page === 1}>
-              <ChevronLeft className="h-4 w-4 mr-1" /> Precedente
-            </Button>
-            <span className="text-xs text-muted-foreground">Pagina {page} di {totalPages}</span>
-            <Button variant="outline" size="sm" onClick={nextPage} disabled={page === totalPages}>
-              Successivo <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </div>
-      )}
+      <PaginationControls {...pagination} />
 
       <p className="text-xs text-muted-foreground">
         {filtered.length} di {mockSecurityAuditLogs.length} eventi • Append-only • Retention: 7 anni • Hash chain SHA-256

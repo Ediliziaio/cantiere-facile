@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TrendingUp, TrendingDown, DollarSign, Users, AlertTriangle, Receipt, FileText, CreditCard, ChevronLeft, ChevronRight } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Users, AlertTriangle, Receipt, FileText, CreditCard } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import {
   mockBillingMetrics, mockRevenueTrend, mockPlanDistribution, mockInvoices, type MockInvoice,
 } from "@/data/mock-billing";
 import { usePagination } from "@/hooks/usePagination";
+import { useSortable } from "@/hooks/useSortable";
+import { PaginationControls } from "@/components/superadmin/PaginationControls";
+import { SortableHeader } from "@/components/superadmin/SortableHeader";
 
 const invoiceStatusMap: Record<MockInvoice["stato"], { label: string; variant: "default" | "destructive" | "secondary" | "outline" }> = {
   pagata: { label: "Pagata", variant: "default" },
@@ -19,15 +22,28 @@ const invoiceStatusMap: Record<MockInvoice["stato"], { label: string; variant: "
   bozza: { label: "Bozza", variant: "outline" },
 };
 
+const statusWeight: Record<string, number> = { bozza: 0, pagata: 1, in_scadenza: 2, scaduta: 3 };
+
+type BillingSortKey = "totale" | "data_emissione" | "stato";
+
+const comparators: Record<BillingSortKey, (a: MockInvoice, b: MockInvoice) => number> = {
+  totale: (a, b) => a.totale - b.totale,
+  data_emissione: (a, b) => new Date(a.data_emissione).getTime() - new Date(b.data_emissione).getTime(),
+  stato: (a, b) => (statusWeight[a.stato] || 0) - (statusWeight[b.stato] || 0),
+};
+
 export default function SuperAdminBilling() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const m = mockBillingMetrics;
 
-  const filteredInvoices = statusFilter === "all"
-    ? mockInvoices
-    : mockInvoices.filter((i) => i.stato === statusFilter);
+  const filteredInvoices = useMemo(() =>
+    statusFilter === "all"
+      ? mockInvoices
+      : mockInvoices.filter((i) => i.stato === statusFilter),
+    [statusFilter]);
 
-  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filteredInvoices, 10);
+  const { sortedItems, sortConfig, toggleSort } = useSortable(filteredInvoices, comparators);
+  const pagination = usePagination(sortedItems, 10);
 
   const kpis = [
     { label: "MRR", value: `€${m.mrr.toLocaleString("it-IT")}`, icon: DollarSign, trend: "+5.7%", up: true },
@@ -45,18 +61,10 @@ export default function SuperAdminBilling() {
           <p className="text-sm text-muted-foreground">Monitora ricavi, fatture e distribuzione piani</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => toast({ title: "Fattura manuale", description: "Creazione fattura manuale... (simulato)" })}
-          >
+          <Button variant="outline" size="sm" onClick={() => toast({ title: "Fattura manuale", description: "Creazione fattura manuale... (simulato)" })}>
             <FileText className="h-4 w-4 mr-1" /> Fattura manuale
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => toast({ title: "Pagamento manuale", description: "Registrazione pagamento... (simulato)" })}
-          >
+          <Button variant="outline" size="sm" onClick={() => toast({ title: "Pagamento manuale", description: "Registrazione pagamento... (simulato)" })}>
             <CreditCard className="h-4 w-4 mr-1" /> Registra pagamento
           </Button>
         </div>
@@ -155,14 +163,20 @@ export default function SuperAdminBilling() {
                   <TableHead>N° Fattura</TableHead>
                   <TableHead>Azienda</TableHead>
                   <TableHead>Descrizione</TableHead>
-                  <TableHead>Data emissione</TableHead>
-                  <TableHead className="text-right">Totale</TableHead>
-                  <TableHead>Stato</TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("data_emissione")}>
+                    <SortableHeader label="Data emissione" sortKey="data_emissione" sortConfig={sortConfig} onToggle={() => {}} />
+                  </TableHead>
+                  <TableHead className="text-right cursor-pointer select-none" onClick={() => toggleSort("totale")}>
+                    <SortableHeader label="Totale" sortKey="totale" sortConfig={sortConfig} onToggle={() => {}} />
+                  </TableHead>
+                  <TableHead className="cursor-pointer select-none" onClick={() => toggleSort("stato")}>
+                    <SortableHeader label="Stato" sortKey="stato" sortConfig={sortConfig} onToggle={() => {}} />
+                  </TableHead>
                   <TableHead className="w-10"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedItems.map((inv) => {
+                {pagination.paginatedItems.map((inv) => {
                   const st = invoiceStatusMap[inv.stato];
                   return (
                     <TableRow key={inv.id}>
@@ -191,7 +205,7 @@ export default function SuperAdminBilling() {
 
           {/* Mobile cards */}
           <div className="md:hidden space-y-3">
-            {paginatedItems.map((inv) => {
+            {pagination.paginatedItems.map((inv) => {
               const st = invoiceStatusMap[inv.stato];
               return (
                 <div key={inv.id} className="border border-border rounded-lg p-3 space-y-2">
@@ -220,21 +234,9 @@ export default function SuperAdminBilling() {
             })}
           </div>
 
-          {/* Pagination */}
-          {showPagination && (
-            <div className="flex items-center justify-between gap-3 text-sm mt-4">
-              <span className="text-xs text-muted-foreground">{from}–{to} di {total} risultati</span>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={prevPage} disabled={page === 1}>
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Precedente
-                </Button>
-                <span className="text-xs text-muted-foreground">Pagina {page} di {totalPages}</span>
-                <Button variant="outline" size="sm" onClick={nextPage} disabled={page === totalPages}>
-                  Successivo <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-            </div>
-          )}
+          <div className="mt-4">
+            <PaginationControls {...pagination} />
+          </div>
         </CardContent>
       </Card>
     </div>

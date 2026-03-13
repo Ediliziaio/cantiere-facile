@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, LogIn, Eye, Plus, Building2, Clock, AlertTriangle, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,24 @@ import { mockTenantsAll } from "@/data/mock-superadmin";
 import { TenantStatusBadge } from "@/components/layout/TenantStatusBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePagination } from "@/hooks/usePagination";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSortable } from "@/hooks/useSortable";
+import { PaginationControls } from "@/components/superadmin/PaginationControls";
+import { SortableHeader } from "@/components/superadmin/SortableHeader";
 
 const planBadgeVariant: Record<string, "outline" | "default" | "secondary"> = {
   free: "outline",
   pro: "default",
   enterprise: "secondary",
+};
+
+type AziendaSortKey = "health_score" | "cantieri_count" | "utenti_count" | "last_active";
+type Tenant = typeof mockTenantsAll[0];
+
+const comparators: Record<AziendaSortKey, (a: Tenant, b: Tenant) => number> = {
+  health_score: (a, b) => a.health_score - b.health_score,
+  cantieri_count: (a, b) => a.cantieri_count - b.cantieri_count,
+  utenti_count: (a, b) => a.utenti_count - b.utenti_count,
+  last_active: (a, b) => new Date(a.last_active).getTime() - new Date(b.last_active).getTime(),
 };
 
 function AziendaAvatar({ name }: { name: string }) {
@@ -32,12 +44,14 @@ export default function SuperAdminAziende() {
   const { startImpersonation } = useAuth();
   const navigate = useNavigate();
 
-  const filtered = mockTenantsAll.filter((t) =>
-    t.nome_azienda.toLowerCase().includes(search.toLowerCase()) ||
-    t.p_iva.includes(search)
-  );
+  const filtered = useMemo(() =>
+    mockTenantsAll.filter((t) =>
+      t.nome_azienda.toLowerCase().includes(search.toLowerCase()) ||
+      t.p_iva.includes(search)
+    ), [search]);
 
-  const { paginatedItems, page, totalPages, from, to, total, nextPage, prevPage, showPagination } = usePagination(filtered, 10);
+  const { sortedItems, sortConfig, toggleSort } = useSortable(filtered, comparators);
+  const pagination = usePagination(sortedItems, 10);
 
   const totale = mockTenantsAll.length;
   const attive = mockTenantsAll.filter(t => t.stato === "attivo").length;
@@ -51,7 +65,7 @@ export default function SuperAdminAziende() {
     { label: "Sospese", value: sospese, icon: AlertTriangle, color: "text-destructive" },
   ];
 
-  const handleImpersonate = (t: typeof mockTenantsAll[0]) => {
+  const handleImpersonate = (t: Tenant) => {
     startImpersonation(t.id, t.nome_azienda);
     navigate("/app/dashboard");
   };
@@ -68,7 +82,6 @@ export default function SuperAdminAziende() {
         </Button>
       </div>
 
-      {/* Summary stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {summaryStats.map((s) => (
           <Card key={s.label}>
@@ -97,15 +110,15 @@ export default function SuperAdminAziende() {
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">P.IVA</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Piano</th>
               <th className="text-left px-4 py-3 font-medium text-muted-foreground">Stato</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Cantieri</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden lg:table-cell">Utenti</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Health</th>
-              <th className="text-left px-4 py-3 font-medium text-muted-foreground">Ultima attività</th>
+              <SortableHeader label="Cantieri" sortKey="cantieri_count" sortConfig={sortConfig} onToggle={toggleSort} className="hidden lg:table-cell" />
+              <SortableHeader label="Utenti" sortKey="utenti_count" sortConfig={sortConfig} onToggle={toggleSort} className="hidden lg:table-cell" />
+              <SortableHeader label="Health" sortKey="health_score" sortConfig={sortConfig} onToggle={toggleSort} />
+              <SortableHeader label="Ultima attività" sortKey="last_active" sortConfig={sortConfig} onToggle={toggleSort} />
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {paginatedItems.map((t) => (
+            {pagination.paginatedItems.map((t) => (
               <tr key={t.id} className="hover:bg-muted/20 transition-colors">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2.5">
@@ -153,7 +166,7 @@ export default function SuperAdminAziende() {
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
-        {paginatedItems.map((t) => (
+        {pagination.paginatedItems.map((t) => (
           <Card key={t.id}>
             <CardContent className="p-4 space-y-3">
               <div className="flex items-center justify-between">
@@ -191,21 +204,7 @@ export default function SuperAdminAziende() {
         ))}
       </div>
 
-      {/* Pagination */}
-      {showPagination && (
-        <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-xs text-muted-foreground">{from}–{to} di {total} risultati</span>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={prevPage} disabled={page === 1}>
-              <ChevronLeft className="h-4 w-4 mr-1" /> Precedente
-            </Button>
-            <span className="text-xs text-muted-foreground">Pagina {page} di {totalPages}</span>
-            <Button variant="outline" size="sm" onClick={nextPage} disabled={page === totalPages}>
-              Successivo <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </div>
-      )}
+      <PaginationControls {...pagination} />
     </div>
   );
 }
