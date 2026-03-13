@@ -73,7 +73,7 @@ export function SettingsLayout() {
               })}
             </div>
           </div>
-          <main className="flex-1 p-4 md:p-8 overflow-auto pb-20 md:pb-6 safe-area-left safe-area-right">
+          <main className="flex-1 p-4 md:p-6 overflow-auto pb-20 md:pb-6 safe-area-left safe-area-right">
             <Suspense fallback={<PageFallback />}>
               <Outlet />
             </Suspense>
