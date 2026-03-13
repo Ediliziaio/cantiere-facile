@@ -140,7 +140,7 @@ export default function CheckIn() {
         setLastAction(null);
       }, 2000);
     },
-    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation]
+    [cantiere, geo.position, mode, manualNote, isProcessing, addOperation, geofence.distance]
   );
 
   const handleCheckOut = useCallback(
