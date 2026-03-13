@@ -83,7 +83,7 @@ export default function SuperAdminAziende() {
   ];
 
   const handleImpersonate = (t: Tenant) => {
-    startImpersonation(t.id, t.nome_azienda);
+    startImpersonation(t.id, t.nome_azienda, "admin");
     navigate("/app/dashboard");
   };
 

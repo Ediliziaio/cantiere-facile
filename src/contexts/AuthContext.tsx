@@ -14,18 +14,20 @@ interface ImpersonationState {
   isImpersonating: boolean;
   tenantId: string | null;
   tenantName: string | null;
+  impersonatedRole: UserRole | null;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
   role: UserRole | null;
+  effectiveRole: UserRole | null;
   superadminRole: SuperAdminRole | null;
   tenantId: string | null;
   tenantName: string | null;
   impersonation: ImpersonationState;
   login: (user: AuthUser, role: UserRole, tenantId: string | null, tenantName: string | null, saRole?: SuperAdminRole) => void;
   logout: () => void;
-  startImpersonation: (tenantId: string, tenantName: string) => void;
+  startImpersonation: (tenantId: string, tenantName: string, role: UserRole) => void;
   stopImpersonation: () => void;
   activeTenantId: string | null;
   hasPermission: (permission: string) => boolean;
@@ -43,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isImpersonating: false,
     tenantId: null,
     tenantName: null,
+    impersonatedRole: null,
   });
 
   const login = useCallback((user: AuthUser, role: UserRole, tid: string | null, tname: string | null, saRole?: SuperAdminRole) => {
@@ -59,15 +62,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSuperadminRole(null);
     setTenantId(null);
     setTenantName(null);
-    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null });
+    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null, impersonatedRole: null });
   }, []);
 
-  const startImpersonation = useCallback((tid: string, tname: string) => {
-    setImpersonation({ isImpersonating: true, tenantId: tid, tenantName: tname });
+  const startImpersonation = useCallback((tid: string, tname: string, impRole: UserRole) => {
+    setImpersonation({ isImpersonating: true, tenantId: tid, tenantName: tname, impersonatedRole: impRole });
   }, []);
 
   const stopImpersonation = useCallback(() => {
-    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null });
+    setImpersonation({ isImpersonating: false, tenantId: null, tenantName: null, impersonatedRole: null });
   }, []);
 
   const hasPermission = useCallback((permission: string): boolean => {
@@ -76,10 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [superadminRole, role]);
 
   const activeTenantId = impersonation.isImpersonating ? impersonation.tenantId : tenantId;
+  const effectiveRole = impersonation.isImpersonating && impersonation.impersonatedRole ? impersonation.impersonatedRole : role;
 
   return (
     <AuthContext.Provider value={{
-      user, role, superadminRole, tenantId, tenantName, impersonation,
+      user, role, effectiveRole, superadminRole, tenantId, tenantName, impersonation,
       login, logout, startImpersonation, stopImpersonation,
       activeTenantId, hasPermission,
     }}>

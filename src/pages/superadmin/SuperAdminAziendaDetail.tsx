@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, LogIn, Users, ShieldCheck, Shield, Download, Ban, RefreshCw, Building2, FileText, ScrollText, Settings2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,17 +6,19 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { mockTenantsAll, mockTenantSettings, mockSubscriptions, mockSuperAdminLog, mockCantieriAllTenants } from "@/data/mock-superadmin";
 import { mockUtentiAzienda } from "@/data/mock-data";
 import { TenantStatusBadge } from "@/components/layout/TenantStatusBadge";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, type UserRole } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 export default function SuperAdminAziendaDetail() {
   const { id } = useParams<{ id: string }>();
-  const tenant = mockTenantsAll.find((t) => t.id === id);
   const { startImpersonation } = useAuth();
   const navigate = useNavigate();
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const tenant = mockTenantsAll.find((t) => t.id === id);
 
   if (!tenant) {
     return (
@@ -35,8 +38,10 @@ export default function SuperAdminAziendaDetail() {
   const auditLogs = mockSuperAdminLog.filter((l) => l.tenant_id === tenant.id).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   const storagePercent = Math.round((tenant.storage_used_mb / (tenant.max_storage_gb * 1024)) * 100);
 
-  const handleImpersonate = () => {
-    startImpersonation(tenant.id, tenant.nome_azienda);
+
+  const handleImpersonate = (impRole: UserRole) => {
+    startImpersonation(tenant.id, tenant.nome_azienda, impRole);
+    setRoleDialogOpen(false);
     navigate("/app/dashboard");
   };
 
@@ -67,9 +72,40 @@ export default function SuperAdminAziendaDetail() {
           <TenantStatusBadge stato={tenant.stato} />
         </div>
         <div className="flex gap-2 flex-wrap">
-          <Button size="sm" onClick={handleImpersonate}>
-            <LogIn className="h-3.5 w-3.5 mr-1.5" /> Impersona
-          </Button>
+          <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm">
+                <LogIn className="h-3.5 w-3.5 mr-1.5" /> Impersona
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Scegli il ruolo da impersonare</DialogTitle>
+              </DialogHeader>
+              <p className="text-sm text-muted-foreground">
+                Navigherai come <strong>{tenant.nome_azienda}</strong> con i permessi del ruolo selezionato.
+              </p>
+              <div className="flex flex-col gap-2 mt-2">
+                {([
+                  { role: "admin" as UserRole, label: "Admin", desc: "Piena gestione dell'azienda" },
+                  { role: "manager" as UserRole, label: "Manager", desc: "Accesso limitato ai cantieri assegnati" },
+                  { role: "utente" as UserRole, label: "Utente", desc: "Dipendente operativo (check-in, badge, firma)" },
+                ]).map((opt) => (
+                  <Button
+                    key={opt.role}
+                    variant="outline"
+                    className="justify-start h-auto py-3 px-4"
+                    onClick={() => handleImpersonate(opt.role)}
+                  >
+                    <div className="text-left">
+                      <div className="font-medium">{opt.label}</div>
+                      <div className="text-xs text-muted-foreground">{opt.desc}</div>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button size="sm" variant="outline" onClick={handleExport}>
             <Download className="h-3.5 w-3.5 mr-1.5" /> Export
           </Button>
