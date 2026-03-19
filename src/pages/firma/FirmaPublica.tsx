@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { HardHat, FileText, PenTool, CheckCircle2, Eraser, Send, ShieldCheck, AlertTriangle } from "lucide-react";
+import { FileText, PenTool, CheckCircle2, Eraser, Send, ShieldCheck, AlertTriangle } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { mockFirmatari, mockDocumentiFirma } from "@/data/mock-firma";
 import { useToast } from "@/hooks/use-toast";
 
