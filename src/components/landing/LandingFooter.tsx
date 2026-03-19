@@ -1,5 +1,5 @@
-import { HardHat } from "lucide-react";
 import { Link } from "react-router-dom";
+import logoDark from "@/assets/logo-dark.png";
 
 const cols = [
   {
