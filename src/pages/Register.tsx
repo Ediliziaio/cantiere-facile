@@ -29,7 +29,7 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8">
-          <img src={logoLight} alt="Cantiere in Cloud" className="h-9" />
+          <img src={logoLight} alt="Cantiere in Cloud" className="h-12" />
         </div>
 
         <h1 className="font-heading font-bold text-2xl text-foreground mb-1">Crea il tuo account</h1>

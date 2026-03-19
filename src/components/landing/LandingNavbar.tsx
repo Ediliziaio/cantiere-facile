@@ -95,7 +95,7 @@ export default function LandingNavbar() {
         >
           <div className="flex items-center justify-between px-4 h-16">
             <Link to="/" className="flex items-center">
-              <img src={logoLight} alt="Cantiere in Cloud" className="h-8" />
+              <img src={logoLight} alt="Cantiere in Cloud" className="h-10" />
             </Link>
             <button onClick={() => setMobileOpen(false)} aria-label="Chiudi">
               <X className="h-6 w-6" />
