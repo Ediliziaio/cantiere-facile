@@ -70,7 +70,7 @@ export function SuperAdminLayout() {
             <div className="flex items-center gap-3">
               
               <div className="flex items-center md:hidden">
-                <img src={logoLight} alt="Cantiere in Cloud" className="h-6" />
+                <img src={logoLight} alt="Cantiere in Cloud" className="h-8" />
               </div>
               <div className="hidden md:flex items-center gap-2">
                 <span className="text-sm font-medium text-foreground">Piattaforma Admin</span>

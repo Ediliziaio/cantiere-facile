@@ -43,7 +43,7 @@ export function TopBar() {
     <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4 safe-area-top">
       <div className="flex items-center gap-3">
         <div className="flex items-center md:hidden">
-          <img src={logoLight} alt="Cantiere in Cloud" className="h-6" />
+          <img src={logoLight} alt="Cantiere in Cloud" className="h-8" />
         </div>
         <span className="text-sm font-medium text-foreground hidden md:inline">
           {mockTenant.nome_azienda}

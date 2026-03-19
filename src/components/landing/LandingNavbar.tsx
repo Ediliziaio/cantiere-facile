@@ -38,13 +38,13 @@ export default function LandingNavbar() {
             <motion.img
               src={logoDark}
               alt="Cantiere in Cloud"
-              className="h-8"
+              className="h-10"
               style={{ opacity: useTransform(scrollY, [0, 400], [1, 0]) }}
             />
             <motion.img
               src={logoLight}
               alt="Cantiere in Cloud"
-              className="h-8 absolute"
+              className="h-10 absolute"
               style={{ opacity: useTransform(scrollY, [0, 400], [0, 1]) }}
             />
           </Link>
@@ -95,7 +95,7 @@ export default function LandingNavbar() {
         >
           <div className="flex items-center justify-between px-4 h-16">
             <Link to="/" className="flex items-center">
-              <img src={logoLight} alt="Cantiere in Cloud" className="h-8" />
+              <img src={logoLight} alt="Cantiere in Cloud" className="h-10" />
             </Link>
             <button onClick={() => setMobileOpen(false)} aria-label="Chiudi">
               <X className="h-6 w-6" />

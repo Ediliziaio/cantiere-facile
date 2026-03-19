@@ -66,7 +66,7 @@ export function SuperAdminSidebar() {
   return (
     <Sidebar collapsible="none" className="border-r border-border hidden md:flex">
       <div className={`flex items-center px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
-        <img src={logoLight} alt="Cantiere in Cloud" className={collapsed ? "h-6" : "h-7"} />
+        <img src={logoLight} alt="Cantiere in Cloud" className={collapsed ? "h-8" : "h-10"} />
       </div>
       <SidebarContent>
         {navGroups.map((group) => {
