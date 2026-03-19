@@ -19,7 +19,6 @@ export default function LandingNavbar() {
   const shadow = useTransform(scrollY, [0, 400], ["0px 0px 0px rgba(0,0,0,0)", "0px 1px 12px rgba(0,0,0,0.08)"]);
 
   // Color transitions: white (on dark hero) → dark (on scrolled white bg)
-  const logoColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
   const linkColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,0.7)", "hsl(25,5%,45%)"]);
   const linkHoverColor = "hsl(25,95%,53%)";
   const menuIconColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
