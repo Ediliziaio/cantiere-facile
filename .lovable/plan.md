@@ -1,43 +1,23 @@
 
 
-# Sostituzione logo con immagine ufficiale
+# Ingrandire il logo ovunque
 
-## Panoramica
-Sostituire l'icona HardHat + testo "Cantiere in Cloud" con le immagini logo ufficiali caricate dall'utente. La versione "light" (sfondo chiaro) e "dark" (sfondo scuro) verranno usate nei contesti appropriati.
+## Modifiche
 
-## File logo
-- `src/assets/logo-light.png` — logo per sfondi chiari (testo scuro)
-- `src/assets/logo-dark.png` — logo per sfondi scuri (testo bianco/chiaro)
-- `public/favicon.png` — favicon estratto dal logo (icona gru/elmetto)
+Aumentare l'altezza del logo in tutti i file dove è usato, portandolo a dimensioni più generose:
 
-## Luoghi da aggiornare (10 file)
+| File | Attuale | Nuovo |
+|------|---------|-------|
+| `AppSidebar.tsx` | `h-7` / `h-6` (collapsed) | `h-10` / `h-8` |
+| `SuperAdminSidebar.tsx` | `h-7` / `h-6` (collapsed) | `h-10` / `h-8` |
+| `TopBar.tsx` (mobile) | `h-6` | `h-8` |
+| `SuperAdminLayout.tsx` (mobile) | `h-6` | `h-8` |
+| `Login.tsx` | `h-9` | `h-12` |
+| `Register.tsx` | `h-9` | `h-12` |
+| `LandingNavbar.tsx` (dark + light + mobile) | `h-8` | `h-10` |
+| `LandingFooter.tsx` | `h-8` | `h-10` |
+| `FirmaPublica.tsx` | `h-6` | `h-8` |
+| `CertificatoConformita.tsx` | `h-10` | `h-12` |
 
-### Sfondi chiari → `logo-light.png`
-| File | Contesto |
-|------|----------|
-| `src/pages/Login.tsx` | Logo nella pagina login |
-| `src/pages/Register.tsx` | Logo nella pagina registrazione |
-| `src/components/layout/AppSidebar.tsx` | Logo sidebar app |
-| `src/components/layout/SuperAdminSidebar.tsx` | Logo sidebar superadmin |
-| `src/components/layout/TopBar.tsx` | Logo mobile header |
-| `src/components/layout/SuperAdminLayout.tsx` | Logo mobile header superadmin |
-| `src/components/badge/CertificatoConformita.tsx` | Header certificato |
-| `src/pages/firma/FirmaPublica.tsx` | Header firma pubblica |
+Nessuna modifica strutturale — solo la classe Tailwind dell'altezza su ogni `<img>` / `<motion.img>`.
 
-### Sfondi scuri → `logo-dark.png`
-| File | Contesto |
-|------|----------|
-| `src/components/landing/LandingNavbar.tsx` | Navbar landing (bianco su hero scuro, poi switch) |
-| `src/components/landing/LandingFooter.tsx` | Footer landing (sfondo nero) |
-
-### PWA e Favicon
-| File | Modifica |
-|------|----------|
-| `index.html` | Puntare a `/favicon.png` |
-| `public/favicon.png` | Copiare logo come favicon |
-
-## Approccio per ogni sostituzione
-- Rimuovere import `HardHat` (dove usato solo come logo)
-- Importare l'asset: `import logoLight from "@/assets/logo-light.png"`
-- Sostituire `<HardHat> + <span>Cantiere in Cloud</span>` con `<img src={logoLight} alt="Cantiere in Cloud" className="h-8" />`
-- Per la navbar landing
