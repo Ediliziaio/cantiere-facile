@@ -1,5 +1,6 @@
 import { QRCodeSVG } from "qrcode.react";
-import { HardHat, Shield, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { Shield, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import type { Badge } from "@/data/mock-badges";
 import { getBadgeLavoratore, getBadgeCantiere, calcolaStatoConformita } from "@/data/mock-badges";
 import { mockTenant, mockSubappaltatori } from "@/data/mock-data";
