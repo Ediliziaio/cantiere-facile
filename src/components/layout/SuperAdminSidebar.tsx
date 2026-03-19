@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, Building2, Settings, ScrollText, Receipt, BarChart3, Headphones, HardHat, ChevronDown
+  LayoutDashboard, Building2, Settings, ScrollText, Receipt, BarChart3, Headphones, ChevronDown
 } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
