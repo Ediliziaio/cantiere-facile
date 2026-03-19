@@ -1,4 +1,5 @@
-import { HelpCircle, User, HardHat, Check, ArrowLeft } from "lucide-react";
+import { HelpCircle, User, Check, ArrowLeft } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { mockTenant } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
