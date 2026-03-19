@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { HardHat, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import logoDark from "@/assets/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
