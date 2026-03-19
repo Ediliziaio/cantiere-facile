@@ -42,9 +42,8 @@ export const CertificatoConformita = forwardRef<HTMLDivElement, Props>(({ badge 
       {/* Header */}
       <div className="flex items-center justify-between border-b-2 border-gray-800 pb-4 mb-6">
         <div className="flex items-center gap-3">
-          <HardHat className="h-8 w-8 text-orange-600" />
+          <img src={logoLight} alt="Cantiere in Cloud" className="h-10" />
           <div>
-            <p className="font-bold text-lg tracking-tight text-gray-900">CANTIERE IN CLOUD</p>
             <p className="text-xs text-gray-500">Sistema Badge Digitale</p>
           </div>
         </div>
