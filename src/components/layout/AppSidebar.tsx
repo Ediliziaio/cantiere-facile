@@ -4,6 +4,7 @@ import {
   LayoutDashboard, Building2, FileText, HardHat, Building, Truck,
   ShieldCheck, CalendarClock, MessageSquare, Settings, IdCard, Clock, PenTool, MapPin, ShieldAlert, BarChart3, Receipt, LifeBuoy, ChevronDown, CalendarDays
 } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -95,13 +96,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="none" className="border-r border-border hidden md:flex">
-      <div className={`flex items-center gap-2 px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
-        <HardHat className="h-6 w-6 text-primary shrink-0" />
-        {!collapsed && (
-          <span className="font-heading font-bold text-sm text-foreground tracking-tight">
-            Cantiere in Cloud
-          </span>
-        )}
+      <div className={`flex items-center px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
+        <img src={logoLight} alt="Cantiere in Cloud" className={collapsed ? "h-6" : "h-7"} />
       </div>
       <SidebarContent>
         {navGroups.map((group) => {

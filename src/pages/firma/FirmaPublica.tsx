@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { HardHat, FileText, PenTool, CheckCircle2, Eraser, Send, ShieldCheck, AlertTriangle } from "lucide-react";
+import { FileText, PenTool, CheckCircle2, Eraser, Send, ShieldCheck, AlertTriangle } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { mockFirmatari, mockDocumentiFirma } from "@/data/mock-firma";
 import { useToast } from "@/hooks/use-toast";
 
@@ -330,9 +331,8 @@ export default function FirmaPublica() {
     <div className="min-h-screen bg-muted/30">
       {/* Header */}
       <div className="bg-card border-b border-border px-4 py-3">
-        <div className="max-w-xl mx-auto flex items-center gap-2">
-          <HardHat className="h-5 w-5 text-primary shrink-0" />
-          <span className="font-bold text-sm">Cantiere in Cloud</span>
+        <div className="max-w-xl mx-auto flex items-center">
+          <img src={logoLight} alt="Cantiere in Cloud" className="h-6" />
         </div>
       </div>
 

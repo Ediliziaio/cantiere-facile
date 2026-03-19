@@ -1,4 +1,5 @@
-import { HelpCircle, User, HardHat, Check, ArrowLeft } from "lucide-react";
+import { HelpCircle, User, Check, ArrowLeft } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { mockTenant } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
@@ -41,9 +42,8 @@ export function TopBar() {
   return (
     <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4 safe-area-top">
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 md:hidden">
-          <HardHat className="h-5 w-5 text-primary" />
-          <span className="text-sm font-bold text-foreground tracking-tight">Cantiere in Cloud</span>
+        <div className="flex items-center md:hidden">
+          <img src={logoLight} alt="Cantiere in Cloud" className="h-6" />
         </div>
         <span className="text-sm font-medium text-foreground hidden md:inline">
           {mockTenant.nome_azienda}

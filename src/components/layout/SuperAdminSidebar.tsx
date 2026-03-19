@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, Building2, Settings, ScrollText, Receipt, BarChart3, Headphones, HardHat, ChevronDown
+  LayoutDashboard, Building2, Settings, ScrollText, Receipt, BarChart3, Headphones, ChevronDown
 } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -64,13 +65,8 @@ export function SuperAdminSidebar() {
 
   return (
     <Sidebar collapsible="none" className="border-r border-border hidden md:flex">
-      <div className={`flex items-center gap-2 px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
-        <HardHat className="h-6 w-6 text-primary shrink-0" />
-        {!collapsed && (
-          <span className="font-heading font-bold text-sm text-foreground tracking-tight">
-            Cantiere in Cloud
-          </span>
-        )}
+      <div className={`flex items-center px-4 py-4 border-b border-border ${collapsed ? "justify-center" : ""}`}>
+        <img src={logoLight} alt="Cantiere in Cloud" className={collapsed ? "h-6" : "h-7"} />
       </div>
       <SidebarContent>
         {navGroups.map((group) => {

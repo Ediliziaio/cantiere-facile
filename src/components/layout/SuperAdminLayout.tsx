@@ -6,7 +6,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { HardHat, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
+import logoLight from "@/assets/logo-light.png";
 import { roleLabels } from "@/data/mock-security";
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -68,9 +69,8 @@ export function SuperAdminLayout() {
           <header className="h-14 flex items-center justify-between border-b border-border bg-card px-4 safe-area-top">
             <div className="flex items-center gap-3">
               
-              <div className="flex items-center gap-2 md:hidden">
-                <HardHat className="h-5 w-5 text-primary" />
-                <span className="text-sm font-bold text-foreground tracking-tight">Cantiere in Cloud</span>
+              <div className="flex items-center md:hidden">
+                <img src={logoLight} alt="Cantiere in Cloud" className="h-6" />
               </div>
               <div className="hidden md:flex items-center gap-2">
                 <span className="text-sm font-medium text-foreground">Piattaforma Admin</span>

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { HardHat, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import logoDark from "@/assets/logo-dark.png";
+import logoLight from "@/assets/logo-light.png";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -17,7 +19,6 @@ export default function LandingNavbar() {
   const shadow = useTransform(scrollY, [0, 400], ["0px 0px 0px rgba(0,0,0,0)", "0px 1px 12px rgba(0,0,0,0.08)"]);
 
   // Color transitions: white (on dark hero) → dark (on scrolled white bg)
-  const logoColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
   const linkColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,0.7)", "hsl(25,5%,45%)"]);
   const linkHoverColor = "hsl(25,95%,53%)";
   const menuIconColor = useTransform(scrollY, [0, 400], ["rgba(255,255,255,1)", "hsl(20,14%,8%)"]);
@@ -33,14 +34,19 @@ export default function LandingNavbar() {
         }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <HardHat className="h-7 w-7 text-[hsl(25,95%,53%)]" />
-            <motion.span
-              className="font-landing-heading font-bold text-lg"
-              style={{ color: logoColor }}
-            >
-              Cantiere in Cloud
-            </motion.span>
+          <Link to="/" className="flex items-center">
+            <motion.img
+              src={logoDark}
+              alt="Cantiere in Cloud"
+              className="h-8"
+              style={{ opacity: useTransform(scrollY, [0, 400], [1, 0]) }}
+            />
+            <motion.img
+              src={logoLight}
+              alt="Cantiere in Cloud"
+              className="h-8 absolute"
+              style={{ opacity: useTransform(scrollY, [0, 400], [0, 1]) }}
+            />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
@@ -88,9 +94,8 @@ export default function LandingNavbar() {
           exit={{ opacity: 0 }}
         >
           <div className="flex items-center justify-between px-4 h-16">
-            <Link to="/" className="flex items-center gap-2">
-              <HardHat className="h-7 w-7 text-[hsl(25,95%,53%)]" />
-              <span className="font-landing-heading font-bold text-lg">Cantiere in Cloud</span>
+            <Link to="/" className="flex items-center">
+              <img src={logoLight} alt="Cantiere in Cloud" className="h-8" />
             </Link>
             <button onClick={() => setMobileOpen(false)} aria-label="Chiudi">
               <X className="h-6 w-6" />
