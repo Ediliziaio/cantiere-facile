@@ -38,7 +38,7 @@ export default function LandingNavbar() {
             <motion.img
               src={logoDark}
               alt="Cantiere in Cloud"
-              className="h-8"
+              className="h-10"
               style={{ opacity: useTransform(scrollY, [0, 400], [1, 0]) }}
             />
             <motion.img
