@@ -35,14 +35,19 @@ export default function LandingNavbar() {
         }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <HardHat className="h-7 w-7 text-[hsl(25,95%,53%)]" />
-            <motion.span
-              className="font-landing-heading font-bold text-lg"
-              style={{ color: logoColor }}
-            >
-              Cantiere in Cloud
-            </motion.span>
+          <Link to="/" className="flex items-center">
+            <motion.img
+              src={logoDark}
+              alt="Cantiere in Cloud"
+              className="h-8"
+              style={{ opacity: useTransform(scrollY, [0, 400], [1, 0]) }}
+            />
+            <motion.img
+              src={logoLight}
+              alt="Cantiere in Cloud"
+              className="h-8 absolute"
+              style={{ opacity: useTransform(scrollY, [0, 400], [0, 1]) }}
+            />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
